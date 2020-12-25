@@ -172,7 +172,7 @@ jobs:
         # TODO(maruel): Due to https://github.com/golang/go/issues/40276, ignore
         # go.mod/go.sum modifications. Remove once a new Go toolchain fixes
         # this.
-        git checkout HEAD -- go.mod
+        git checkout HEAD -- go.mod go.sum
         # Also test for untracked files.
         TOUCHED=$(git status --porcelain --ignored)
         if ! test -z "$TOUCHED"; then
