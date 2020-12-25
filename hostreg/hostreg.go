@@ -2,9 +2,10 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
-// Package periph is a peripheral I/O library.
+// Package hostreg registers all the drivers to interact with the host
+// peripherals, I²C, SPI, etc.
 //
-// Package periph acts as a registry of drivers. It is focused on providing
+// Package hostreg acts as a registry of drivers. It is focused on providing
 // high quality host drivers that provide high-speed access to the hardware on
 // the host computer itself.
 //
@@ -15,46 +16,7 @@
 //
 // User shall call either host.Init() or hostextra.Init() on startup to
 // initialize all the registered drivers.
-//
-// Cmd
-//
-// cmd/ contains executable tools to communicate directly with the devices or
-// the buses.
-//
-// cmd/ is allowed to import from conn/, devices/ and host/.
-//
-// Conn
-//
-// conn/ contains interfaces and registries for all the supported protocols and
-// connections (I²C, SPI, GPIO, etc).
-//
-// conn/ is not allowed to import from any other package.
-//
-// Devices
-//
-// devices/ contains devices drivers that are connected to bus, port or
-// connection (i.e I²C, SPI, 1-wire, GPIO) that can be controlled by the host,
-// i.e. ssd1306 (display controller), bm280 (environmental sensor), etc.
-//
-// devices/ is allowed to import from conn/ and host/.
-//
-// Experimental
-//
-// experimental/ contains the drivers that are in the experimental area, not
-// yet considered stable. See
-// https://periph.io/project/#driver-lifetime-management for the process to
-// move drivers out of this area.
-//
-// experimental/ is allowed to import from conn/, devices/ and host/.
-//
-// Host
-//
-// host/ contains all the implementations relating to the host itself, the CPU
-// and buses that are exposed by the host onto which devices can be connected,
-// i.e. I²C, SPI, GPIO, etc.
-//
-// host/ is allowed to import from conn/ only.
-package periph // import "periph.io/x/periph"
+package hostreg // import "periph.io/x/hostreg"
 
 import (
 	"errors"

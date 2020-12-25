@@ -7,7 +7,7 @@
 
 // +build tinygo
 
-package periph
+package hostreg
 
 import (
 	"errors"
