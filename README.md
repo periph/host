@@ -4,11 +4,9 @@
 
 Documentation is at https://periph.io
 
-[![GoDoc](https://godoc.org/periph.io/x/host/hostreg?status.svg)](https://godoc.org/periph.io/x/host/hostreg)
-[![Go Report Card](https://goreportcard.com/badge/periph.io/x/host/hostreg)](https://goreportcard.com/report/periph.io/x/host/hostreg)
-[![Coverage Status](https://codecov.io/gh/google/periph/graph/badge.svg)](https://codecov.io/gh/google/periph)
-[![Build Status](https://travis-ci.org/google/periph.svg)](https://travis-ci.org/google/periph)
-
+[![PkgGoDev](https://pkg.go.dev/badge/periph.io/x/host)](https://pkg.go.dev/periph.io/x/host)
+[![Coverage
+Status](https://codecov.io/gh/periph/host/graph/badge.svg)](https://codecov.io/gh/periph/host)
 
 Join us for a chat on
 [gophers.slack.com/messages/periph](https://gophers.slack.com/messages/periph),
@@ -47,8 +45,8 @@ examples!
 
 `periph` was initiated with ❤️️ and passion by [Marc-Antoine
 Ruel](https://github.com/maruel). The full list of contributors is in
-[AUTHORS](https://github.com/google/periph/blob/master/AUTHORS) and
-[CONTRIBUTORS](https://github.com/google/periph/blob/master/CONTRIBUTORS).
+[AUTHORS](https://github.com/periph/host/blob/main/AUTHORS) and
+[CONTRIBUTORS](https://github.com/periph/host/blob/main/CONTRIBUTORS).
 
 
 ## Disclaimer
