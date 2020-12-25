@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"strings"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/conn/pin/pinreg"
-	"periph.io/x/periph/host/distro"
-	"periph.io/x/periph/host/sysfs"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpioreg"
+	"periph.io/x/conn/pin"
+	"periph.io/x/conn/pin/pinreg"
+	"periph.io/x/host/distro"
+	"periph.io/x/host/hostreg"
+	"periph.io/x/host/sysfs"
 )
 
 // The J2 header is rPi compatible, except for the two analog pins and the 1.8V
@@ -188,7 +188,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		periph.MustRegister(&drv)
+		hostreg.MustRegister(&drv)
 	}
 }
 

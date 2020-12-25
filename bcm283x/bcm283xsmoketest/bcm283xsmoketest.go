@@ -16,12 +16,12 @@ import (
 	"regexp"
 	"time"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/conn/gpio/gpiostream"
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/host/bcm283x"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpioreg"
+	"periph.io/x/conn/gpio/gpiostream"
+	"periph.io/x/conn/physic"
+	"periph.io/x/conn/pin"
+	"periph.io/x/host/bcm283x"
 )
 
 // SmokeTest is imported by periph-smoketest.

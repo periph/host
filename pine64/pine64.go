@@ -8,10 +8,10 @@ import (
 	"errors"
 	"os"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/conn/pin/pinreg"
-	"periph.io/x/periph/host/allwinner"
+	"periph.io/x/conn/pin"
+	"periph.io/x/conn/pin/pinreg"
+	"periph.io/x/host/allwinner"
+	"periph.io/x/host/hostreg"
 )
 
 // Present returns true if running on a Pine64 board.
@@ -265,7 +265,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		periph.MustRegister(&drv)
+		hostreg.MustRegister(&drv)
 	}
 }
 

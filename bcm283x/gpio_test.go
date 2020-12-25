@@ -8,15 +8,15 @@ import (
 	"reflect"
 	"testing"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpiostream"
-	"periph.io/x/periph/conn/i2c"
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/conn/spi"
-	"periph.io/x/periph/conn/uart"
-	"periph.io/x/periph/host/pmem"
-	"periph.io/x/periph/host/videocore"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpiostream"
+	"periph.io/x/conn/i2c"
+	"periph.io/x/conn/physic"
+	"periph.io/x/conn/pin"
+	"periph.io/x/conn/spi"
+	"periph.io/x/conn/uart"
+	"periph.io/x/host/pmem"
+	"periph.io/x/host/videocore"
 )
 
 func TestPresent(t *testing.T) {

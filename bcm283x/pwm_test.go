@@ -7,7 +7,7 @@ package bcm283x
 import (
 	"testing"
 
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/physic"
 )
 
 func TestPWMMap(t *testing.T) {

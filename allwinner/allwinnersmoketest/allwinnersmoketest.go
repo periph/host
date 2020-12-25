@@ -15,10 +15,10 @@ import (
 	"fmt"
 	"time"
 
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/host/allwinner"
-	"periph.io/x/periph/host/chip"
-	"periph.io/x/periph/host/pine64"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/host/allwinner"
+	"periph.io/x/host/chip"
+	"periph.io/x/host/pine64"
 )
 
 // SmokeTest is imported by periph-smoketest.

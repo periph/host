@@ -16,13 +16,13 @@ package bone
 import (
 	"errors"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/conn/pin/pinreg"
-	"periph.io/x/periph/host/beagle/black"
-	"periph.io/x/periph/host/beagle/green"
-	"periph.io/x/periph/host/sysfs"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/pin"
+	"periph.io/x/conn/pin/pinreg"
+	"periph.io/x/host/beagle/black"
+	"periph.io/x/host/beagle/green"
+	"periph.io/x/host/hostreg"
+	"periph.io/x/host/sysfs"
 )
 
 // TODO(maruel): Use specialized am335x or pru implementation once available.
@@ -311,7 +311,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		periph.MustRegister(&drv)
+		hostreg.MustRegister(&drv)
 	}
 }
 

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/physic"
 )
 
 // PWENi is used to enable/disable the corresponding channel. Setting this bit

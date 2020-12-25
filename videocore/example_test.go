@@ -7,7 +7,7 @@ package videocore_test
 import (
 	"log"
 
-	"periph.io/x/periph/host/videocore"
+	"periph.io/x/host/videocore"
 )
 
 func ExampleAlloc() {

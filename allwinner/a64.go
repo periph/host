@@ -10,8 +10,8 @@ package allwinner
 import (
 	"strings"
 
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/host/sysfs"
+	"periph.io/x/conn/pin"
+	"periph.io/x/host/sysfs"
 )
 
 // A64 specific pins.

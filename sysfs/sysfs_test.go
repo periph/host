@@ -8,7 +8,7 @@ import (
 	"errors"
 	"io"
 
-	"periph.io/x/periph/host/fs"
+	"periph.io/x/host/fs"
 )
 
 func init() {

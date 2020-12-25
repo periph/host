@@ -4,12 +4,14 @@
 
 package host
 
-import "periph.io/x/periph"
+import (
+	"periph.io/x/host/hostreg"
+)
 
 // Init calls periph.Init() and returns it as-is.
 //
 // The only difference is that by calling host.Init(), you are guaranteed to
 // have all the drivers implemented in this library to be implicitly loaded.
-func Init() (*periph.State, error) {
-	return periph.Init()
+func Init() (*hostreg.State, error) {
+	return hostreg.Init()
 }

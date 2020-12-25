@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"testing"
 
-	"periph.io/x/periph/host/fs"
+	"periph.io/x/host/fs"
 )
 
 func TestSplitSemiColon(t *testing.T) {

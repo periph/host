@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/physic"
 )
 
 func TestThermalSensorByName_not_present(t *testing.T) {

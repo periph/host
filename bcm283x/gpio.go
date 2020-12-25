@@ -12,16 +12,16 @@ import (
 	"strings"
 	"time"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/conn/gpio/gpiostream"
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/host/distro"
-	"periph.io/x/periph/host/pmem"
-	"periph.io/x/periph/host/sysfs"
-	"periph.io/x/periph/host/videocore"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpioreg"
+	"periph.io/x/conn/gpio/gpiostream"
+	"periph.io/x/conn/physic"
+	"periph.io/x/conn/pin"
+	"periph.io/x/host/distro"
+	"periph.io/x/host/hostreg"
+	"periph.io/x/host/pmem"
+	"periph.io/x/host/sysfs"
+	"periph.io/x/host/videocore"
 )
 
 // All the pins supported by the CPU.
@@ -1429,7 +1429,7 @@ func setSpeed(f physic.Frequency) error {
 
 func init() {
 	if isArm {
-		periph.MustRegister(&drvGPIO)
+		hostreg.MustRegister(&drvGPIO)
 	}
 }
 

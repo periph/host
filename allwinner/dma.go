@@ -21,8 +21,8 @@ import (
 	"log"
 	"os"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/host/pmem"
+	"periph.io/x/host/hostreg"
+	"periph.io/x/host/pmem"
 )
 
 // dmaMap represents the DMA memory mapped CPU registers.
@@ -467,7 +467,7 @@ func (d *driverDMA) Close() error {
 func init() {
 	if false && isArm {
 		// TODO(maruel): This is intense, wait to be sure it works.
-		periph.MustRegister(&drvDMA)
+		hostreg.MustRegister(&drvDMA)
 	}
 }
 

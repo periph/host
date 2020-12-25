@@ -17,14 +17,14 @@ import (
 	"sync"
 	"unsafe"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/spi"
-	"periph.io/x/periph/conn/spi/spireg"
-	"periph.io/x/periph/host/fs"
+	"periph.io/x/conn"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpioreg"
+	"periph.io/x/conn/physic"
+	"periph.io/x/conn/spi"
+	"periph.io/x/conn/spi/spireg"
+	"periph.io/x/host/fs"
+	"periph.io/x/host/hostreg"
 )
 
 // NewSPI opens a SPI port via its devfs interface as described at
@@ -36,7 +36,7 @@ import (
 // busNumber is the bus number as exported by devfs. For example if the path is
 // /dev/spidev0.1, busNumber should be 0 and chipSelect should be 1.
 //
-// It is recommended to use https://periph.io/x/periph/conn/spi/spireg#Open
+// It is recommended to use https://periph.io/x/conn/spi/spireg#Open
 // instead of using NewSPI() directly as the package sysfs is providing a
 // Linux-specific implementation. periph.io works on many OSes! This permits
 // it to work on all operating systems, or devices like SPI over USB.
@@ -604,7 +604,7 @@ func (o *openerSPI) Open() (spi.PortCloser, error) {
 
 func init() {
 	if isLinux {
-		periph.MustRegister(&drvSPI)
+		hostreg.MustRegister(&drvSPI)
 	}
 }
 

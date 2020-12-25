@@ -14,13 +14,13 @@ import (
 	"sync"
 	"time"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/gpio/gpioreg"
-	"periph.io/x/periph/conn/physic"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/host/fs"
+	"periph.io/x/conn"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/gpio/gpioreg"
+	"periph.io/x/conn/physic"
+	"periph.io/x/conn/pin"
+	"periph.io/x/host/fs"
+	"periph.io/x/host/hostreg"
 )
 
 // Pins is all the pins exported by GPIO sysfs.
@@ -507,7 +507,7 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 
 func init() {
 	if isLinux {
-		periph.MustRegister(&drvGPIO)
+		hostreg.MustRegister(&drvGPIO)
 	}
 }
 

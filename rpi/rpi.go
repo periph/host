@@ -11,12 +11,12 @@ import (
 	"fmt"
 	"os"
 
-	"periph.io/x/periph"
-	"periph.io/x/periph/conn/gpio"
-	"periph.io/x/periph/conn/pin"
-	"periph.io/x/periph/conn/pin/pinreg"
-	"periph.io/x/periph/host/bcm283x"
-	"periph.io/x/periph/host/distro"
+	"periph.io/x/conn/gpio"
+	"periph.io/x/conn/pin"
+	"periph.io/x/conn/pin/pinreg"
+	"periph.io/x/host/bcm283x"
+	"periph.io/x/host/distro"
+	"periph.io/x/host/hostreg"
 )
 
 // Present returns true if running on a Raspberry Pi board.
@@ -806,7 +806,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		periph.MustRegister(&drv)
+		hostreg.MustRegister(&drv)
 	}
 }
 

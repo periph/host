@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"periph.io/x/periph/conn/physic"
+	"periph.io/x/conn/physic"
 )
 
 // errClockRegister is returned in a situation where the clock memory is not
