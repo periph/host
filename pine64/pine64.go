@@ -6,12 +6,13 @@ package pine64
 
 import (
 	"errors"
-	"os"
+	"strings"
 
 	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/pin"
 	"periph.io/x/conn/pin/pinreg"
 	"periph.io/x/host/allwinner"
+	"periph.io/x/host/distro"
 )
 
 // Present returns true if running on a Pine64 board.
@@ -19,9 +20,7 @@ import (
 // https://www.pine64.org/
 func Present() bool {
 	if isArm {
-		// This is iffy at best.
-		_, err := os.Stat("/boot/pine64.dtb")
-		return err == nil
+		return strings.HasPrefix(distro.DTModel(), "Pine64")
 	}
 	return false
 }
