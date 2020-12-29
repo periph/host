@@ -70,9 +70,9 @@ import (
 	"strings"
 	"time"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio/gpiostream"
 	"periph.io/x/conn/physic"
-	"periph.io/x/host/hostreg"
 	"periph.io/x/host/pmem"
 	"periph.io/x/host/videocore"
 )
@@ -1253,7 +1253,7 @@ func resetDMA(ch int) error {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drvDMA)
+		driverreg.MustRegister(&drvDMA)
 	}
 }
 

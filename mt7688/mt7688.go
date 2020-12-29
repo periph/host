@@ -7,8 +7,8 @@ package mt7688
 import (
 	"strings"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/host/distro"
-	"periph.io/x/host/hostreg"
 )
 
 // Present returns true if a mt7688 processor is detected.
@@ -24,6 +24,6 @@ func init() {
 	// Since isMIPS is a compile time constant, the compile can strip the
 	// unnecessary code and unused private symbols.
 	if isMIPS {
-		hostreg.MustRegister(&drvGPIO)
+		driverreg.MustRegister(&drvGPIO)
 	}
 }

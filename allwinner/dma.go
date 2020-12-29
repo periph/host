@@ -21,7 +21,7 @@ import (
 	"log"
 	"os"
 
-	"periph.io/x/host/hostreg"
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/host/pmem"
 )
 
@@ -467,7 +467,7 @@ func (d *driverDMA) Close() error {
 func init() {
 	if false && isArm {
 		// TODO(maruel): This is intense, wait to be sure it works.
-		hostreg.MustRegister(&drvDMA)
+		driverreg.MustRegister(&drvDMA)
 	}
 }
 

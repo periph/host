@@ -7,7 +7,7 @@ package pru
 import (
 	"errors"
 
-	"periph.io/x/host/hostreg"
+	"periph.io/x/conn/driver/driverreg"
 )
 
 // Present returns true if an Texas Instrument PRU-ICSS processor is detected.
@@ -45,7 +45,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drv)
+		driverreg.MustRegister(&drv)
 	}
 }
 

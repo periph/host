@@ -15,12 +15,12 @@ import (
 	"sync"
 	"unsafe"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/gpio/gpioreg"
 	"periph.io/x/conn/i2c"
 	"periph.io/x/conn/i2c/i2creg"
 	"periph.io/x/conn/physic"
-	"periph.io/x/host/hostreg"
 )
 
 // I2CSetSpeedHook can be set by a driver to enable changing the I²C buses
@@ -378,7 +378,7 @@ func (o openerI2C) Open() (i2c.BusCloser, error) {
 
 func init() {
 	if isLinux {
-		hostreg.MustRegister(&drvI2C)
+		driverreg.MustRegister(&drvI2C)
 	}
 }
 

@@ -15,8 +15,8 @@ import (
 	"time"
 
 	"periph.io/x/conn"
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/physic"
-	"periph.io/x/host/hostreg"
 )
 
 // ThermalSensors is all the sensors discovered on this host via sysfs.  It
@@ -251,7 +251,7 @@ func (d *driverThermalSensor) discoverDevices(glob, typeFilename string) error {
 
 func init() {
 	if isLinux {
-		hostreg.MustRegister(&drvThermalSensor)
+		driverreg.MustRegister(&drvThermalSensor)
 	}
 }
 

@@ -10,9 +10,9 @@ import (
 	"fmt"
 	"sync"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/onewire"
 	"periph.io/x/conn/onewire/onewirereg"
-	"periph.io/x/host/hostreg"
 )
 
 // New opens a 1-wire bus via its netlink interface as described at
@@ -517,7 +517,7 @@ func (o openerOneWire) Open() (onewire.BusCloser, error) {
 
 func init() {
 	if isLinux {
-		hostreg.MustRegister(&drvOneWire)
+		driverreg.MustRegister(&drvOneWire)
 	}
 }
 

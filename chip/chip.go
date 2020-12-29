@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/gpio/gpioreg"
 	"periph.io/x/conn/pin"
@@ -20,7 +21,6 @@ import (
 	"periph.io/x/host/allwinner"
 	"periph.io/x/host/distro"
 	"periph.io/x/host/fs"
-	"periph.io/x/host/hostreg"
 )
 
 // C.H.I.P. hardware pins.
@@ -351,7 +351,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drv)
+		driverreg.MustRegister(&drv)
 	}
 }
 

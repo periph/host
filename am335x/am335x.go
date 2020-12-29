@@ -8,8 +8,8 @@ import (
 	"errors"
 	"strings"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/host/distro"
-	"periph.io/x/host/hostreg"
 )
 
 // Present returns true if a TM AM335x processor is detected.
@@ -45,7 +45,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drv)
+		driverreg.MustRegister(&drv)
 	}
 }
 

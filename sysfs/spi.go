@@ -18,13 +18,13 @@ import (
 	"unsafe"
 
 	"periph.io/x/conn"
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/gpio/gpioreg"
 	"periph.io/x/conn/physic"
 	"periph.io/x/conn/spi"
 	"periph.io/x/conn/spi/spireg"
 	"periph.io/x/host/fs"
-	"periph.io/x/host/hostreg"
 )
 
 // NewSPI opens a SPI port via its devfs interface as described at
@@ -604,7 +604,7 @@ func (o *openerSPI) Open() (spi.PortCloser, error) {
 
 func init() {
 	if isLinux {
-		hostreg.MustRegister(&drvSPI)
+		driverreg.MustRegister(&drvSPI)
 	}
 }
 

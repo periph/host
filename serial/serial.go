@@ -18,11 +18,11 @@ import (
 	"syscall"
 
 	"periph.io/x/conn"
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/gpio/gpioreg"
 	"periph.io/x/conn/physic"
 	"periph.io/x/conn/uart"
-	"periph.io/x/host/hostreg"
 )
 
 // Enumerate returns the available serial buses as exposed by the OS.
@@ -280,7 +280,7 @@ func (d *driverSerial) Init() (bool, error) {
 }
 
 func init() {
-	hostreg.MustRegister(&drv)
+	driverreg.MustRegister(&drv)
 }
 
 var drv driverSerial

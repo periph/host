@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/gpio/gpioreg"
 	"periph.io/x/conn/physic"
 	"periph.io/x/conn/pin"
-	"periph.io/x/host/hostreg"
 	"periph.io/x/host/pmem"
 	"periph.io/x/host/sysfs"
 )
@@ -551,7 +551,7 @@ func (d *driverGPIOPL) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drvGPIOPL)
+		driverreg.MustRegister(&drvGPIOPL)
 	}
 }
 

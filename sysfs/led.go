@@ -15,11 +15,11 @@ import (
 	"time"
 
 	"periph.io/x/conn"
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/physic"
 	"periph.io/x/conn/pin"
 	"periph.io/x/host/fs"
-	"periph.io/x/host/hostreg"
 )
 
 // LEDs is all the leds discovered on this host via sysfs.
@@ -244,7 +244,7 @@ func (d *driverLED) Init() (bool, error) {
 
 func init() {
 	if isLinux {
-		hostreg.MustRegister(&drvLED)
+		driverreg.MustRegister(&drvLED)
 	}
 }
 

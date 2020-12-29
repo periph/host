@@ -20,11 +20,11 @@ import (
 	"errors"
 	"strings"
 
+	"periph.io/x/conn/driver/driverreg"
 	"periph.io/x/conn/gpio"
 	"periph.io/x/conn/pin"
 	"periph.io/x/conn/pin/pinreg"
 	"periph.io/x/host/distro"
-	"periph.io/x/host/hostreg"
 	"periph.io/x/host/sysfs"
 )
 
@@ -88,7 +88,7 @@ func (d *driver) Init() (bool, error) {
 
 func init() {
 	if isArm {
-		hostreg.MustRegister(&drv)
+		driverreg.MustRegister(&drv)
 	}
 }
 
