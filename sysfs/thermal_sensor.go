@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"periph.io/x/conn"
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/physic"
 )
 
 // ThermalSensors is all the sensors discovered on this host via sysfs.  It

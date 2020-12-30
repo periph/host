@@ -6,5 +6,5 @@ package host
 
 import (
 	// Make sure sysfs drivers are registered.
-	_ "periph.io/x/host/sysfs"
+	_ "periph.io/x/host/v3/sysfs"
 )

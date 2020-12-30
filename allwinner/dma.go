@@ -21,8 +21,8 @@ import (
 	"log"
 	"os"
 
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/host/pmem"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/host/v3/pmem"
 )
 
 // dmaMap represents the DMA memory mapped CPU registers.

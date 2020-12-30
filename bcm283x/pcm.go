@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"time"
 
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3/physic"
 )
 
 type pcmCS uint32

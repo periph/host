@@ -17,14 +17,14 @@ import (
 	"sync"
 	"unsafe"
 
-	"periph.io/x/conn"
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/gpio/gpioreg"
-	"periph.io/x/conn/physic"
-	"periph.io/x/conn/spi"
-	"periph.io/x/conn/spi/spireg"
-	"periph.io/x/host/fs"
+	"periph.io/x/conn/v3"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/spi"
+	"periph.io/x/conn/v3/spi/spireg"
+	"periph.io/x/host/v3/fs"
 )
 
 // NewSPI opens a SPI port via its devfs interface as described at
@@ -36,7 +36,7 @@ import (
 // busNumber is the bus number as exported by devfs. For example if the path is
 // /dev/spidev0.1, busNumber should be 0 and chipSelect should be 1.
 //
-// It is recommended to use https://periph.io/x/conn/spi/spireg#Open
+// It is recommended to use https://periph.io/x/conn/v3/spi/spireg#Open
 // instead of using NewSPI() directly as the package sysfs is providing a
 // Linux-specific implementation. periph.io works on many OSes! This permits
 // it to work on all operating systems, or devices like SPI over USB.

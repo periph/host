@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"testing"
 
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3/physic"
 )
 
 func TestClockDiv_String(t *testing.T) {

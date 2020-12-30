@@ -13,14 +13,14 @@ import (
 	"strconv"
 	"strings"
 
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/gpio/gpioreg"
-	"periph.io/x/conn/pin"
-	"periph.io/x/conn/pin/pinreg"
-	"periph.io/x/host/allwinner"
-	"periph.io/x/host/distro"
-	"periph.io/x/host/fs"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/conn/v3/pin"
+	"periph.io/x/conn/v3/pin/pinreg"
+	"periph.io/x/host/v3/allwinner"
+	"periph.io/x/host/v3/distro"
+	"periph.io/x/host/v3/fs"
 )
 
 // C.H.I.P. hardware pins.

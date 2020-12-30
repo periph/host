@@ -13,13 +13,13 @@ import (
 	"strings"
 	"time"
 
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/gpio/gpioreg"
-	"periph.io/x/conn/physic"
-	"periph.io/x/conn/pin"
-	"periph.io/x/host/pmem"
-	"periph.io/x/host/sysfs"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/pin"
+	"periph.io/x/host/v3/pmem"
+	"periph.io/x/host/v3/sysfs"
 )
 
 // All the pins in the PL group.

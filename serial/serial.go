@@ -17,12 +17,12 @@ import (
 	"sync"
 	"syscall"
 
-	"periph.io/x/conn"
-	"periph.io/x/conn/driver/driverreg"
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/gpio/gpioreg"
-	"periph.io/x/conn/physic"
-	"periph.io/x/conn/uart"
+	"periph.io/x/conn/v3"
+	"periph.io/x/conn/v3/driver/driverreg"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
+	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/uart"
 )
 
 // Enumerate returns the available serial buses as exposed by the OS.

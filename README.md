@@ -4,7 +4,7 @@
 
 Documentation is at https://periph.io
 
-[![PkgGoDev](https://pkg.go.dev/badge/periph.io/x/host)](https://pkg.go.dev/periph.io/x/host)
+[![PkgGoDev](https://pkg.go.dev/badge/periph.io/x/host/v3)](https://pkg.go.dev/periph.io/x/host/v3)
 [![Coverage
 Status](https://codecov.io/gh/periph/host/graph/badge.svg)](https://codecov.io/gh/periph/host)
 
@@ -22,9 +22,9 @@ package main
 
 import (
     "time"
-    "periph.io/x/conn/gpio"
-    "periph.io/x/host"
-    "periph.io/x/host/rpi"
+    "periph.io/x/conn/v3/gpio"
+    "periph.io/x/host/v3"
+    "periph.io/x/host/v3/rpi"
 )
 
 func main() {

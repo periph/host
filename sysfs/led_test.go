@@ -7,8 +7,8 @@ package sysfs
 import (
 	"testing"
 
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/physic"
 )
 
 func TestLEDByName(t *testing.T) {

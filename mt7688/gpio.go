@@ -5,7 +5,7 @@
 package mt7688
 
 import (
-	"periph.io/x/conn/pin"
+	"periph.io/x/conn/v3/pin"
 )
 
 // All the pins supported by the CPU.

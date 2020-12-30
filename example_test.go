@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"log"
 
-	"periph.io/x/host"
+	"periph.io/x/host/v3"
 )
 
 func ExampleInit() {

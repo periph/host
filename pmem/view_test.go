@@ -10,7 +10,7 @@ import (
 	"errors"
 	"testing"
 
-	"periph.io/x/host/fs"
+	"periph.io/x/host/v3/fs"
 )
 
 func TestSlice(t *testing.T) {

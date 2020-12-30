@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3/physic"
 )
 
 func TestToHz(t *testing.T) {

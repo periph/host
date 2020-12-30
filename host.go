@@ -4,7 +4,7 @@
 
 package host
 
-import "periph.io/x/conn/driver/driverreg"
+import "periph.io/x/conn/v3/driver/driverreg"
 
 // Init calls driverreg.Init() and returns it as-is.
 //

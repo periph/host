@@ -13,8 +13,8 @@ import (
 	"testing"
 	"time"
 
-	"periph.io/x/conn/gpio"
-	"periph.io/x/conn/physic"
+	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/physic"
 )
 
 // runGPIOBenchmark runs the standardized GPIO benchmark for this specific

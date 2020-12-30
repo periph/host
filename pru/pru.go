@@ -7,7 +7,7 @@ package pru
 import (
 	"errors"
 
-	"periph.io/x/conn/driver/driverreg"
+	"periph.io/x/conn/v3/driver/driverreg"
 )
 
 // Present returns true if an Texas Instrument PRU-ICSS processor is detected.

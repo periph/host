@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"periph.io/x/host/distro"
+	"periph.io/x/host/v3/distro"
 )
 
 // Present detects whether the host CPU is an Allwinner CPU.
