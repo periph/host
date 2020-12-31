@@ -6,4 +6,4 @@ module periph.io/x/host/v3
 
 go 1.13
 
-require periph.io/x/conn/v3 v3.0.0-20201230174115-729c1fe5c4ae
+require periph.io/x/conn/v3 v3.6.7
