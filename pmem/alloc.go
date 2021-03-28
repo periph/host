@@ -165,8 +165,8 @@ func virtToPhys(virt uintptr) (uint64, error) {
 }
 
 func toRaw(b []byte) uintptr {
-	header := *(*reflect.SliceHeader)(unsafe.Pointer(&b))
-	return header.Data
+	h := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	return h.Data
 }
 
 // isWSL returns true if running under Windows Subsystem for Linux.

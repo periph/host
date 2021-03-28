@@ -110,10 +110,9 @@ func copyRAM(pDst, pSrc uint64, size, hole int) error {
 }
 
 func toSlice(p uint64, size int) []byte {
-	h := &reflect.SliceHeader{
-		Data: uintptr(p),
-		Len:  size,
-		Cap:  size,
-	}
+	h := new(reflect.SliceHeader)
+	h.Data = uintptr(p)
+	h.Len = size
+	h.Cap = size
 	return *(*[]byte)(unsafe.Pointer(h))
 }

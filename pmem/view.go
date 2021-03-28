@@ -20,10 +20,12 @@ type Slice []byte
 
 // Uint32 returns a view of the byte slice as a []uint32.
 func (s *Slice) Uint32() []uint32 {
-	header := *(*reflect.SliceHeader)(unsafe.Pointer(s))
-	header.Len /= 4
-	header.Cap /= 4
-	return *(*[]uint32)(unsafe.Pointer(&header))
+	// It's important to make a copy here.
+	h := new(reflect.SliceHeader)
+	h.Data = (*reflect.SliceHeader)(unsafe.Pointer(s)).Data
+	h.Len = (*reflect.SliceHeader)(unsafe.Pointer(s)).Len / 4
+	h.Cap = (*reflect.SliceHeader)(unsafe.Pointer(s)).Cap / 4
+	return *(*[]uint32)(unsafe.Pointer(h))
 }
 
 // Bytes implements Mem.
