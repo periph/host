@@ -111,32 +111,13 @@ func (e *eventsListener) init() error {
 		e.mu.Unlock()
 		return nil
 	}
-	var err error
-	e.epollFd, err = syscall.EpollCreate(1)
-	switch {
-	case err == nil:
-		break
-	case err.Error() == "function not implemented":
-		// Some arch (arm64) do not implement EpollCreate().
-		if e.epollFd, err = syscall.EpollCreate1(0); err != nil {
-			e.mu.Unlock()
-			return err
-		}
-	default:
-		e.mu.Unlock()
-		return err
-	}
-	e.r, e.w, err = os.Pipe()
+	err := e.initLocked()
+	atomic.StoreInt32(&e.initialized, 1)
 	if err != nil {
 		e.mu.Unlock()
 		return err
 	}
-	// Only need epollIN. epollPRI has no effect on pipes.
-	if err = e.addFdInner(e.r.Fd(), epollET|epollIN); err != nil {
-		// This object will not be reusable at this point.
-		e.mu.Unlock()
-		return err
-	}
+
 	wakeUp := make(chan time.Time)
 	e.wakeUp = wakeUp
 	e.fds = map[int32]chan<- time.Time{}
@@ -146,9 +127,29 @@ func (e *eventsListener) init() error {
 	//
 	// This forces loop() to be started before addFd() can be called by users.
 	go e.loop()
-	// Initialization is now good to go.
-	atomic.StoreInt32(&e.initialized, 1)
 	return nil
+}
+
+func (e *eventsListener) initLocked() error {
+	var err error
+	e.epollFd, err = syscall.EpollCreate(1)
+	switch {
+	case err == nil:
+		break
+	case err.Error() == "function not implemented":
+		// Some arch (arm64) do not implement EpollCreate().
+		if e.epollFd, err = syscall.EpollCreate1(0); err != nil {
+			return err
+		}
+	default:
+		return err
+	}
+	e.r, e.w, err = os.Pipe()
+	if err != nil {
+		return err
+	}
+	// Only need epollIN. epollPRI has no effect on pipes.
+	return e.addFdInner(e.r.Fd(), epollET|epollIN)
 }
 
 // loop is the main event loop.
@@ -288,9 +289,6 @@ func (e *eventsListener) removeFd(fd uintptr) error {
 //
 // Must not be called with the lock held.
 func (e *eventsListener) wakeUpLoop(c <-chan time.Time) time.Time {
-	if atomic.LoadInt32(&e.initialized) == 0 {
-		return time.Time{}
-	}
 	// TODO(maruel): Figure out a way to wake up that doesn't require emptying.
 	var b [1]byte
 	_, _ = e.w.Write(b[:])

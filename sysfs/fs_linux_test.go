@@ -76,19 +76,28 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	if err := ev.addFd(r.Fd(), c, flags); err != nil {
 		t.Fatal(err)
 	}
+	notExpectChan(t, c, "should not have produced an event")
 
 	// Produce a single event.
-	if _, err := w.Write([]byte("foo")); err != nil {
+	if _, err = w.Write([]byte("foo")); err != nil {
 		t.Fatal(err)
 	}
 	expectChan(t, c, start)
 	notExpectChan(t, c, "should have produced a single event")
 
+	buf := [8]byte{}
+	if n, err := r.Read(buf[:]); err != nil {
+		t.Fatal(err)
+	} else if n != 3 {
+		t.Fatal("expected foo")
+	}
+	notExpectChan(t, c, "no event for read")
+
 	// Produce one or two events.
-	if _, err := w.Write([]byte("bar")); err != nil {
+	if _, err = w.Write([]byte("bar")); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := w.Write([]byte("baz")); err != nil {
+	if _, err = w.Write([]byte("baz")); err != nil {
 		t.Fatal(err)
 	}
 	expectChan(t, c, start)
@@ -99,7 +108,14 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	default:
 	}
 
-	if err := ev.removeFd(r.Fd()); err != nil {
+	if n, err := r.Read(buf[:]); err != nil {
+		t.Fatal(err)
+	} else if n != 6 {
+		t.Fatal("expected foo")
+	}
+	notExpectChan(t, c, "no event for read")
+
+	if err = ev.removeFd(r.Fd()); err != nil {
 		t.Fatal(err)
 	}
 }
