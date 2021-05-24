@@ -1,0 +1,14 @@
+# Copyright 2017 The Periph Authors. All rights reserved.
+# Use of this source code is governed under the Apache License, Version 2.0
+# that can be found in the LICENSE file.
+
+# udev rule file to make FTDI devices accessible usable as non-root and disable
+# the ftdi_sio driver.
+#
+# See https://periph.io/device/ftdi/ for more information.
+
+# Make FTDI device usable from users in group plugdev.
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", MODE="0664", GROUP="plugdev"
+
+# Disallow ftdi_sio from loading.
+SUBSYSTEM=="usb", DRIVER=="ftdi_sio", ATTRS{idVendor}=="0403", RUN+="/bin/sh -c 'echo $kernel > /sys/bus/usb/drivers/ftdi_sio/unbind'"

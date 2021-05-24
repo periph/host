@@ -4,7 +4,10 @@
 
 package host
 
-import "periph.io/x/conn/v3/driver/driverreg"
+import (
+	"periph.io/x/conn/v3/driver/driverreg"
+	_ "periph.io/x/host/v3/ftdi"
+)
 
 // Init calls driverreg.Init() and returns it as-is.
 //
