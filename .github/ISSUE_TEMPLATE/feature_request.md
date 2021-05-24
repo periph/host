@@ -11,3 +11,4 @@ about: What would you like to see supported?
 **Do you plan to:**
 - Contribute an initial driver: [Yes/No]
 - Write unit tests: [Yes/No]
+- Update https://github.com/periph/cmd to use the new functionality: [Yes/No]
