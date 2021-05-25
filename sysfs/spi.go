@@ -548,9 +548,9 @@ func (d *driverSPI) Init() (bool, error) {
 	// Do not use "/sys/bus/spi/devices/spi" as Raspbian's provided udev rules
 	// only modify the ACL of /dev/spidev* but not the ones in /sys/bus/...
 	prefix := "/dev/spidev"
-	items, err := filepath.Glob(prefix + "*")
-	if err != nil {
-		return true, err
+	items, err2 := filepath.Glob(prefix + "*")
+	if err2 != nil {
+		return true, err2
 	}
 	if len(items) == 0 {
 		return false, errors.New("no SPI port found")

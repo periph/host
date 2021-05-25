@@ -711,7 +711,7 @@ func dmaWriteStreamPCM(p *Pin, w gpiostream.Stream) error {
 		return err
 	}
 	defer buf.Close()
-	if err := copyStreamToDMABuf(w, buf.Uint32()); err != nil {
+	if err = copyStreamToDMABuf(w, buf.Uint32()); err != nil {
 		return err
 	}
 
@@ -845,7 +845,7 @@ func dmaReadStream(p *Pin, b *gpiostream.BitStream) error {
 	if err != nil {
 		return err
 	}
-	if _, err := setPWMClockSource(); err != nil {
+	if _, err = setPWMClockSource(); err != nil {
 		return err
 	}
 
@@ -867,7 +867,7 @@ func dmaReadStream(p *Pin, b *gpiostream.BitStream) error {
 	defer pCB.Close()
 
 	reg := drvGPIO.gpioBaseAddr + 0x34 + uint32Size*uint32(p.number/32) // GPIO Pin Level 0
-	if err := cb[0].initBlock(reg, uint32(buf.PhysAddr()), uint32(l), true, false, false, true, dmaPWM); err != nil {
+	if err = cb[0].initBlock(reg, uint32(buf.PhysAddr()), uint32(l), true, false, false, true, dmaPWM); err != nil {
 		return err
 	}
 	err = runIO(pCB, l <= maxLite)
@@ -953,7 +953,7 @@ func dmaWriteStreamEdges(p *Pin, w gpiostream.Stream) error {
 	stride = uint32(skip)
 	for i := 1; i < l; i++ {
 		if v := getBit(bits[i/8], i%8, msb); v != last || stride == maxLite {
-			if err := cb[index].initBlock(physBit, dest[last], stride*uint32Size, false, true, false, false, dmaPWM); err != nil {
+			if err = cb[index].initBlock(physBit, dest[last], stride*uint32Size, false, true, false, false, dmaPWM); err != nil {
 				return err
 			}
 			// It is not necessary to use physToUncachedPhys() here.
@@ -964,13 +964,12 @@ func dmaWriteStreamEdges(p *Pin, w gpiostream.Stream) error {
 		}
 		stride += uint32(skip)
 	}
-	if err := cb[index].initBlock(physBit, dest[last], stride*uint32Size, false, true, false, false, dmaPWM); err != nil {
+	if err = cb[index].initBlock(physBit, dest[last], stride*uint32Size, false, true, false, false, dmaPWM); err != nil {
 		return err
 	}
 
 	// Start clock before DMA
-	_, err = setPWMClockSource()
-	if err != nil {
+	if _, err = setPWMClockSource(); err != nil {
 		return err
 	}
 	return runIO(buf, true)
@@ -1010,13 +1009,12 @@ func dmaWriteStreamDualChannel(p *Pin, w gpiostream.Stream) error {
 	// Needs 64x the memory since each write is 2 full uint32. On the other
 	// hand one could write 32 contiguous pins simultaneously at no cost.
 	mask := uint32(1) << uint(p.number&31)
-	if err := raster32(w, skip, bufClear.Uint32(), bufSet.Uint32(), mask); err != nil {
+	if err = raster32(w, skip, bufClear.Uint32(), bufSet.Uint32(), mask); err != nil {
 		return err
 	}
 
 	// Start clock before DMA start
-	_, err = setPWMClockSource()
-	if err != nil {
+	if _, err = setPWMClockSource(); err != nil {
 		return err
 	}
 

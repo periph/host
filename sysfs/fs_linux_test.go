@@ -45,8 +45,8 @@ func TestAddFd_File(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer func() {
-		if err := os.Remove(f.Name()); err != nil {
-			t.Fatal(err)
+		if err2 := os.Remove(f.Name()); err2 != nil {
+			t.Fatal(err2)
 		}
 	}()
 
@@ -73,7 +73,7 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	c := make(chan time.Time)
 	// Pipes do not support epollPRI, so use epollIN instead.
 	const flags = epollET | epollIN
-	if err := ev.addFd(r.Fd(), c, flags); err != nil {
+	if err = ev.addFd(r.Fd(), c, flags); err != nil {
 		t.Fatal(err)
 	}
 	notExpectChan(t, c, "should not have produced an event")
@@ -86,7 +86,8 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	notExpectChan(t, c, "should have produced a single event")
 
 	buf := [8]byte{}
-	if n, err := r.Read(buf[:]); err != nil {
+	n := 0
+	if n, err = r.Read(buf[:]); err != nil {
 		t.Fatal(err)
 	} else if n != 3 {
 		t.Fatal("expected foo")
@@ -108,7 +109,7 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	default:
 	}
 
-	if n, err := r.Read(buf[:]); err != nil {
+	if n, err = r.Read(buf[:]); err != nil {
 		t.Fatal(err)
 	} else if n != 6 {
 		t.Fatal("expected foo")

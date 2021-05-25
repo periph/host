@@ -471,7 +471,7 @@ func (d *driver1W) Init() (bool, error) {
 
 	// Find bus masters.
 	m := &w1Msg{typ: msgListMasters}
-	if err := s.sendMsg(m.serialize(), 0); err != nil {
+	if err = s.sendMsg(m.serialize(), 0); err != nil {
 		return false, fmt.Errorf("netlink-onewire: failed to send list bus msg: %v", err)
 	}
 

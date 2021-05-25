@@ -102,7 +102,7 @@ func uallocMemLocked(size int) ([]byte, error) {
 		for i := range b {
 			b[i] = 0
 		}
-		if err := mlock(b); err != nil {
+		if err = mlock(b); err != nil {
 			// Ignore the unmap error.
 			_ = munmap(b)
 			return nil, wrapf("locking %d bytes failed: %v", size, err)

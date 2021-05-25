@@ -461,7 +461,7 @@ func (d *driverGPIO) Init() (bool, error) {
 	// of an array.
 	Pins = map[int]*Pin{}
 	for _, item := range items {
-		if err := d.parseGPIOChip(item + "/"); err != nil {
+		if err = d.parseGPIOChip(item + "/"); err != nil {
 			return true, err
 		}
 	}
