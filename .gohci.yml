@@ -349,11 +349,11 @@ workers:
     - i2c-list
   - cmd:
     - spi-list
-#  - cmd:
-#    - periph-smoketest
-#    - ftdi
-#    - -type
-#    - ft232r
+  - cmd:
+    - periph-smoketest
+    - ftdi
+    - -type
+    - ft232r
 
 # Laptop on Windows 10.
 - name: win10
@@ -426,8 +426,8 @@ workers:
     - i2c-list
   - cmd:
     - spi-list
-#  - cmd:
-#    - periph-smoketest
-#    - ftdi
-#    - -type
-#    - ft232h
+  - cmd:
+    - periph-smoketest
+    - ftdi
+    - -type
+    - ft232h
