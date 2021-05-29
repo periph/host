@@ -56,6 +56,8 @@ func openHandle(opener func(i int) (d2xx.Handle, d2xx.Err), i int) (*handle, err
 	if e != 0 {
 		return nil, toErr("Open", e)
 	}
+	// For debugging:
+	// d := &handle{h: &d2xxtest.Log{H: h, Printf: log.Printf}}
 	d := &handle{h: h}
 	t, vid, did, e := h.GetDeviceInfo()
 	if e != 0 {
@@ -119,6 +121,12 @@ func (h *handle) Init() error {
 	if e := h.h.SetLatencyTimer(1); e != 0 {
 		return toErr("SetLatencyTimer", e)
 	}
+	return nil
+}
+
+// InitNonMPSSE does initialization that should only be done when not in MPSSE
+// mode.
+func (h *handle) InitNonMPSSE() error {
 	// Not sure: Turn on flow control to synchronize IN requests.
 	if e := h.h.SetFlowControl(); e != 0 {
 		return toErr("SetFlowControl", e)

@@ -179,6 +179,7 @@ func (h *handle) InitMPSSE() error {
 		if err := h.Init(); err != nil {
 			return err
 		}
+		// That does the magic thing.
 		if err := h.SetBitMode(0, bitModeMpsse); err != nil {
 			return err
 		}
@@ -208,7 +209,7 @@ func (h *handle) InitMPSSE() error {
 //
 // In practice this takes around 2ms.
 func (h *handle) mpsseVerify() error {
-	var b [16]byte
+	var b [2]byte
 	for _, v := range []byte{0xAA, 0xAB} {
 		// Write a bad command and ensure it returned correctly.
 		// Unlike what the application note proposes, include a flush op right
@@ -217,38 +218,24 @@ func (h *handle) mpsseVerify() error {
 		// which enables increasing the delay specified to SetLatencyTimer.
 		b[0] = v
 		b[1] = flush
-		if _, err := h.Write(b[:2]); err != nil {
-			return fmt.Errorf("d2xx: mpsseVerify: %v", err)
+		if _, err := h.Write(b[:]); err != nil {
+			return fmt.Errorf("ftdi: MPSSE verification failed: %w", err)
 		}
-		// Sometimes, especially right after a reset, the device spews a few bytes.
-		// Discard them. This significantly increases the odds of a successful
-		// initialization.
 		p, e := h.h.GetQueueStatus()
 		if e != 0 {
 			return toErr("Read/GetQueueStatus", e)
 		}
-		for p > 2 {
-			l := int(p) - 2
-			if l > len(b) {
-				l = len(b)
-			}
-			// Discard the overflow bytes.
-			ctx, cancel := context200ms()
-			defer cancel()
-			if _, err := h.ReadAll(ctx, b[:l]); err != nil {
-				return fmt.Errorf("d2xx: mpsseVerify: %v", err)
-			}
-			p -= uint32(l)
+		if p != 2 {
+			return fmt.Errorf("ftdi: MPSSE verification failed: expected 2 bytes reply, got %d bytes", p)
 		}
-		// Custom implementation, as we want to flush any stray byte.
 		ctx, cancel := context200ms()
 		defer cancel()
-		if _, err := h.ReadAll(ctx, b[:2]); err != nil {
-			return fmt.Errorf("d2xx: mpsseVerify: %v", err)
+		if _, err := h.ReadAll(ctx, b[:]); err != nil {
+			return fmt.Errorf("ftdi: MPSSE verification failed: %w", err)
 		}
 		// 0xFA means invalid command, 0xAA is the command echoed back.
 		if b[0] != 0xFA || b[1] != v {
-			return fmt.Errorf("d2xx: mpsseVerify: failed test for byte %#x: %#x", v, b)
+			return fmt.Errorf("ftdi: MPSSE verification failed test for byte %#x: %#x", v, b)
 		}
 	}
 	return nil
@@ -280,7 +267,7 @@ func (h *handle) MPSSEClock(f physic.Frequency) (physic.Frequency, error) {
 		base /= 5
 		div = base / f
 		if div >= 65536 {
-			return 0, errors.New("d2xx: clock frequency is too low")
+			return 0, errors.New("ftdi: clock frequency is too low")
 		}
 	}
 	b := [...]byte{clk, clockSetDivisor, byte(div - 1), byte((div - 1) >> 8)}
@@ -317,15 +304,15 @@ func (h *handle) MPSSETx(w, r []byte, ew, er gpio.Edge, lsbf bool) error {
 	if len(w) != 0 {
 		// TODO(maruel): This is easy to fix by daisy chaining operations.
 		if len(w) > 65536 {
-			return errors.New("d2xx: write buffer too long; max 65536")
+			return errors.New("ftdi: write buffer too long; max 65536")
 		}
 	}
 	if len(r) != 0 {
 		if len(r) > 65536 {
-			return errors.New("d2xx: read buffer too long; max 65536")
+			return errors.New("ftdi: read buffer too long; max 65536")
 		}
 		if l != 0 && len(r) != l {
-			return errors.New("d2xx: mismatched buffer lengths")
+			return errors.New("ftdi: mismatched buffer lengths")
 		}
 		l = len(r)
 	}
@@ -361,7 +348,7 @@ func (h *handle) MPSSETxShort(w byte, wbits, rbits int, ew, er gpio.Edge, lsbf b
 	l := wbits
 	if wbits != 0 {
 		if wbits > 8 {
-			return 0, errors.New("d2xx: write buffer too long; max 8")
+			return 0, errors.New("ftdi: write buffer too long; max 8")
 		}
 		op |= dataOut
 		if ew == gpio.FallingEdge {
@@ -370,14 +357,14 @@ func (h *handle) MPSSETxShort(w byte, wbits, rbits int, ew, er gpio.Edge, lsbf b
 	}
 	if rbits != 0 {
 		if rbits > 8 {
-			return 0, errors.New("d2xx: read buffer too long; max 8")
+			return 0, errors.New("ftdi: read buffer too long; max 8")
 		}
 		op |= dataIn
 		if er == gpio.FallingEdge {
 			op |= dataInFall
 		}
 		if l != 0 && rbits != l {
-			return 0, errors.New("d2xx: mismatched buffer lengths")
+			return 0, errors.New("ftdi: mismatched buffer lengths")
 		}
 		l = rbits
 	}

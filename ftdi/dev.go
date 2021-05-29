@@ -458,6 +458,10 @@ func newFT232R(g generic) (*FT232R, error) {
 	f.C2 = f.hdr[10]
 	f.C3 = f.hdr[11]
 
+	if err := f.h.InitNonMPSSE(); err != nil {
+		return nil, err
+	}
+
 	// Default to 3MHz.
 	if err := f.h.SetBaudRate(3 * physic.MegaHertz); err != nil {
 		return nil, err

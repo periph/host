@@ -189,18 +189,11 @@ func (d *driver) reset() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.all = nil
-	// open is mocked in tests.
+	// open is mocked in tests. You can also wrap d2xx.Open to return a wrapped
+	// d2xxtest.Log.
 	d.d2xxOpen = d2xx.Open
 	// numDevices is mocked in tests.
 	d.numDevices = numDevices
-
-	// The d2xx can hang for up to the timeout under certain circumstances and the
-	// Go profiler is not very useful to find the source, so use manual logging
-	// to see where time it spent.
-	//d.d2xxOpen = func(i int) (d2xx.Handle, int) {
-	//	h, e := d2xxOpen(i)
-	//	return &d2xxLoggingHandle{h}, e
-	//}
 }
 
 func init() {
