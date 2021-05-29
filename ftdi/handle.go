@@ -117,7 +117,15 @@ func (h *handle) Init() error {
 	if e := h.h.SetChars(0, false, 0, false); e != 0 {
 		return toErr("SetChars", e)
 	}
-	// Not sure: Latency timer at 1ms.
+	// TODO(maruel): Set latency timer at 255ms in MPSSE mode? The rationale is
+	// that for FT232H, the MPSSE command 'flush' should consistently used
+	// whenever needed and we want this to be apparent. Investigate the effect
+	// for FT232R so potentially move to InitNonMPSSE and InitMPSSE with
+	// different values.
+	//
+	// The documentation recommends to use at least 2ms as 1ms is the frame
+	// length. It doesn't make sense to me, as we should only want to read what
+	// was already pushed.
 	if e := h.h.SetLatencyTimer(1); e != 0 {
 		return toErr("SetLatencyTimer", e)
 	}
