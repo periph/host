@@ -13,11 +13,9 @@ import (
 	"flag"
 	"fmt"
 	"reflect"
-	"regexp"
 	"time"
 
 	"periph.io/x/conn/v3/gpio"
-	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
@@ -26,8 +24,6 @@ import (
 
 // SmokeTest is imported by periph-smoketest.
 type SmokeTest struct {
-	// start is to display the delta in µs.
-	start time.Time
 }
 
 // Name implements the SmokeTest interface.
@@ -55,9 +51,6 @@ func (s *SmokeTest) Run(f *flag.FlagSet, args []string) error {
 		return errors.New("this smoke test can only be run on a bcm283x based host")
 	}
 
-	if err := testAliases(); err != nil {
-		return err
-	}
 	if *quick {
 		return nil
 	}
@@ -81,23 +74,6 @@ func (s *SmokeTest) Run(f *flag.FlagSet, args []string) error {
 	}
 	return s.testStreamIn(pPWM, pClk)
 	// TODO(simokawa): test StreamOut.
-}
-
-// waitForEdge returns a channel that will return one bool, true if a edge was
-// detected, false otherwise.
-func (s *SmokeTest) waitForEdge(p gpio.PinIO) <-chan bool {
-	c := make(chan bool)
-	// A timeout inherently makes this test flaky but there's a inherent
-	// assumption that the CPU edge trigger wakes up this process within a
-	// reasonable amount of time; in term of latency.
-	go func() {
-		b := p.WaitForEdge(time.Second)
-		// Author note: the test intentionally doesn't call p.Read() to test that
-		// reading is not necessary.
-		fmt.Printf("    %s -> WaitForEdge(%s) -> %t\n", since(s.start), p, b)
-		c <- b
-	}()
-	return c
 }
 
 // testPWMbyDMA tests .PWM() for a PWM pin driven by DMA.
@@ -240,67 +216,6 @@ func (s *SmokeTest) testStreamIn(p1, p2 *loggingPin) (err error) {
 }
 
 //
-
-// testAliases catches unexpected GPIO aliases.
-func testAliases() error {
-	expectedStr := []string{
-		`\d+`,
-		`GPIO\d+`,
-		`AUDIO_\d`,
-		`CLK\d`,
-		`GPCLK\d`,
-		`HDMI_\d`,
-		`I2C\d_SCL`,
-		`I2C\d_SDA`,
-		`I2S_DIN`,
-		`I2S_DOUT`,
-		`I2S_SCK`,
-		`I2S_WS`,
-		`P1_\d+`,
-		`P5_\d+`,
-		`PWM\d`,
-		`PWM\d_OUT`,
-		`SPI\d_CLK`,
-		`SPI\d_CS\d`,
-		`SPI\d_MISO`,
-		`SPI\d_MOSI`,
-		`UART\d_CTS`,
-		`UART\d_RTS`,
-		`UART\d_RX`,
-		`UART\d_TX`,
-	}
-	valid := make([]*regexp.Regexp, 0, len(expectedStr))
-	for i, v := range expectedStr {
-		r, err := regexp.Compile("^" + v + "$")
-		if err != nil {
-			return fmt.Errorf("accepted #%d is invalid: %q", i, v)
-		}
-		valid = append(valid, r)
-	}
-
-	for _, p := range gpioreg.Aliases() {
-		n := p.Name()
-		ok := false
-		for _, r := range valid {
-			if r.MatchString(n) {
-				ok = true
-				break
-			}
-		}
-		if !ok {
-			return fmt.Errorf("found unexpected alias %q", n)
-		}
-	}
-	return nil
-}
-
-func printPin(p gpio.PinIO) {
-	fmt.Printf("- %s: %s", p, p.Function())
-	if r, ok := p.(gpio.RealPin); ok {
-		fmt.Printf("  alias for %s", r.Real())
-	}
-	fmt.Print("\n")
-}
 
 // since returns time in µs since the test start.
 func since(start time.Time) string {

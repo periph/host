@@ -277,6 +277,11 @@ workers:
     - periph-smoketest
     - bcm283x
     - -quick
+  - cmd:
+    - periph-smoketest
+    - ftdi
+    - -type
+    - ft232h
 
 # Old MacBook Pro on 10.9.
 - name: mbp

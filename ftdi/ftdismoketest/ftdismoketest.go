@@ -129,6 +129,8 @@ func gpioTest(p1, p2 gpio.PinIO, broken bool) error {
 	if err := p2.Out(gpio.Low); err != nil {
 		return err
 	}
+	// There can be a small amount of skew. This should inject just enough time.
+	time.Sleep(10 * time.Microsecond)
 	if l := p1.Read(); l != gpio.Low {
 		if broken {
 			fmt.Printf("TODO(maruel): Not working; %s: expected to read %s but got %s\n", p1, gpio.Low, l)
@@ -139,6 +141,8 @@ func gpioTest(p1, p2 gpio.PinIO, broken bool) error {
 	if err := p2.Out(gpio.High); err != nil {
 		return err
 	}
+	// There can be a small amount of skew. This should inject just enough time.
+	time.Sleep(10 * time.Microsecond)
 	if l := p1.Read(); l != gpio.High {
 		if broken {
 			fmt.Printf("TODO(maruel): Not working; %s: expected to read %s but got %s\n", p1, gpio.High, l)
