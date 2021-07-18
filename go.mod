@@ -8,5 +8,5 @@ go 1.13
 
 require (
 	periph.io/x/conn/v3 v3.6.8
-	periph.io/x/d2xx v0.0.2
+	periph.io/x/d2xx v0.0.3
 )
