@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/physic"
 )
 
@@ -183,6 +184,27 @@ func (g *gpioMPSSE) Out(l gpio.Level) error {
 // PWM implements gpio.PinOut.
 func (g *gpioMPSSE) PWM(d gpio.Duty, f physic.Frequency) error {
 	return errors.New("d2xx: not implemented")
+}
+
+// StreamOut implements gpiostream.PinOut.
+//
+// It only works on the D1 pin.
+func (g *gpioMPSSE) StreamOut(s gpiostream.Stream) error {
+	if g.num != 1 || g.a.cbus {
+		return errors.New("d2xx: pin doesn't support gpio stream out")
+	}
+	b, ok := s.(*gpiostream.BitStream)
+	if !ok {
+		return errors.New("d2xx: only BitStream is currently supported")
+	}
+	if b.Freq == 0 {
+		return errors.New("d2xx: BitStream.Freq must be specified")
+	}
+	_, err := g.a.h.MPSSEClock(b.Freq)
+	if err != nil {
+		return err
+	}
+	return g.a.h.MPSSETx(b.Bits, nil, gpio.NoEdge, gpio.NoEdge, b.LSBF)
 }
 
 /*

@@ -12,10 +12,18 @@ import (
 
 	"periph.io/x/conn/v3"
 	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/i2c"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/spi"
 )
+
+// PinStreamOut is a gpio pin that supports raw data stream output.
+type PinStreamOut interface {
+	gpio.PinIO
+	// StreamOut defines gpiostream.PinOut.
+	StreamOut(s gpiostream.Stream) error
+}
 
 // Info is the information gathered about the connected FTDI device.
 //
@@ -227,7 +235,7 @@ func newFT232H(g generic) (*FT232H, error) {
 	f.hdr[16] = &f.c8
 	f.hdr[17] = &f.c9
 	f.D0 = f.hdr[0]
-	f.D1 = f.hdr[1]
+	f.D1 = &f.dbus.pins[1]
 	f.D2 = f.hdr[2]
 	f.D3 = f.hdr[3]
 	f.D4 = f.hdr[4]
@@ -283,10 +291,10 @@ func newFT232H(g generic) (*FT232H, error) {
 type FT232H struct {
 	generic
 
-	D0 gpio.PinIO // Clock output
-	D1 gpio.PinIO // Data out
-	D2 gpio.PinIO // Data in
-	D3 gpio.PinIO // Chip select
+	D0 gpio.PinIO   // Clock output
+	D1 PinStreamOut // Data out
+	D2 gpio.PinIO   // Data in
+	D3 gpio.PinIO   // Chip select
 	D4 gpio.PinIO
 	D5 gpio.PinIO
 	D6 gpio.PinIO

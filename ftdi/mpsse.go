@@ -323,9 +323,7 @@ func (h *handle) MPSSETx(w, r []byte, ew, er gpio.Edge, lsbf bool) error {
 	op := mpsseTxOp(len(w) != 0, len(r) != 0, ew, er, lsbf)
 	cmd := []byte{op, byte(l - 1), byte((l - 1) >> 8)}
 	cmd = append(cmd, w...)
-	if len(r) != 0 {
-		cmd = append(cmd, flush)
-	}
+	cmd = append(cmd, flush)
 	if _, err := h.Write(cmd); err != nil {
 		return err
 	}
