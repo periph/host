@@ -199,6 +199,7 @@ func (d *driver) reset() {
 func init() {
 	if d2xx.Available {
 		drv.reset()
+		drv.resetLog()
 		driverreg.MustRegister(&drv)
 	}
 }

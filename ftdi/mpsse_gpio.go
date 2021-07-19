@@ -200,10 +200,11 @@ func (g *gpioMPSSE) StreamOut(s gpiostream.Stream) error {
 	if b.Freq == 0 {
 		return errors.New("d2xx: BitStream.Freq must be specified")
 	}
-	_, err := g.a.h.MPSSEClock(b.Freq)
+	f, err := g.a.h.MPSSEClock(b.Freq)
 	if err != nil {
 		return err
 	}
+	logf("StreamOut(%d, %s)", len(b.Bits)*8, f)
 	return g.a.h.MPSSETx(b.Bits, nil, gpio.NoEdge, gpio.NoEdge, b.LSBF)
 }
 

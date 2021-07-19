@@ -7,6 +7,8 @@
 // The supported devices (FT232h/FT232r) implement support for various
 // protocols like the GPIO, I²C, SPI, UART, JTAG.
 //
+// Use build tag periph_host_ftdi_debug to enable verbose debugging.
+//
 // More details
 //
 // See https://periph.io/device/ftdi/ for more details, and how to configure
