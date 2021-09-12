@@ -61,6 +61,12 @@ func TestParseRevision(t *testing.T) {
 		{0xa03111, newFormat | memory1GB | sonyUK | bcm2711 | board4B | 1},
 		{0xb03111, newFormat | memory2GB | sonyUK | bcm2711 | board4B | 1},
 		{0xc03111, newFormat | memory4GB | sonyUK | bcm2711 | board4B | 1},
+		{0xb03112, newFormat | memory2GB | sonyUK | bcm2711 | board4B | 2},
+		{0xc03112, newFormat | memory4GB | sonyUK | bcm2711 | board4B | 2},
+		{0xb03114, newFormat | memory2GB | sonyUK | bcm2711 | board4B | 4},
+		{0xc03114, newFormat | memory4GB | sonyUK | bcm2711 | board4B | 4},
+		{0xd03114, newFormat | memory8GB | sonyUK | bcm2711 | board4B | 4},
+		{0xc03130, newFormat | memory4GB | sonyUK | bcm2711 | board400},
 	}
 	for i, line := range data {
 		r, err := parseRevision(line.v)
@@ -129,6 +135,7 @@ func TestFeaturesInit(t *testing.T) {
 		{0xa03111, features{hdrP1P40: true, hdrAudio: true, audioLeft41: true, hdrHDMI: true}}, // board4B
 		{0xb03111, features{hdrP1P40: true, hdrAudio: true, audioLeft41: true, hdrHDMI: true}}, // board4B
 		{0xc03111, features{hdrP1P40: true, hdrAudio: true, audioLeft41: true, hdrHDMI: true}}, // board4B
+		{0xc03130, features{hdrP1P40: true, hdrHDMI: true}},                                    // board400
 	}
 	for i, line := range data {
 		f := features{}
