@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         # Do not forget to bump every 6 months!
-        gover: ["1.16"]
+        gover: ["1.17"]
     runs-on: "${{matrix.os}}"
     name: "go${{matrix.gover}}.x on ${{matrix.os}}"
     steps:
@@ -36,10 +36,6 @@ jobs:
     - name: Turn off git core.autocrlf
       run: git config --global core.autocrlf false
     - uses: actions/checkout@v2
-    - name: 'go version'
-      run: go version
-    - name: 'go env'
-      run: go env
     - name: "Debug"
       run: |
         echo HOME = $HOME
@@ -198,7 +194,8 @@ jobs:
         cd ..
         git clone https://github.com/periph/devices
         cd devices
-        go get periph.io/x/host/v3@${GITHUB_SHA}
+        go mod edit -replace=periph.io/x/host/v3=../host
+        go get ./...
         go test -short ./...
 
     - name: 'Test on periph.io/x/cmd'
@@ -207,7 +204,8 @@ jobs:
         cd ..
         git clone https://github.com/periph/cmd
         cd cmd
-        go get periph.io/x/host/v3@${GITHUB_SHA}
+        go mod edit -replace=periph.io/x/host/v3=../host
+        go get ./...
         go test -short ./...
 
     - name: 'Send comments'
