@@ -432,8 +432,9 @@ func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 				pullState = 0
 			}
 
-			previous := drvGPIO.gpioMemory.pullRegister[offset]
-			drvGPIO.gpioMemory.pullRegister[offset] = previous | (pullState << uint((p.number%16)<<1))
+			bitOffset := 2 * uint(p.number%16)
+			previous := drvGPIO.gpioMemory.pullRegister[offset] & ^(3 << bitOffset)
+			drvGPIO.gpioMemory.pullRegister[offset] = previous | (pullState << bitOffset)
 		} else {
 			// Set Pull
 			switch pull {
