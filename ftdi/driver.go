@@ -28,6 +28,18 @@ func All() []Dev {
 	return out
 }
 
+// rescan rescans the USB bus for new or disconnected devices.
+func rescan() error {
+	drv.mu.Lock()
+	defer drv.mu.Unlock()
+	e := d2xx.Rescan()
+	// TODO(maruel): Reenumerate the devices.
+	if e != 0 {
+		return toErr("Rescan", e)
+	}
+	return nil
+}
+
 //
 
 // open opens a FTDI device.
