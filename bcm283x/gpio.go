@@ -406,8 +406,8 @@ func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 		// https://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 		// page 101.
 		// However, BCM2711 uses a simpler way of setting pull resistors, reference at
-		// https://github.com/raspberrypi/documentation/blob/master/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0.pdf
-		// page 84 and 95 ~ 98.
+		// https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf
+		// page 65 and 73 ~ 76.
 
 		// If we are running on a newer chip such as BCM2711, set Pull directly.
 		if !drvGPIO.useLegacyPull {
@@ -1027,9 +1027,8 @@ type function uint8
 // Mapping as
 // https://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 // pages 90-91.
-// And
-// https://github.com/raspberrypi/documentation/blob/master/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0.pdf
-// pages 83-84.
+// And https://datasheets.raspberrypi.org/bcm2711/bcm2711-peripherals.pdf pages
+// 65 and 73 ~ 76.
 type gpioMap struct {
 	// 0x00    RW   GPIO Function Select 0 (GPIO0-9)
 	// 0x04    RW   GPIO Function Select 1 (GPIO10-19)
