@@ -14,12 +14,13 @@ import (
 	"sync"
 	"time"
 
+	"adev73/x/host/v3/fs"
+
 	"periph.io/x/conn/v3"
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/fs"
 )
 
 // LEDs is all the leds discovered on this host via sysfs.

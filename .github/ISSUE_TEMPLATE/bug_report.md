@@ -13,7 +13,7 @@ Steps to reproduce the behavior:
 package main
 
 import (
-  "periph.io/x/host/v3"
+  "adev73/x/host/v3"
 )
 
 func main() {

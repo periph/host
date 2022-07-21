@@ -8,7 +8,7 @@ get an [invite here](https://invite.slack.golangbridge.org/).
 
 [![mascot](https://raw.githubusercontent.com/periph/website/master/site/static/img/periph-mascot-280.png)](https://periph.io/)
 
-[![PkgGoDev](https://pkg.go.dev/badge/periph.io/x/host/v3)](https://pkg.go.dev/periph.io/x/host/v3)
+[![PkgGoDev](https://pkg.go.dev/badge/adev73/x/host/v3)](https://pkg.go.dev/adev73/x/host/v3)
 [![codecov](https://codecov.io/gh/periph/host/branch/main/graph/badge.svg?token=RX9O1CPQHU)](https://codecov.io/gh/periph/host)
 
 
@@ -22,8 +22,8 @@ package main
 import (
     "time"
     "periph.io/x/conn/v3/gpio"
-    "periph.io/x/host/v3"
-    "periph.io/x/host/v3/rpi"
+    "adev73/x/host/v3"
+    "adev73/x/host/v3/rpi"
 )
 
 func main() {

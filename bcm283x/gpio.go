@@ -12,16 +12,17 @@ import (
 	"strings"
 	"time"
 
+	"adev73/x/host/v3/distro"
+	"adev73/x/host/v3/pmem"
+	"adev73/x/host/v3/sysfs"
+	"adev73/x/host/v3/videocore"
+
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/distro"
-	"periph.io/x/host/v3/pmem"
-	"periph.io/x/host/v3/sysfs"
-	"periph.io/x/host/v3/videocore"
 )
 
 // All the pins supported by the CPU.

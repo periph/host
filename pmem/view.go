@@ -12,7 +12,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"periph.io/x/host/v3/fs"
+	"adev73/x/host/v3/fs"
 )
 
 // Slice can be transparently viewed as []byte, []uint32 or a struct.

@@ -11,12 +11,13 @@ import (
 	"fmt"
 	"os"
 
+	"adev73/x/host/v3/bcm283x"
+	"adev73/x/host/v3/distro"
+
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/conn/v3/pin/pinreg"
-	"periph.io/x/host/v3/bcm283x"
-	"periph.io/x/host/v3/distro"
 )
 
 // Present returns true if running on a Raspberry Pi board.

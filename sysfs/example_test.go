@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"log"
 
+	"adev73/x/host/v3"
+	"adev73/x/host/v3/sysfs"
+
 	"periph.io/x/conn/v3/gpio"
-	"periph.io/x/host/v3"
-	"periph.io/x/host/v3/sysfs"
 )
 
 func ExampleLEDByName() {

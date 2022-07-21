@@ -242,7 +242,7 @@ jobs:
         cd ..
         git clone --depth 1 https://github.com/periph/devices
         cd devices
-        go mod edit -replace=periph.io/x/host/v3=../host
+        go mod edit -replace=adev73/x/host/v3=../host
         go get -t ./...
         go test -short ./...
 
@@ -252,7 +252,7 @@ jobs:
         cd ..
         git clone --depth 1 https://github.com/periph/cmd
         cd cmd
-        go mod edit -replace=periph.io/x/host/v3=../host
+        go mod edit -replace=adev73/x/host/v3=../host
         go get -t ./...
         go test -short ./...
 

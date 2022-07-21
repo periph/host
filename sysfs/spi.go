@@ -17,6 +17,8 @@ import (
 	"sync"
 	"unsafe"
 
+	"adev73/x/host/v3/fs"
+
 	"periph.io/x/conn/v3"
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
@@ -24,7 +26,6 @@ import (
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/spi"
 	"periph.io/x/conn/v3/spi/spireg"
-	"periph.io/x/host/v3/fs"
 )
 
 // NewSPI opens a SPI port via its devfs interface as described at

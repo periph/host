@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"log"
 
-	"periph.io/x/host/v3"
-	"periph.io/x/host/v3/ftdi"
+	"adev73/x/host/v3"
+	"adev73/x/host/v3/ftdi"
 )
 
 func Example() {

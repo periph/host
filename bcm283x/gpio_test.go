@@ -8,6 +8,9 @@ import (
 	"reflect"
 	"testing"
 
+	"adev73/x/host/v3/pmem"
+	"adev73/x/host/v3/videocore"
+
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/i2c"
@@ -15,8 +18,6 @@ import (
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/conn/v3/spi"
 	"periph.io/x/conn/v3/uart"
-	"periph.io/x/host/v3/pmem"
-	"periph.io/x/host/v3/videocore"
 )
 
 func TestPresent(t *testing.T) {

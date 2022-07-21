@@ -8,8 +8,9 @@ import (
 	"errors"
 	"strings"
 
+	"adev73/x/host/v3/distro"
+
 	"periph.io/x/conn/v3/driver/driverreg"
-	"periph.io/x/host/v3/distro"
 )
 
 // Present returns true if a TM AM335x processor is detected.

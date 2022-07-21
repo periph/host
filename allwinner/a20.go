@@ -10,8 +10,9 @@ package allwinner
 import (
 	"strings"
 
+	"adev73/x/host/v3/sysfs"
+
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/sysfs"
 )
 
 // mappingA20 describes the mapping of the A20 processor gpios to their

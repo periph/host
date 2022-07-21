@@ -7,7 +7,7 @@ package beagle
 import (
 	"strings"
 
-	"periph.io/x/host/v3/distro"
+	"adev73/x/host/v3/distro"
 )
 
 // Present returns true if the host is a BeagleBone.

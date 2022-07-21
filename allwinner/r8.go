@@ -10,8 +10,9 @@ package allwinner
 import (
 	"strings"
 
+	"adev73/x/host/v3/sysfs"
+
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/sysfs"
 )
 
 // R8 specific pins.

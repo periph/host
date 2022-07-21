@@ -7,7 +7,7 @@ package allwinner
 import (
 	"time"
 
-	"periph.io/x/host/v3/cpu"
+	"adev73/x/host/v3/cpu"
 )
 
 // ReadTime returns the time on a monotonic timer.

@@ -30,7 +30,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../devices
     cmd:
     - go
@@ -56,7 +56,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../cmd
     cmd:
     - go
@@ -122,7 +122,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../devices
     cmd:
     - go
@@ -148,7 +148,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../cmd
     cmd:
     - go
@@ -228,7 +228,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../devices
     cmd:
     - go
@@ -254,7 +254,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../cmd
     cmd:
     - go
@@ -355,7 +355,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../devices
     cmd:
     - go
@@ -381,7 +381,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../cmd
     cmd:
     - go
@@ -448,7 +448,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../devices
     cmd:
     - go
@@ -474,7 +474,7 @@ workers:
     - go
     - mod
     - edit
-    - -replace=periph.io/x/host/v3=../host
+    - -replace=adev73/x/host/v3=../host
   - dir: ../cmd
     cmd:
     - go

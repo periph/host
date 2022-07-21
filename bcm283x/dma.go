@@ -70,11 +70,12 @@ import (
 	"strings"
 	"time"
 
+	"adev73/x/host/v3/pmem"
+	"adev73/x/host/v3/videocore"
+
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/physic"
-	"periph.io/x/host/v3/pmem"
-	"periph.io/x/host/v3/videocore"
 )
 
 const (

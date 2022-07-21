@@ -1,5 +1,5 @@
 1. Please prefix the issue title with the primary package affected. For example,
-if this PR fixes periph.io/x/host/v3/sysfs, prefix the PR title with "sysfs:".
+if this PR fixes adev73/x/host/v3/sysfs, prefix the PR title with "sysfs:".
 
 2. Mention the issue number it fixes or add the details of the changes if it
 doesn't have a specific issue. Examples:

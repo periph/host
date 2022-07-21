@@ -8,7 +8,7 @@ import (
 	"periph.io/x/conn/v3/driver/driverreg"
 	// TODO(maruel): For now do not include ftdi by default. It's not stable
 	// enough to warrant being included.
-	// _ "periph.io/x/host/v3/ftdi"
+	// _ "adev73/x/host/v3/ftdi"
 )
 
 // Init calls driverreg.Init() and returns it as-is.

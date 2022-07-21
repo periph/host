@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"periph.io/x/host/v3/fs"
+	"adev73/x/host/v3/fs"
 )
 
 // MaxSpeed returns the processor maximum speed in Hz.

@@ -8,10 +8,11 @@ import (
 	"errors"
 	"time"
 
+	"adev73/x/host/v3/sysfs"
+
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/sysfs"
 )
 
 // function specifies the active functionality of a pin. The alternative

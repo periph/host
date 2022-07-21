@@ -6,8 +6,8 @@ package host
 
 import (
 	// Make sure CPU and board drivers are registered.
-	_ "periph.io/x/host/v3/allwinner"
-	_ "periph.io/x/host/v3/bcm283x"
-	_ "periph.io/x/host/v3/pine64"
-	_ "periph.io/x/host/v3/rpi"
+	_ "adev73/x/host/v3/allwinner"
+	_ "adev73/x/host/v3/bcm283x"
+	_ "adev73/x/host/v3/pine64"
+	_ "adev73/x/host/v3/rpi"
 )

@@ -7,7 +7,7 @@ package sysfs
 import (
 	"io"
 
-	"periph.io/x/host/v3/fs"
+	"adev73/x/host/v3/fs"
 )
 
 var ioctlOpen = ioctlOpenDefault

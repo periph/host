@@ -8,11 +8,12 @@ import (
 	"errors"
 	"strings"
 
+	"adev73/x/host/v3/allwinner"
+	"adev73/x/host/v3/distro"
+
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/conn/v3/pin/pinreg"
-	"periph.io/x/host/v3/allwinner"
-	"periph.io/x/host/v3/distro"
 )
 
 // Present returns true if running on a Pine64 board.

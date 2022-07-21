@@ -7,8 +7,9 @@ package mt7688
 import (
 	"strings"
 
+	"adev73/x/host/v3/distro"
+
 	"periph.io/x/conn/v3/driver/driverreg"
-	"periph.io/x/host/v3/distro"
 )
 
 // Present returns true if a mt7688 processor is detected.

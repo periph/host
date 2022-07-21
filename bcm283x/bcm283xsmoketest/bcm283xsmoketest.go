@@ -15,11 +15,12 @@ import (
 	"reflect"
 	"time"
 
+	"adev73/x/host/v3/bcm283x"
+
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpiostream"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
-	"periph.io/x/host/v3/bcm283x"
 )
 
 // SmokeTest is imported by periph-smoketest.
