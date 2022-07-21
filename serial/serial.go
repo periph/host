@@ -49,6 +49,11 @@ func Enumerate() ([]int, error) {
 	return out, nil
 }
 
+func New(portNumber int) (*Port, error) {
+	// Expose newPortDevFs to allow a program to actually get access to a serial port
+	return newPortDevFs(portNumber)
+}
+
 func newPortDevFs(portNumber int) (*Port, error) {
 	// Use the devfs path for now.
 	name := fmt.Sprintf("ttyS%d", portNumber)
@@ -75,6 +80,23 @@ func (p *Port) Close() error {
 // String implements uart.Port.
 func (p *Port) String() string {
 	return p.conn.String()
+}
+
+// Implement the "missing" methods of a serial port that we need to use it properly
+
+// Duplex implements conn.Conn.
+func (p *Port) Duplex() conn.Duplex {
+	return conn.Full
+}
+
+// Read implements io.Reader.
+func (p *Port) Read(b []byte) (int, error) {
+	return p.conn.f.Read(b)
+}
+
+// Write implements io.Writer.
+func (p *Port) Write(b []byte) (int, error) {
+	return p.conn.f.Write(b)
 }
 
 // Connect implements uart.Port.
