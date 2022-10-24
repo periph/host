@@ -35,7 +35,7 @@ import (
 //
 // So make sure to read the datasheet for the exact right CPU.
 var (
-	PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PA8, PA9, PA10, PA11, PA12, PA13, PA14, PA15, PA16, PA17                                                             *Pin
+	PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7, PA8, PA9, PA10, PA11, PA12, PA13, PA14, PA15, PA16, PA17, PA18, PA19, PA20, PA21                                     *Pin
 	PB0, PB1, PB2, PB3, PB4, PB5, PB6, PB7, PB8, PB9, PB10, PB11, PB12, PB13, PB14, PB15, PB16, PB17, PB18, PB19, PB20, PB21, PB22, PB23                         *Pin
 	PC0, PC1, PC2, PC3, PC4, PC5, PC6, PC7, PC8, PC9, PC10, PC11, PC12, PC13, PC14, PC15, PC16, PC17, PC18, PC19, PC20, PC21, PC22, PC23, PC24                   *Pin
 	PD0, PD1, PD2, PD3, PD4, PD5, PD6, PD7, PD8, PD9, PD10, PD11, PD12, PD13, PD14, PD15, PD16, PD17, PD18, PD19, PD20, PD21, PD22, PD23, PD24, PD25, PD26, PD27 *Pin
@@ -532,6 +532,10 @@ var cpupins = map[string]*Pin{
 	"PA15": {group: 0, offset: 15, name: "PA15", defaultPull: gpio.Float},
 	"PA16": {group: 0, offset: 16, name: "PA16", defaultPull: gpio.Float},
 	"PA17": {group: 0, offset: 17, name: "PA17", defaultPull: gpio.Float},
+	"PA18": {group: 0, offset: 18, name: "PA18", defaultPull: gpio.Float},
+	"PA19": {group: 0, offset: 19, name: "PA19", defaultPull: gpio.Float},
+	"PA20": {group: 0, offset: 20, name: "PA20", defaultPull: gpio.Float},
+	"PA21": {group: 0, offset: 21, name: "PA21", defaultPull: gpio.Float},
 	"PB0":  {group: 1, offset: 0, name: "PB0", defaultPull: gpio.Float},
 	"PB1":  {group: 1, offset: 1, name: "PB1", defaultPull: gpio.Float},
 	"PB2":  {group: 1, offset: 2, name: "PB2", defaultPull: gpio.Float},
@@ -719,6 +723,10 @@ func init() {
 	PA15 = cpupins["PA15"]
 	PA16 = cpupins["PA16"]
 	PA17 = cpupins["PA17"]
+	PA18 = cpupins["PA18"]
+	PA19 = cpupins["PA19"]
+	PA20 = cpupins["PA20"]
+	PA21 = cpupins["PA21"]
 	PB0 = cpupins["PB0"]
 	PB1 = cpupins["PB1"]
 	PB2 = cpupins["PB2"]
@@ -1010,6 +1018,10 @@ func (d *driverGPIO) Init() (bool, error) {
 		}
 	case IsA20():
 		if err := mapA20Pins(); err != nil {
+			return true, err
+		}
+	case IsH5():
+		if err := mapH5Pins(); err != nil {
 			return true, err
 		}
 	default:

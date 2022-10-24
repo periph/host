@@ -44,6 +44,14 @@ func IsA64() bool {
 	return detection.isA64
 }
 
+// IsH5 detects whether the host CPU is an Allwinner H5 CPU.
+//
+// It looks for the string "sun50i-h5" in /proc/device-tree/compatible.
+func IsH5() bool {
+	detection.do()
+	return detection.isH5
+}
+
 //
 
 type detectionS struct {
@@ -53,6 +61,7 @@ type detectionS struct {
 	isR8        bool
 	isA20       bool
 	isA64       bool
+	isH5        bool
 }
 
 var detection detectionS
@@ -78,8 +87,11 @@ func (d *detectionS) do() {
 				if strings.Contains(c, "sun7i-a20") {
 					d.isA20 = true
 				}
+				if strings.Contains(c, "sun50i-h5") {
+					d.isH5 = true
+				}
 			}
-			d.isAllwinner = d.isA64 || d.isR8 || d.isA20
+			d.isAllwinner = d.isA64 || d.isR8 || d.isA20 || d.isH5
 
 			if !d.isAllwinner {
 				// The kernel in the image that comes pre-installed on the pcDuino3 Nano
