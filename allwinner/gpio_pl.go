@@ -231,9 +231,9 @@ func (p *PinPL) In(pull gpio.Pull, edge gpio.Edge) error {
 		drvGPIOPL.gpioMemoryPL.pull[off] &^= 3 << shift
 		switch pull {
 		case gpio.PullDown:
-			drvGPIOPL.gpioMemoryPL.pull[off] = 2 << shift
+			drvGPIOPL.gpioMemoryPL.pull[off] |= 2 << shift
 		case gpio.PullUp:
-			drvGPIOPL.gpioMemoryPL.pull[off] = 1 << shift
+			drvGPIOPL.gpioMemoryPL.pull[off] |= 1 << shift
 		default:
 		}
 	}

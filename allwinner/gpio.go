@@ -270,9 +270,9 @@ func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 		drvGPIO.gpioMemory.groups[p.group].pull[off] &^= 3 << shift
 		switch pull {
 		case gpio.PullDown:
-			drvGPIO.gpioMemory.groups[p.group].pull[off] = 2 << shift
+			drvGPIO.gpioMemory.groups[p.group].pull[off] |= 2 << shift
 		case gpio.PullUp:
-			drvGPIO.gpioMemory.groups[p.group].pull[off] = 1 << shift
+			drvGPIO.gpioMemory.groups[p.group].pull[off] |= 1 << shift
 		default:
 		}
 	}
