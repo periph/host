@@ -19,7 +19,7 @@ import (
 //
 // It omits the in & out functions which are available on all gpio.
 //
-// The mapping comes from the datasheet page 23:
+// The mapping comes from the datasheet page 55:
 // https://linux-sunxi.org/images/a/a3/Allwinner_H5_Manual_v1.0.pdf
 //
 // - The datasheet uses TWI instead of I2C but it is renamed here for
