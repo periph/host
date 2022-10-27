@@ -8,7 +8,7 @@
 // Assumes Raspbian but does not directly depend on the distro being Raspbian.
 // Windows IoT is currently not supported.
 //
-// Physical
+// # Physical
 //
 // The physical pin out is based on http://www.raspberrypi.org information but
 // http://pinout.xyz/ has a nice interactive web page.

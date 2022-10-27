@@ -315,9 +315,9 @@ var (
 // revisionCode processes the CPU revision code based on documentation at
 // https://www.raspberrypi.org/documentation/hardware/raspberrypi/revision-codes/README.md
 //
-//    Format is: uuuuuuuuFMMMCCCCPPPPTTTTTTTTRRRR
-//                       2  2   1   1       0   0
-//                       3  0   6   2       4   0
+//	Format is: uuuuuuuuFMMMCCCCPPPPTTTTTTTTRRRR
+//	                   2  2   1   1       0   0
+//	                   3  0   6   2       4   0
 type revisionCode uint32
 
 // parseRevision processes the old style revision codes to new style bitpacked

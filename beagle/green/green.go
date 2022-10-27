@@ -5,13 +5,13 @@
 // Package green implements headers for the BeagleBone Green and BeagleBone
 // Green Wireless micro-computers.
 //
-// Reference
+// # Reference
 //
 // https://beagleboard.org/green
 //
 // https://beagleboard.org/green-wireless
 //
-// Datasheet
+// # Datasheet
 //
 // http://wiki.seeedstudio.com/BeagleBone_Green/
 package green

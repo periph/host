@@ -10,7 +10,6 @@
 package distro
 
 import (
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -98,7 +97,7 @@ var (
 	mu        sync.Mutex
 	cpuInfo   map[string]string
 	osRelease map[string]string
-	readFile  = ioutil.ReadFile
+	readFile  = os.ReadFile
 )
 
 func splitSemiColon(content string) map[string]string {

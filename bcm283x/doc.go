@@ -10,12 +10,12 @@
 // If you are looking for the actual implementation, open doc.go for further
 // implementation details.
 //
-// GPIOs
+// # GPIOs
 //
 // Aliases for GPCLK0, GPCLK1, GPCLK2 are created for corresponding CLKn pins.
 // Same for PWM0_OUT and PWM1_OUT, which point respectively to PWM0 and PWM1.
 //
-// Datasheet
+// # Datasheet
 //
 // https://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 //

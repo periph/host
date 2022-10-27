@@ -21,7 +21,7 @@
 //
 // - 4x PRUs on 66ak2g02; http://www.ti.com/product/66ak2g02
 //
-// Datasheet
+// # Datasheet
 //
 // Technical Reference Manual starting at page 199:
 // https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
@@ -32,7 +32,7 @@
 // Picture summary of instructions:
 // http://exploringbeaglebone.com/wp-content/uploads/2014/12/Instruction-Set-Sheet.png
 //
-// Help
+// # Help
 //
 // Hands-on videos
 // http://beagleboard.org/pru

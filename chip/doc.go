@@ -19,7 +19,7 @@
 // also supported on the XIO pins, but this feature is rather limited due to
 // the device and the driver (for example, the driver interrupts on all edges).
 //
-// References
+// # References
 //
 // http://www.chip-community.org/index.php/Hardware_Information
 //

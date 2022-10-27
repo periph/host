@@ -11,7 +11,7 @@
 // If you are looking at the actual implementation, open doc.go for further
 // implementation details.
 //
-// Datasheets
+// # Datasheets
 //
 // A64: http://files.pine64.org/doc/datasheet/pine64/Allwinner_A64_User_Manual_V1.0.pdf
 //

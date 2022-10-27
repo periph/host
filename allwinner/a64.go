@@ -41,13 +41,13 @@ func init() {
 // The mapping comes from the datasheet page 23:
 // http://files.pine64.org/doc/datasheet/pine64/A64_Datasheet_V1.1.pdf
 //
-// - The datasheet uses TWI instead of I2C but it is renamed here for
-//   consistency.
-// - AIF is an audio interface, i.e. to connect to S/PDIF.
-// - RGMII means Reduced gigabit media-independent interface.
-// - SDC means SDCard?
-// - NAND connects to a NAND flash controller.
-// - CSI and CCI are for video capture.
+//   - The datasheet uses TWI instead of I2C but it is renamed here for
+//     consistency.
+//   - AIF is an audio interface, i.e. to connect to S/PDIF.
+//   - RGMII means Reduced gigabit media-independent interface.
+//   - SDC means SDCard?
+//   - NAND connects to a NAND flash controller.
+//   - CSI and CCI are for video capture.
 var mappingA64 = map[string][5]pin.Func{
 	"PB0":  {"UART2_TX", "", "JTAG0_TMS", "", "PB_EINT0"},
 	"PB1":  {"UART2_RX", "", "JTAG0_TCK", "SIM_PWREN", "PB_EINT1"},

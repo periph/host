@@ -7,7 +7,7 @@
 // To make things confusing, a modern computer has many view of the memory
 // (address spaces):
 //
-// User
+// # User
 //
 // User mode address space is the virtual address space that an application
 // runs in.  It is generally a tad less than half the addressable memory, so on
@@ -15,7 +15,7 @@
 // but it usually at least 3.5Gb. The memory is virtual and can be flushed to
 // disk in the swap file unless individual pages are locked.
 //
-// Kernel
+// # Kernel
 //
 // Kernel address space is the virtual address space the kernel sees. It often
 // can see the currently active user space program on the current CPU core in
@@ -24,7 +24,7 @@
 // when there's not enough RAM available. On linux systems, the kernel
 // addressed memory can be mapped in user space via `/dev/kmem`.
 //
-// Physical
+// # Physical
 //
 // Physical memory address space is the actual address of each page in the DRAM
 // chip and anything connected to the memory controller. The mapping may be
@@ -33,7 +33,7 @@
 // memory than the host CPU. On linux systems, this memory can be mapped in
 // user space via `/dev/mem`.
 //
-// CPU
+// # CPU
 //
 // The CPU or its subsystems may memory map registers (for example, to control
 // GPIO pins, clock speed, etc). This is not "real" memory, this is a view of
@@ -50,19 +50,19 @@
 // space program writing data to a memory page and immediately asking the DMA
 // controller to read it may cause stale data to be read!
 //
-// Hypervisor
+// # Hypervisor
 //
 // Hypervisor can change the complete memory mapping as seen by the kernel.
 // This is outside the scope of this project. :)
 //
-// Summary
+// # Summary
 //
 // In practice, the semantics change between CPU manufacturers (Broadcom vs
 // Allwinner) and between architectures (ARM vs x86). The most tricky one is to
 // understand cached memory and how it affects coherence and performance.
 // Uncached memory is extremely slow so it must only be used when necessary.
 //
-// References
+// # References
 //
 // Overview of IOMMU:
 // https://en.wikipedia.org/wiki/Input-output_memory_management_unit

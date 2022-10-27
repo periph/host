@@ -8,7 +8,7 @@
 // In particular, the headers are found on the models using a TI AM335x
 // processor: BeagleBone Black, Black Wireless, Green and Green Wireless.
 //
-// Reference
+// # Reference
 //
 // http://beagleboard.org/Support/bone101/#hardware
 package bone

@@ -246,9 +246,10 @@ func (e *eventsListener) loop() {
 // addFd lazy initializes eventsListener if it was not initialized yet.
 //
 // It can fail due to various reasons, a few are:
-//   ENOSPC: /proc/sys/fs/epoll/max_user_watches limit was exceeded
-//   ENOMEM: No memory available
-//   EPERM: fd is a regular file or directory
+//
+//	ENOSPC: /proc/sys/fs/epoll/max_user_watches limit was exceeded
+//	ENOMEM: No memory available
+//	EPERM: fd is a regular file or directory
 func (e *eventsListener) addFd(fd uintptr, c chan<- time.Time, flags epollEvent) error {
 	if c == nil {
 		return errors.New("fd: addFd requires a valid channel")

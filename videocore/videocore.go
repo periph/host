@@ -7,7 +7,7 @@
 // This package shouldn't be used directly, it is used by bcm283x's DMA
 // implementation.
 //
-// Datasheet
+// # Datasheet
 //
 // While not an actual datasheet, this is the closest to actual formal
 // documentation:

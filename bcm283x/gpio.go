@@ -590,7 +590,7 @@ func (p *Pin) FastOut(l gpio.Level) {
 //
 // It outputs a periodic signal on supported pins without CPU usage.
 //
-// PWM pins
+// # PWM pins
 //
 // PWM0 is exposed on pins 12, 18 and 40. However, PWM0 is used for generating
 // clock for DMA and unavailable for PWM.

@@ -7,7 +7,7 @@
 //
 // Requires Armbian Jessie Server.
 //
-// Physical
+// # Physical
 //
 // http://files.pine64.org/doc/Pine%20A64%20Schematic/Pine%20A64%20Pin%20Assignment%20160119.pdf
 //

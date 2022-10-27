@@ -5,11 +5,11 @@
 // Package black implements headers for the BeagleBone Black and BeagleBone
 // Black Wireless micro-computers.
 //
-// Reference
+// # Reference
 //
 // https://beagleboard.org/black
 //
-// Datasheet
+// # Datasheet
 //
 // https://elinux.org/Beagleboard:BeagleBoneBlack
 //

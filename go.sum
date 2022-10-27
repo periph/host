@@ -1,6 +1,6 @@
-github.com/jonboulle/clockwork v0.2.2 h1:UOGuzwb1PwsrDAObMuhUnj0p5ULPj8V/xJ7Kx9qUBdQ=
-github.com/jonboulle/clockwork v0.2.2/go.mod h1:Pkfl5aHPm1nk2H9h0bjmnJD/BcgbGXUBGnn1kMkgxc8=
-periph.io/x/conn/v3 v3.6.10 h1:gwU4ssmZkq1D/uz8hU91i/COo2c9DrRaS4PJZBbCd+c=
-periph.io/x/conn/v3 v3.6.10/go.mod h1:UqWNaPMosWmNCwtufoTSTTYhB2wXWsMRAJyo1PlxO4Q=
-periph.io/x/d2xx v0.0.4 h1:R1Yejby5Ny6cVRo94RlMgXFtpp6AJrsVNAAjQCQx5rA=
-periph.io/x/d2xx v0.0.4/go.mod h1:38Euaaj+s6l0faIRHh32a+PrjXvxFTFkPBEQI0TKg34=
+github.com/jonboulle/clockwork v0.3.0 h1:9BSCMi8C+0qdApAp4auwX0RkLGUjs956h0EkuQymUhg=
+github.com/jonboulle/clockwork v0.3.0/go.mod h1:Pkfl5aHPm1nk2H9h0bjmnJD/BcgbGXUBGnn1kMkgxc8=
+periph.io/x/conn/v3 v3.7.0 h1:f1EXLn4pkf7AEWwkol2gilCNZ0ElY+bxS4WE2PQXfrA=
+periph.io/x/conn/v3 v3.7.0/go.mod h1:ypY7UVxgDbP9PJGwFSVelRRagxyXYfttVh7hJZUHEhg=
+periph.io/x/d2xx v0.1.0 h1:aR+hMkz57YbQHR+Rji4jHH43YLTITRZUr2HjhqCYa7k=
+periph.io/x/d2xx v0.1.0/go.mod h1:OflHQcWZ4LDP/2opGYbdXSP/yvWSnHVFO90KRoyobWY=

@@ -22,12 +22,12 @@ import (
 // The mapping comes from the datasheet page 55:
 // https://linux-sunxi.org/images/a/a3/Allwinner_H5_Manual_v1.0.pdf
 //
-// - The datasheet uses TWI instead of I2C but it is renamed here for
-//   consistency.
-// - RGMII means Reduced gigabit media-independent interface.
-// - SDC means SDCard?
-// - NAND connects to a NAND flash controller.
-// - CSI and CCI are for video capture.
+//   - The datasheet uses TWI instead of I2C but it is renamed here for
+//     consistency.
+//   - RGMII means Reduced gigabit media-independent interface.
+//   - SDC means SDCard?
+//   - NAND connects to a NAND flash controller.
+//   - CSI and CCI are for video capture.
 var mappingH5 = map[string][5]pin.Func{
 	"PA0":  {"UART2_TX", "JTAG_MS", "", "", "PA_EINT0"},
 	"PA1":  {"UART2_RX", "JTAG_CK", "", "", "PA_EINT1"},

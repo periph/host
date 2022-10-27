@@ -9,12 +9,12 @@
 //
 // Use build tag periph_host_ftdi_debug to enable verbose debugging.
 //
-// More details
+// # More details
 //
 // See https://periph.io/device/ftdi/ for more details, and how to configure
 // the host to be able to use this driver.
 //
-// Datasheets
+// # Datasheets
 //
 // http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232R.pdf
 //

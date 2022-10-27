@@ -16,7 +16,7 @@
 // header pins 19/21/23/24. The onewire gpio driver appears to be loaded by
 // default on header pin 7.
 //
-// References
+// # References
 //
 // Product page: http://www.hardkernel.com/main/products/prdt_info.php?g_code=G143703355573&tab_idx=2
 //

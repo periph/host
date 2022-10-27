@@ -7,7 +7,6 @@ package cpu
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -31,7 +30,7 @@ func TestMaxSpeed(t *testing.T) {
 		if flag != os.O_RDONLY {
 			t.Fatal(flag)
 		}
-		return ioutil.NopCloser(bytes.NewBufferString("1001\n")), nil
+		return io.NopCloser(bytes.NewBufferString("1001\n")), nil
 	}
 	MaxSpeed()
 	if s := getMaxSpeedLinux(); s != 1001000 {

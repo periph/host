@@ -13,12 +13,12 @@
 // GPIOx_y. To get the absolute number, as exposed by sysfs, use 32*x+y to get
 // the absolute number.
 //
-// Datasheet
+// # Datasheet
 //
 // Technical Reference Manual
 // https://www.ti.com/lit/ug/spruh73p/spruh73p.pdf
 //
-// Other
+// # Other
 //
 // Marketing page
 // https://www.ti.com/processors/sitara/arm-cortex-a8/am335x/overview.html

@@ -7,7 +7,7 @@ package chip
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -126,13 +126,14 @@ var (
 //
 // It looks for "C.H.I.P" in the device tree. The following information is
 // expected in the device dtree:
-//   root@chip2:/proc/device-tree# od -c compatible
-//   0000000   n   e   x   t   t   h   i   n   g   ,   c   h   i   p  \0   a
-//   0000020   l   l   w   i   n   n   e   r   ,   s   u   n   5   i   -   r
-//   0000040   8  \0
-//   root@chip2:/proc/device-tree# od -c model
-//   0000000   N   e   x   t   T   h   i   n   g       C   .   H   .   I   .
-//   0000020   P   .  \0
+//
+//	root@chip2:/proc/device-tree# od -c compatible
+//	0000000   n   e   x   t   t   h   i   n   g   ,   c   h   i   p  \0   a
+//	0000020   l   l   w   i   n   n   e   r   ,   s   u   n   5   i   -   r
+//	0000040   8  \0
+//	root@chip2:/proc/device-tree# od -c model
+//	0000000   N   e   x   t   T   h   i   n   g       C   .   H   .   I   .
+//	0000020   P   .  \0
 func Present() bool {
 	return strings.Contains(distro.DTModel(), "C.H.I.P")
 }
@@ -223,7 +224,7 @@ func findXIOBase() int {
 		if err != nil {
 			continue
 		}
-		b, err := ioutil.ReadAll(f)
+		b, err := io.ReadAll(f)
 		if err1 := f.Close(); err == nil {
 			err = err1
 		}

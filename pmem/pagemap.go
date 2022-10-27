@@ -8,6 +8,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -50,7 +51,7 @@ func readPageMapLinux(virtAddr uintptr) (uint64, error) {
 	}
 	// Convert address to page number, then index in uint64 array.
 	offset := int64(virtAddr / pageSize * 8)
-	if _, err := pageMap.Seek(offset, os.SEEK_SET); err != nil {
+	if _, err := pageMap.Seek(offset, io.SeekStart); err != nil {
 		return 0, fmt.Errorf("pmem: failed to seek at 0x%x for 0x%x: %v", offset, virtAddr, err)
 	}
 	n, err := pageMap.Read(b[:])

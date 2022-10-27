@@ -7,7 +7,7 @@ package pmem
 import (
 	"bytes"
 	"io"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"sync"
 	"unsafe"
@@ -172,7 +172,7 @@ func toRaw(b []byte) uintptr {
 // isWSL returns true if running under Windows Subsystem for Linux.
 func isWSL() bool {
 	wslOnce.Do(func() {
-		if c, err := ioutil.ReadFile("/proc/sys/kernel/osrelease"); err == nil {
+		if c, err := os.ReadFile("/proc/sys/kernel/osrelease"); err == nil {
 			isWSLValue = bytes.Contains(c, []byte("Microsoft"))
 		}
 	})

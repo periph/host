@@ -6,7 +6,7 @@ package distro
 
 import (
 	"encoding/binary"
-	"io/ioutil"
+	"os"
 )
 
 // DTModel returns platform model info from the Linux device tree (/proc/device-tree/model), and
@@ -50,7 +50,7 @@ func DTRevision() uint32 {
 		return dtRevision
 	}
 	dtRevisionRead = true
-	if b, _ := ioutil.ReadFile("/proc/device-tree/system/linux,revision"); len(b) >= 4 {
+	if b, _ := os.ReadFile("/proc/device-tree/system/linux,revision"); len(b) >= 4 {
 		dtRevision = binary.BigEndian.Uint32(b[:4])
 	}
 	return dtRevision

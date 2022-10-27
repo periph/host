@@ -285,7 +285,7 @@ func newFT232H(g generic) (*FT232H, error) {
 // Pins C8 and C9 can only be used in 'slow' mode via EEPROM and are currently
 // not implemented.
 //
-// Datasheet
+// # Datasheet
 //
 // http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232H.pdf
 type FT232H struct {
@@ -517,7 +517,7 @@ func newFT232R(g generic) (*FT232R, error) {
 // Pin C4 can only be used in 'slow' mode via EEPROM and is currently not
 // implemented.
 //
-// Datasheet
+// # Datasheet
 //
 // http://www.ftdichip.com/Support/Documents/DataSheets/ICs/DS_FT232R.pdf
 type FT232R struct {
