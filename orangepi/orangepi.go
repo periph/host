@@ -1,6 +1,8 @@
-// Copyright 2016 The Periph Authors. All rights reserved.
+// Copyright 2022 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
+
+// Orange Pi pin out.
 
 package orangepi
 
@@ -17,8 +19,11 @@ import (
 	"periph.io/x/host/v3/distro"
 )
 
+// Present return true if a Orange Pi board is detected.
 func Present() bool {
 	if isArm {
+		// This works for the Orange Pi Zero, not sure if other Orange Pi boards
+		// match the same DTModel prefix.
 		return strings.HasPrefix(distro.DTModel(), "OrangePi")
 	}
 
@@ -72,11 +77,13 @@ var (
 	FUN1_13 pin.Pin = allwinner.PL11     // IR-RX
 )
 
-func registerHeaders(model string) {
+// registerHeaders registers the headers for various Orange Pi boards. Currently
+// only Orange Pi Zero is supported.
+func registerHeaders(model string) error {
 	// http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-Zero.html
 	if strings.Contains(model, boardZero) {
 		// 26pin expansion port
-		pinreg.Register("PA", [][]pin.Pin{
+		if err := pinreg.Register("PA", [][]pin.Pin{
 			{PA1_1, PA1_2},
 			{PA1_3, PA1_4},
 			{PA1_5, PA1_6},
@@ -90,10 +97,12 @@ func registerHeaders(model string) {
 			{PA1_21, PA1_22},
 			{PA1_23, PA1_24},
 			{PA1_25, PA1_26},
-		})
+		}); err != nil {
+			return err
+		}
 
 		// 13pin function interface
-		pinreg.Register("FUN", [][]pin.Pin{
+		if err := pinreg.Register("FUN", [][]pin.Pin{
 			{FUN1_1},
 			{FUN1_2},
 			{FUN1_3},
@@ -107,25 +116,37 @@ func registerHeaders(model string) {
 			{FUN1_11},
 			{FUN1_12},
 			{FUN1_13},
-		})
+		}); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
+// driver implements periph.Driver.
 type driver struct {
 }
 
+// String is the text representation of the board.
 func (d *driver) String() string {
 	return "orangepi"
 }
 
+// Prerequisites load drivers before the actual driver is loaded. For
+// these boards, we do not need any prerequisites.
 func (d *driver) Prerequisites() []string {
 	return nil
 }
 
+// After this driver is loaded, we need to load generic Allwinner drivers
+// for the GPIO pins which are identical on all Allwinner CPUs.
 func (d *driver) After() []string {
 	return []string{"allwinner-gpio", "allwinner-gpio-pl"}
 }
 
+// Init initializes the driver by checking its presence and if found, the
+// driver will be registered.
 func (d *driver) Init() (bool, error) {
 	if !Present() {
 		return false, errors.New("borad Orange Pi not detected")
@@ -136,10 +157,11 @@ func (d *driver) Init() (bool, error) {
 		return true, fmt.Errorf("orangepi: failed to obtain model")
 	}
 
-	registerHeaders(model)
-	return true, nil
+	err := registerHeaders(model)
+	return true, err
 }
 
+// init register the driver.
 func init() {
 	if isArm {
 		driverreg.MustRegister(&drv)

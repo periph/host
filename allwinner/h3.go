@@ -1,3 +1,10 @@
+// Copyright 2022 The Periph Authors. All rights reserved.
+// Use of this source code is governed under the Apache License, Version 2.0
+// that can be found in the LICENSE file.
+
+// This file contains pin mapping information that is specific to the Allwinner
+// H2+ and H3 model.
+
 package allwinner
 
 import (
@@ -7,7 +14,9 @@ import (
 	"periph.io/x/host/v3/sysfs"
 )
 
-// Page 74 (Chapter 3.2 GPIO Multiplexing Functions)
+// mappingH3 describes the mapping of the H3 processor GPIO pins to their
+// functions. The mappings source is the official H3 Datasheet, version 1.0,
+// page 74 (chapter 3.2 GPIO Multiplexing Functions).
 // http://dl.linux-sunxi.org/H3/Allwinner_H3_Datasheet_V1.0.pdf
 var mappingH3 = map[string][5]pin.Func{
 	"PA0":  {"UART2_TX", "JTAG_MS", "", "", "PA_EINT0"},
@@ -124,6 +133,9 @@ var mappingH3 = map[string][5]pin.Func{
 	"PL11": {"S_CIR_RX", "", "", "", "S_PL_EINT12"},
 }
 
+// mapH3Pins uses mappingH3 to set the altFunc fields of all the GPIO pings and
+// mark them as available. This is called if the generic allwinner processor
+// code detects a H2+ or H3 processor.
 func mapH3Pins() error {
 	for name, altFuncs := range mappingH3 {
 		pin := cpupins[name]

@@ -1,12 +1,12 @@
-// copyright 2016 the periph authors. all rights reserved.
-// use of this source code is governed under the apache license, version 2.0
-// that can be found in the license file.
+// Copyright 2022 The Periph Authors. All rights reserved.
+// Use of this source code is governed under the Apache License, Version 2.0
+// that can be found in the LICENSE file.
 
-// package orangepi contains Orange Pi hardware logic.
+// Package orangepi contains Orange Pi hardware logic.
 //
-// requires armbian jessie server.
+// Requires armbian jessie server.
 //
-// physical
+// # Physical
 //
 // http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/index.html
 package orangepi
