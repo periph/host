@@ -1,4 +1,4 @@
-// Copyright 2016 The Periph Authors. All rights reserved.
+// Copyright 2022 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
@@ -44,6 +44,14 @@ func IsA64() bool {
 	return detection.isA64
 }
 
+// IsH3 detects whether the host CPU is an Allwinner H3/H2+ Plus CPU.
+//
+// It looks for the string "sun8i-h2-plus" or "sun8i-h3" in /proc/device-tree/compatible.
+func IsH3() bool {
+	detection.do()
+	return detection.isH3
+}
+
 // IsH5 detects whether the host CPU is an Allwinner H5 CPU.
 //
 // It looks for the string "sun50i-h5" in /proc/device-tree/compatible.
@@ -61,6 +69,7 @@ type detectionS struct {
 	isR8        bool
 	isA20       bool
 	isA64       bool
+	isH3        bool
 	isH5        bool
 }
 
@@ -87,11 +96,16 @@ func (d *detectionS) do() {
 				if strings.Contains(c, "sun7i-a20") {
 					d.isA20 = true
 				}
+				// H2+ is a subtype of H3 and nearly compatible (only lacks GBit MAC and
+				// 4k HDMI Output), so it is safe to map H2+ as an H3.
+				if strings.Contains(c, "sun8i-h2-plus") || strings.Contains(c, "sun8i-h3") {
+					d.isH3 = true
+				}
 				if strings.Contains(c, "sun50i-h5") {
 					d.isH5 = true
 				}
 			}
-			d.isAllwinner = d.isA64 || d.isR8 || d.isA20 || d.isH5
+			d.isAllwinner = d.isA64 || d.isR8 || d.isA20 || d.isH3 || d.isH5
 
 			if !d.isAllwinner {
 				// The kernel in the image that comes pre-installed on the pcDuino3 Nano

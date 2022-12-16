@@ -1,4 +1,4 @@
-// Copyright 2016 The Periph Authors. All rights reserved.
+// Copyright 2022 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
@@ -1018,6 +1018,10 @@ func (d *driverGPIO) Init() (bool, error) {
 		}
 	case IsA20():
 		if err := mapA20Pins(); err != nil {
+			return true, err
+		}
+	case IsH3():
+		if err := mapH3Pins(); err != nil {
 			return true, err
 		}
 	case IsH5():
