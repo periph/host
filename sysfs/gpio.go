@@ -490,7 +490,7 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 		p := &Pin{
 			number: i,
 			name:   fmt.Sprintf("GPIO%d", i),
-			root:   fmt.Sprintf("/sys/class/gpio/gpio%d/", i),
+			root:   getSymlinkRoot(i),
 		}
 		Pins[i] = p
 		if err := gpioreg.Register(p); err != nil {
@@ -505,7 +505,74 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 	return nil
 }
 
+func getSymlinkRoot(pinNumber int) string {
+	// The NVidia Jetson Orin AGX uses nonstandard names within /sys/class/gpio. This is a mapping
+	// from pin numbers to their names on that machine.
+	jetsonOrinAgxPins := map[int]string{
+		316: "AA.00", 317: "AA.01", 318: "AA.02", 319: "AA.03", 320: "AA.04", 321: "AA.05",
+		322: "AA.06", 323: "AA.07", 324: "BB.00", 325: "BB.01", 326: "BB.02", 327: "BB.03",
+		328: "CC.00", 329: "CC.01", 330: "CC.02", 331: "CC.03", 332: "CC.04", 333: "CC.05",
+		334: "CC.06", 335: "CC.07", 336: "DD.00", 337: "DD.01", 338: "DD.02", 339: "EE.00",
+		340: "EE.01", 341: "EE.02", 342: "EE.03", 343: "EE.04", 344: "EE.05", 345: "EE.06",
+		346: "EE.07", 347: "GG.00", 348: "A.00",  349: "A.01",  350: "A.02",  351: "A.03",
+		352: "A.04",  353: "A.05",  354: "A.06",  355: "A.07",  356: "B.00",  357: "C.00",
+		358: "C.01",  359: "C.02",  360: "C.03",  361: "C.04",  362: "C.05",  363: "C.06",
+		364: "C.07",  365: "D.00",  366: "D.01",  367: "D.02",  368: "D.03",  369: "E.00",
+		370: "E.01",  371: "E.02",  372: "E.03",  373: "E.04",  374: "E.05",  375: "E.06",
+		376: "E.07",  377: "F.00",  378: "F.01",  379: "F.02",  380: "F.03",  381: "F.04",
+		382: "F.05",  383: "G.00",  384: "G.01",  385: "G.02",  386: "G.03",  387: "G.04",
+		388: "G.05",  389: "G.06",  390: "G.07",  391: "H.00",  392: "H.01",  393: "H.02",
+		394: "H.03",  395: "H.04",  396: "H.05",  397: "H.06",  398: "H.07",  399: "I.00",
+		400: "I.01",  401: "I.02",  402: "I.03",  403: "I.04",  404: "I.05",  405: "I.06",
+		406: "J.00",  407: "J.01",  408: "J.02",  409: "J.03",  410: "J.04",  411: "J.05",
+		412: "K.00",  413: "K.01",  414: "K.02",  415: "K.03",  416: "K.04",  417: "K.05",
+		418: "K.06",  419: "K.07",  420: "L.00",  421: "L.01",  422: "L.02",  423: "L.03",
+		424: "M.00",  425: "M.01",  426: "M.02",  427: "M.03",  428: "M.04",  429: "M.05",
+		430: "M.06",  431: "M.07",  432: "N.00",  433: "N.01",  434: "N.02",  435: "N.03",
+		436: "N.04",  437: "N.05",  438: "N.06",  439: "N.07",  440: "P.00",  441: "P.01",
+		442: "P.02",  443: "P.03",  444: "P.04",  445: "P.05",  446: "P.06",  447: "P.07",
+		448: "Q.00",  449: "Q.01",  450: "Q.02",  451: "Q.03",  452: "Q.04",  453: "Q.05",
+		454: "Q.06",  455: "Q.07",  456: "R.00",  457: "R.01",  458: "R.02",  459: "R.03",
+		460: "R.04",  461: "R.05",  462: "X.00",  463: "X.01",  464: "X.02",  465: "X.03",
+		466: "X.04",  467: "X.05",  468: "X.06",  469: "X.07",  470: "Y.00",  471: "Y.01",
+		472: "Y.02",  473: "Y.03",  474: "Y.04",  475: "Y.05",  476: "Y.06",  477: "Y.07",
+		478: "Z.00",  479: "Z.01",  480: "Z.02",  481: "Z.03",  482: "Z.04",  483: "Z.05",
+		484: "Z.06",  485: "Z.07",  486: "AC.00", 487: "AC.01", 488: "AC.02", 489: "AC.03",
+		490: "AC.04", 491: "AC.05", 492: "AC.06", 493: "AC.07", 494: "AD.00", 495: "AD.01",
+		496: "AD.02", 497: "AD.03", 498: "AE.00", 499: "AE.01", 500: "AF.00", 501: "AF.01",
+		502: "AF.02", 503: "AF.03", 504: "AG.00", 505: "AG.01", 506: "AG.02", 507: "AG.03",
+		508: "AG.04", 509: "AG.05", 510: "AG.06", 511: "AG.07",
+	}
+
+	if boardName == "Jetson AGX Orin" {
+		val, ok := jetsonOrinAgxPins[pinNumber]
+		if ok {
+			return fmt.Sprintf("/sys/class/gpio/P%s", val)
+		}
+		// For unknown pins, try the default name but expect failures regardless.
+	}
+	// Nearly all boards use this naming scheme:
+	return fmt.Sprintf("/sys/class/gpio/gpio%d/", pinNumber)
+}
+
+var boardName string // The contents of /proc/device-tree/model, if it exists
+
+func initBoardName() {
+	f, err := fileIOOpen("/proc/device-tree/model", os.O_RDONLY)
+	if err != nil {
+		return // Unknown board, we'll try using the default pin names
+	}
+	defer f.Close()
+	var b [1024]byte
+	n, err := f.Read(b[:])
+	if err != nil {
+		return
+	}
+	boardName = string(b[:n])
+}
+
 func init() {
+	initBoardName()
 	if isLinux {
 		driverreg.MustRegister(&drvGPIO)
 	}
