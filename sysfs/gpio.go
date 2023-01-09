@@ -548,7 +548,7 @@ func getSymlinkRoot(pinNumber int) string {
 	if boardName == "Jetson AGX Orin\000" {
 		val, ok := jetsonOrinAgxPins[pinNumber]
 		if ok {
-			return fmt.Sprintf("/sys/class/gpio/P%s", val)
+			return fmt.Sprintf("/sys/class/gpio/P%s/", val)
 		}
 		// For unknown pins, try the default name but expect failures regardless.
 	}
