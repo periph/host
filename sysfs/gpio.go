@@ -20,6 +20,7 @@ import (
 	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
+	"periph.io/x/host/v3/distro"
 	"periph.io/x/host/v3/fs"
 )
 
@@ -545,7 +546,7 @@ func getSymlinkRoot(pinNumber int) string {
 	}
 
 	// Watch out! The board name likely ends in a null byte.
-	if boardName == "Jetson AGX Orin\000" {
+	if distro.DTModel() == "Jetson AGX Orin\000" {
 		val, ok := jetsonOrinAgxPins[pinNumber]
 		if ok {
 			return fmt.Sprintf("/sys/class/gpio/P%s/", val)
@@ -556,24 +557,7 @@ func getSymlinkRoot(pinNumber int) string {
 	return fmt.Sprintf("/sys/class/gpio/gpio%d/", pinNumber)
 }
 
-var boardName string // The contents of /proc/device-tree/model, if it exists
-
-func initBoardName() {
-	f, err := fileIOOpen("/proc/device-tree/model", os.O_RDONLY)
-	if err != nil {
-		return // Unknown board, we'll try using the default pin names
-	}
-	defer f.Close()
-	var b [1024]byte
-	n, err := f.Read(b[:])
-	if err != nil {
-		return
-	}
-	boardName = string(b[:n])
-}
-
 func init() {
-	initBoardName()
 	if isLinux {
 		driverreg.MustRegister(&drvGPIO)
 	}
