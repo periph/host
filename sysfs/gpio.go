@@ -513,7 +513,7 @@ const jetsonOrinAgxOffset = 316
 // The NVidia Jetson Orin AGX uses nonstandard names within /sys/class/gpio. This is a mapping
 // from pin numbers starting at the offset above to their names on that machine. It should be
 // considered immutable.
-var jetsonOrinAgxPinNames =	[196]string{
+var jetsonOrinAgxPinNames = [196]string{
 	// 0        1        2        3        4        5        6        7        8        9
 	"AA.00", "AA.01", "AA.02", "AA.03", "AA.04", "AA.05", "AA.06", "AA.07", "BB.00", "BB.01",
 	"BB.02", "BB.03", "CC.00", "CC.01", "CC.02", "CC.03", "CC.04", "CC.05", "CC.06", "CC.07",
