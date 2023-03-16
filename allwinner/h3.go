@@ -138,16 +138,28 @@ var mappingH3 = map[string][5]pin.Func{
 // code detects a H2+ or H3 processor.
 func mapH3Pins() error {
 	for name, altFuncs := range mappingH3 {
-		pin := cpupins[name]
-		pin.altFunc = altFuncs
-		pin.available = true
-		if strings.Contains(string(altFuncs[4]), "_EINT") ||
-			strings.Contains(string(altFuncs[3]), "_EINT") {
-			pin.supportEdge = true
-		}
+		if strings.HasPrefix(name, "PL") {
+			pinNumStr := name[2:]
+			pinNum, err := strconv.Atoi(pinNumStr)
+			if err != nil {
+					return err
+			}
+			pin := &cpuPinsPL[pinNum]
+			pin.available = true
 
-		// Initializes the sysfs corresponding pin right away.
-		pin.sysfsPin = sysfs.Pins[pin.Number()]
+			// Initializes the sysfs corresponding pin right away.
+			pin.sysfsPin = sysfs.Pins[pin.Number()]
+		} else {
+			pin := cpupins[name]
+			pin.altFunc = altFuncs
+			pin.available = true
+			if strings.Contains(string(altFuncs[4]), "_EINT") ||
+				strings.Contains(string(altFuncs[3]), "_EINT") {
+				pin.supportEdge = true
+			}
+			// Initializes the sysfs corresponding pin right away.
+			pin.sysfsPin = sysfs.Pins[pin.Number()]
+		}
 	}
 	return nil
 }
