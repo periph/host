@@ -8,6 +8,7 @@
 package allwinner
 
 import (
+	"strconv"
 	"strings"
 
 	"periph.io/x/conn/v3/pin"
