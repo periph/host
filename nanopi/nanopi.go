@@ -61,27 +61,27 @@ var (
 	PA1_24 gpio.PinIO = allwinner.PC3
 
 	FUN1_1  pin.Pin = pin.V5
-	FUN1_2  pin.Pin = gpio.INVALID       // USB-DP2
-	FUN1_3  pin.Pin = gpio.INVALID       // USB-DM2
-	FUN1_4  pin.Pin = gpio.INVALID       // USB-DP3
-	FUN1_5  pin.Pin = gpio.INVALID       // USB-DM3
-	FUN1_6  pin.Pin = allwinner.PL11     // IR-RX
-	FUN1_7  pin.Pin = allwinner.PA17     // SPDIF-OUT
-	FUN1_8  pin.Pin = allwinner.PA18     // PCM0_SYNC/I2S0_LRC
-	FUN1_9  pin.Pin = allwinner.PA19     // PCM0_CLK/I2S0_BCK
-	FUN1_10 pin.Pin = allwinner.PA20     // PCM0_DOUT/I2S0_SDOUT
-	FUN1_11 pin.Pin = allwinner.PA21     // PCM0_DIN/I2S0_SDIN
-	FUN1_12 pin.Pin = pin.GROUND         //
+	FUN1_2  pin.Pin = gpio.INVALID   // USB-DP2
+	FUN1_3  pin.Pin = gpio.INVALID   // USB-DM2
+	FUN1_4  pin.Pin = gpio.INVALID   // USB-DP3
+	FUN1_5  pin.Pin = gpio.INVALID   // USB-DM3
+	FUN1_6  pin.Pin = allwinner.PL11 // IR-RX
+	FUN1_7  pin.Pin = allwinner.PA17 // SPDIF-OUT
+	FUN1_8  pin.Pin = allwinner.PA18 // PCM0_SYNC/I2S0_LRC
+	FUN1_9  pin.Pin = allwinner.PA19 // PCM0_CLK/I2S0_BCK
+	FUN1_10 pin.Pin = allwinner.PA20 // PCM0_DOUT/I2S0_SDOUT
+	FUN1_11 pin.Pin = allwinner.PA21 // PCM0_DIN/I2S0_SDIN
+	FUN1_12 pin.Pin = pin.GROUND     //
 
-	FUN2_1  pin.Pin = allwinner.HP_LEFT  // LINEOUTL
-	FUN2_2  pin.Pin = allwinner.HP_RIGHT // LINEOUT
-	FUN2_3  pin.Pin = allwinner.MIC_GND  // MIC GND
-	FUN2_4  pin.Pin = allwinner.MIC_IN  // MIC IN
+	FUN2_1 pin.Pin = allwinner.HP_LEFT  // LINEOUTL
+	FUN2_2 pin.Pin = allwinner.HP_RIGHT // LINEOUT
+	FUN2_3 pin.Pin = allwinner.MIC_GND  // MIC GND
+	FUN2_4 pin.Pin = allwinner.MIC_IN   // MIC IN
 
-	FUN3_1  pin.Pin = pin.GROUND
-	FUN3_2  pin.Pin = pin.V5
-	FUN3_3  pin.Pin = allwinner.PA4 // UART TX
-	FUN3_4  pin.Pin = allwinner.PA5 // UART RX
+	FUN3_1 pin.Pin = pin.GROUND
+	FUN3_2 pin.Pin = pin.V5
+	FUN3_3 pin.Pin = allwinner.PA4 // UART TX
+	FUN3_4 pin.Pin = allwinner.PA5 // UART RX
 
 )
 

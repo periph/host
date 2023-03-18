@@ -143,7 +143,7 @@ func mapH3Pins() error {
 			pinNumStr := name[2:]
 			pinNum, err := strconv.Atoi(pinNumStr)
 			if err != nil {
-					return err
+				return err
 			}
 			pin := &cpuPinsPL[pinNum]
 			pin.available = true
