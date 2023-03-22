@@ -7,5 +7,4 @@
 // Requires armbian jessie server.
 //
 // # Physical
-//
 package nanopi
