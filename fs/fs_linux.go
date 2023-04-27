@@ -95,13 +95,13 @@ type event struct {
 // syscall.EpollCreate: http://man7.org/linux/man-pages/man2/epoll_create.2.html
 // syscall.EpollCtl: http://man7.org/linux/man-pages/man2/epoll_ctl.2.html
 func (e *event) makeEvent(fd uintptr) error {
-	epollFd, err := syscall.EpollCreate(1)
+	epollFd, err := syscall.EpollCreate1(syscall.EPOLL_CLOEXEC)
 	switch {
 	case err == nil:
 		break
 	case err.Error() == "function not implemented":
-		// Some arch (arm64) do not implement EpollCreate().
-		if epollFd, err = syscall.EpollCreate1(0); err != nil {
+		// Fall back to epoll_create.
+		if epollFd, err = syscall.EpollCreate(1); err != nil {
 			return err
 		}
 	default:

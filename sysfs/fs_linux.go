@@ -132,13 +132,13 @@ func (e *eventsListener) init() error {
 
 func (e *eventsListener) initLocked() error {
 	var err error
-	e.epollFd, err = syscall.EpollCreate(1)
+	e.epollFd, err = syscall.EpollCreate1(syscall.EPOLL_CLOEXEC)
 	switch {
 	case err == nil:
 		break
 	case err.Error() == "function not implemented":
-		// Some arch (arm64) do not implement EpollCreate().
-		if e.epollFd, err = syscall.EpollCreate1(0); err != nil {
+		// Fall back to epoll_create.
+		if e.epollFd, err = syscall.EpollCreate(1); err != nil {
 			return err
 		}
 	default:
