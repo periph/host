@@ -4,7 +4,7 @@
 
 module periph.io/x/host/v3
 
-go 1.17
+go 1.20
 
 require (
 	periph.io/x/conn/v3 v3.7.0
