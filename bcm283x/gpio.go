@@ -969,8 +969,12 @@ var cpuPins = []Pin{
 	{number: 46, name: "GPIO46", defaultPull: gpio.PullUp},
 }
 
-// This excludes the functions in and out.
-var mapping = [][6]pin.Func{
+// The alternate function mapping tables exclude the functions in and out.
+// Mapping may be overridden during driverGPIO.Init().
+var mapping = mapping283x
+
+// BCM238x specific alternate function mapping (the default).
+var mapping283x = [][6]pin.Func{
 	{"I2C0_SDA"}, // 0
 	{"I2C0_SCL"},
 	{"I2C1_SDA"},
@@ -1017,6 +1021,64 @@ var mapping = [][6]pin.Func{
 	{"CLK2", "", "", "", "SPI2_CS0", "UART1_CTS"},
 	{"CLK1", "I2C0_SDA", "I2C1_SDA", "", "SPI2_CS1", ""},
 	{"PWM1", "I2C0_SCL", "I2C1_SCL", "", "SPI2_CS2", ""}, // 45
+	{""},
+}
+
+// BCM2711 specific alternate function mapping; mostly compatible to
+// mapping283x, with the exception that there is no user-accessible SPI2
+// (the original SPI2-related positions have been assigned
+// corresponding SPI0 functions). Also, since there is an additional
+// PWM1 device, the original PWM0/PWM1 entries had to be
+// renamed into PWM0_0, PWM0_1.
+// The table has been generated from BCM2711's specification,
+// slightly adjusted to match the original mapping's naming.
+var mapping2711 = [][6]pin.Func{
+	{"I2C0_SDA", "", "", "SPI3_CS0", "UART2_TX", "I2C6_SDA"}, // 0
+	{"I2C0_SCL", "", "", "SPI3_MISO", "UART2_RX", "I2C6_SCL"},
+	{"I2C1_SDA", "", "", "SPI3_MOSI", "UART2_CTS", "I2C3_SDA"},
+	{"I2C1_SCL", "", "", "SPI3_CLK", "UART2_RTS", "I2C3_SCL"},
+	{"CLK0", "", "", "SPI4_CS0", "UART3_TX", "I2C3_SDA"},
+	{"CLK1", "", "", "SPI4_MISO", "UART3_RX", "I2C3_SCL"}, // 5
+	{"CLK2", "", "", "SPI4_MOSI", "UART3_CTS", "I2C4_SDA"},
+	{"SPI0_CS1", "", "", "SPI4_CLK", "UART3_RTS", "I2C4_SCL"},
+	{"SPI0_CS0", "", "", "", "UART4_TX", "I2C4_SDA"},
+	{"SPI0_MISO", "", "", "", "UART4_RX", "I2C4_SCL"},
+	{"SPI0_MOSI", "", "", "", "UART4_CTS", "I2C5_SDA"}, // 10
+	{"SPI0_CLK", "", "", "", "UART4_RTS", "I2C5_SCL"},
+	{"PWM0_0", "", "", "SPI5_CS0", "UART5_TX", "I2C5_SDA"},
+	{"PWM0_1", "", "", "SPI5_MISO", "UART5_RX", "I2C5_SCL"},
+	{"UART0_TX", "", "", "SPI5_MOSI", "UART5_CTS", "UART1_TX"},
+	{"UART0_RX", "", "", "SPI5_CLK", "UART5_RTS", "UART1_RX"}, // 15
+	{"", "", "", "UART0_CTS", "SPI1_CS2", "UART1_CTS"},
+	{"", "", "", "UART0_RTS", "SPI1_CS1", "UART1_RTS"},
+	{"I2S_SCK", "", "", "SPI6_CS0", "SPI1_CS0", "PWM0_0"},
+	{"I2S_WS", "", "", "SPI6_MISO", "SPI1_MISO", "PWM0_1"},
+	{"I2S_DIN", "", "", "SPI6_MOSI", "SPI1_MOSI", "CLK0"}, // 20
+	{"I2S_DOUT", "", "", "SPI6_CLK", "SPI1_CLK", "CLK1"},
+	{"", "", "", "", "", "I2C6_SDA"},
+	{"", "", "", "", "", "I2C6_SCL"},
+	{"", "", "", "", "", "SPI3_CS1"},
+	{"", "", "", "", "", "SPI4_CS1"}, // 25
+	{"", "", "", "", "", "SPI5_CS1"},
+	{"", "", "", "", "", "SPI6_CS1"},
+	{"I2C0_SDA", "", "I2S_SCK", "", "", ""},
+	{"I2C0_SCL", "", "I2S_WS", "", "", ""},
+	{"", "", "I2S_DIN", "UART0_CTS", "", "UART1_CTS"}, // 30
+	{"", "", "I2S_DOUT", "UART0_RTS", "", "UART1_RTS"},
+	{"CLK0", "", "", "UART0_TX", "", "UART1_TX"},
+	{"", "", "", "UART0_RX", "", "UART1_RX"},
+	{"CLK0"},
+	{"SPI0_CS1"}, // 35
+	{"SPI0_CS0", "", "UART0_TX", "", "", ""},
+	{"SPI0_MISO", "", "UART0_RX", "", "", ""},
+	{"SPI0_MOSI", "", "UART0_RTS", "", "", ""},
+	{"SPI0_CLK", "", "UART0_CTS", "", "", ""},
+	{"PWM1_0", "", "", "", "SPI0_MISO", "UART1_TX"}, // 40
+	{"PWM1_1", "", "", "", "SPI0_MOSI", "UART1_RX"},
+	{"CLK1", "", "", "", "SPI0_CLK", "UART1_RTS"},
+	{"CLK2", "", "", "", "SPI0_CS0", "UART1_CTS"},
+	{"CLK1", "I2C0_SDA", "I2C1_SDA", "", "SPI0_CS1", ""},
+	{"PWM0_1", "I2C0_SCL", "I2C1_SCL", "", "SPI0_CS2", ""}, // 45
 	{""},
 }
 
@@ -1305,6 +1367,7 @@ func (d *driverGPIO) Init() (bool, error) {
 		// BCM2711 (and perhaps future versions?) uses a simpler way to
 		// setup internal pull resistors.
 		d.useLegacyPull = false
+		mapping = mapping2711
 	}
 	// Page 6.
 	// Virtual addresses in kernel mode will range between 0xC0000000 and
