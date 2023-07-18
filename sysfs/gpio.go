@@ -20,6 +20,7 @@ import (
 	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
+	"periph.io/x/host/v3/distro"
 	"periph.io/x/host/v3/fs"
 )
 
@@ -481,6 +482,9 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 	if err != nil {
 		return err
 	}
+
+	boardModel := distro.DTModel()
+
 	// TODO(maruel): The chip driver may lie and lists GPIO pins that cannot be
 	// exported. The only way to know about it is to export it before opening.
 	for i := base; i < base+number; i++ {
@@ -490,7 +494,7 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 		p := &Pin{
 			number: i,
 			name:   fmt.Sprintf("GPIO%d", i),
-			root:   fmt.Sprintf("/sys/class/gpio/gpio%d/", i),
+			root:   getSymlinkRoot(boardModel, i),
 		}
 		Pins[i] = p
 		if err := gpioreg.Register(p); err != nil {
@@ -503,6 +507,44 @@ func (d *driverGPIO) parseGPIOChip(path string) error {
 		}
 	}
 	return nil
+}
+
+const jetsonOrinAgxOffset = 316
+
+// The NVidia Jetson Orin AGX uses nonstandard names within /sys/class/gpio. This is a mapping
+// from pin numbers starting at the offset above to their names on that machine. It should be
+// considered immutable.
+var jetsonOrinAgxPinNames = [196]string{
+	"AA.00", "AA.01", "AA.02", "AA.03", "AA.04", "AA.05", "AA.06", "AA.07", "BB.00", "BB.01",
+	"BB.02", "BB.03", "CC.00", "CC.01", "CC.02", "CC.03", "CC.04", "CC.05", "CC.06", "CC.07",
+	"DD.00", "DD.01", "DD.02", "EE.00", "EE.01", "EE.02", "EE.03", "EE.04", "EE.05", "EE.06",
+	"EE.07", "GG.00", "A.00", "A.01", "A.02", "A.03", "A.04", "A.05", "A.06", "A.07",
+	"B.00", "C.00", "C.01", "C.02", "C.03", "C.04", "C.05", "C.06", "C.07", "D.00",
+	"D.01", "D.02", "D.03", "E.00", "E.01", "E.02", "E.03", "E.04", "E.05", "E.06",
+	"E.07", "F.00", "F.01", "F.02", "F.03", "F.04", "F.05", "G.00", "G.01", "G.02",
+	"G.03", "G.04", "G.05", "G.06", "G.07", "H.00", "H.01", "H.02", "H.03", "H.04",
+	"H.05", "H.06", "H.07", "I.00", "I.01", "I.02", "I.03", "I.04", "I.05", "I.06",
+	"J.00", "J.01", "J.02", "J.03", "J.04", "J.05", "K.00", "K.01", "K.02", "K.03",
+	"K.04", "K.05", "K.06", "K.07", "L.00", "L.01", "L.02", "L.03", "M.00", "M.01",
+	"M.02", "M.03", "M.04", "M.05", "M.06", "M.07", "N.00", "N.01", "N.02", "N.03",
+	"N.04", "N.05", "N.06", "N.07", "P.00", "P.01", "P.02", "P.03", "P.04", "P.05",
+	"P.06", "P.07", "Q.00", "Q.01", "Q.02", "Q.03", "Q.04", "Q.05", "Q.06", "Q.07",
+	"R.00", "R.01", "R.02", "R.03", "R.04", "R.05", "X.00", "X.01", "X.02", "X.03",
+	"X.04", "X.05", "X.06", "X.07", "Y.00", "Y.01", "Y.02", "Y.03", "Y.04", "Y.05",
+	"Y.06", "Y.07", "Z.00", "Z.01", "Z.02", "Z.03", "Z.04", "Z.05", "Z.06", "Z.07",
+	"AC.00", "AC.01", "AC.02", "AC.03", "AC.04", "AC.05", "AC.06", "AC.07", "AD.00", "AD.01",
+	"AD.02", "AD.03", "AE.00", "AE.01", "AF.00", "AF.01", "AF.02", "AF.03", "AG.00", "AG.01",
+	"AG.02", "AG.03", "AG.04", "AG.05", "AG.06", "AG.07",
+}
+
+func getSymlinkRoot(boardModel string, pinNumber int) string {
+	if boardModel == "Jetson AGX Orin" {
+		pinName := jetsonOrinAgxPinNames[pinNumber-jetsonOrinAgxOffset]
+		return fmt.Sprintf("/sys/class/gpio/P%s/", pinName)
+	}
+
+	// Nearly all boards use this naming scheme:
+	return fmt.Sprintf("/sys/class/gpio/gpio%d/", pinNumber)
 }
 
 func init() {
