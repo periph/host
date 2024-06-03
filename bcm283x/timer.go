@@ -5,6 +5,7 @@
 package bcm283x
 
 import (
+	"sync/atomic"
 	"time"
 
 	"periph.io/x/host/v3/cpu"
@@ -17,7 +18,10 @@ func ReadTime() time.Duration {
 	if drvDMA.timerMemory == nil {
 		return 0
 	}
-	return (time.Duration(drvDMA.timerMemory.high)<<32 | time.Duration(drvDMA.timerMemory.low)) * time.Microsecond
+	// Use atomic package to safely access memory
+	high := atomic.LoadUint32(&drvDMA.timerMemory.high)
+	low := atomic.LoadUint32(&drvDMA.timerMemory.low)
+	return (time.Duration(high)<<32 | time.Duration(low)) * time.Microsecond
 }
 
 // Nanospin spins the CPU without calling into the kernel code if possible.
