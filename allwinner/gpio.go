@@ -652,6 +652,14 @@ var cpupins = map[string]*Pin{
 	"PG11": {group: 6, offset: 11, name: "PG11", defaultPull: gpio.Float},
 	"PG12": {group: 6, offset: 12, name: "PG12", defaultPull: gpio.Float},
 	"PG13": {group: 6, offset: 13, name: "PG13", defaultPull: gpio.Float},
+
+	"PG14": {group: 6, offset: 14, name: "PG14", defaultPull: gpio.Float},
+	"PG15": {group: 6, offset: 15, name: "PG15", defaultPull: gpio.Float},
+	"PG16": {group: 6, offset: 16, name: "PG16", defaultPull: gpio.Float},
+	"PG17": {group: 6, offset: 17, name: "PG17", defaultPull: gpio.Float},
+	"PG18": {group: 6, offset: 18, name: "PG18", defaultPull: gpio.Float},
+	"PG19": {group: 6, offset: 19, name: "PG19", defaultPull: gpio.Float},
+
 	"PH0":  {group: 7, offset: 0, name: "PH0", defaultPull: gpio.Float},
 	"PH1":  {group: 7, offset: 1, name: "PH1", defaultPull: gpio.Float},
 	"PH2":  {group: 7, offset: 2, name: "PH2", defaultPull: gpio.Float},

@@ -574,21 +574,5 @@
     "function4": "TS0_D7",
     "function5": "CLK_FANOUT1",
     "function6": "PI_EINT16"
-  },
-  {
-    "name": "PL0",
-    "function2": "",
-    "function3": "S_TWI0_SCK",
-    "function4": "",
-    "function5": "",
-    "function6": ""
-  },
-  {
-    "name": "PL1",
-    "function2": "",
-    "function3": "S_TWI0_SDA",
-    "function4": "",
-    "function5": "",
-    "function6": ""
   }
 ]
