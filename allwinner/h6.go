@@ -8,7 +8,7 @@
 package allwinner
 
 import (
-	_ "embed"
+	//_ "embed"
 	"encoding/json"
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/host/v3/sysfs"

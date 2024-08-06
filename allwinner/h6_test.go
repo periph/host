@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func Test_getH6SerializedPinSpecs(t *testing.T) {
+func TestGetH6SerializedPinSpecs(t *testing.T) {
 	if pins, err := getH6SerializedPinSpecs(); err != nil {
 		t.Error(err)
 	} else if n := len(pins); n != 72 {
@@ -12,7 +12,7 @@ func Test_getH6SerializedPinSpecs(t *testing.T) {
 	}
 }
 
-func Test_getH6SerializedPinSpecs_areRegistered(t *testing.T) {
+func TestGetH6SerializedPinSpecs_areRegistered(t *testing.T) {
 	if pins, err := getH6SerializedPinSpecs(); err != nil {
 		t.Error(err)
 	} else {
