@@ -1,9 +1,9 @@
-// Copyright 2022 The Periph Authors. All rights reserved.
+// Copyright 2024 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
 // This file contains pin mapping information that is specific to the Allwinner
-// H5 model.
+// H6 model.
 
 package allwinner
 
