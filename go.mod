@@ -7,6 +7,6 @@ module periph.io/x/host/v3
 go 1.22
 
 require (
-	periph.io/x/conn/v3 v3.7.0
-	periph.io/x/d2xx v0.1.0
+	periph.io/x/conn/v3 v3.7.1
+	periph.io/x/d2xx v0.1.1
 )
