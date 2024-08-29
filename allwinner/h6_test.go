@@ -17,13 +17,13 @@ func TestGetH6SerializedPinSpecs(t *testing.T) {
 }
 
 func TestGetH6SerializedPinSpecs_areRegistered(t *testing.T) {
-	if pins, err := getH6SerializedPinSpecs(); err != nil {
-		t.Error(err)
-	} else {
-		for _, pinSpec := range pins {
-			if _, ok := cpupins[pinSpec.Name]; !ok {
-				t.Error(pinSpec.Name)
-			}
+	pins, err := getH6SerializedPinSpecs()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, pinSpec := range pins {
+		if _, ok := cpupins[pinSpec.Name]; !ok {
+			t.Error(pinSpec.Name)
 		}
 	}
 }
