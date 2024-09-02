@@ -49,9 +49,11 @@ var consumer []byte
 // The set of GPIO Chips found on the running device.
 var Chips []*GPIOChip
 
-var directionLabels = []string{"NotSet", "Input", "Output"}
-var pullLabels = []string{"PullNoChange", "Float", "PullDown", "PullUp"}
-var edgeLabels = []string{"NoEdge", "RisingEdge", "FallingEdge", "BothEdges"}
+type Label string
+
+var DirectionLabels = []Label{"NotSet", "Input", "Output"}
+var PullLabels = []Label{"PullNoChange", "Float", "PullDown", "PullUp"}
+var EdgeLabels = []Label{"NoEdge", "RisingEdge", "FallingEdge", "BothEdges"}
 
 // A GPIOLine represents a specific line of a GPIO Chip. GPIOLine implements
 // periph.io/conn/v3/gpio.PinIn, PinIO, and PinOut. A line is obtained by
@@ -207,9 +209,9 @@ func (line *GPIOLine) String() string {
 		line.number,
 		line.name,
 		line.consumer,
-		directionLabels[line.direction],
-		pullLabels[line.pull],
-		edgeLabels[line.edge])
+		DirectionLabels[line.direction],
+		PullLabels[line.pull],
+		EdgeLabels[line.edge])
 }
 
 // Wait for this line to trigger and edge event. You must call In() with
@@ -301,28 +303,52 @@ func (line *GPIOLine) setLine(flags uint64) error {
 // more than one GPIOChip.
 type GPIOChip struct {
 	// The name of the device as reported by the kernel.
-	Name string
+	name string
 	// Path represents the path to the /dev/gpiochip* character
 	// device used for ioctl() calls.
-	Path  string
-	Label string
+	path  string
+	label string
 	// The number of lines this device supports.
-	LineCount int
+	lineCount int
 	// The set of Lines associated with this device.
-	Lines []*GPIOLine
+	lines []*GPIOLine
 	// The LineSets opened on this device.
-	LineSets []*LineSet
+	lineSets []*LineSet
 	// The file descriptor to the Path device.
 	fd uintptr
 	// File associated with the file descriptor.
 	file *os.File
 }
 
+func (chip *GPIOChip) Name() string {
+	return chip.name
+}
+
+func (chip *GPIOChip) Path() string {
+	return chip.path
+}
+
+func (chip *GPIOChip) Label() string {
+	return chip.label
+}
+
+func (chip *GPIOChip) LineCount() int {
+	return chip.lineCount
+}
+
+func (chip *GPIOChip) Lines() []*GPIOLine {
+	return chip.lines
+}
+
+func (chip *GPIOChip) LineSets() []*LineSet {
+	return chip.lineSets
+}
+
 // Construct a new GPIOChip by opening the /dev/gpiochip*
 // path specified and using Kernel ioctl() calls to
 // read information about the chip and it's associated lines.
 func newGPIOChip(path string) (*GPIOChip, error) {
-	chip := GPIOChip{Path: path}
+	chip := GPIOChip{path: path}
 	f, err := os.OpenFile(path, os.O_RDONLY, 0444)
 	if err != nil {
 		err = fmt.Errorf("Opening GPIO Chip %s failed. Error: %w", path, err)
@@ -335,23 +361,23 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 	var info gpiochip_info
 	err = ioctl_gpiochip_info(chip.fd, &info)
 	if err != nil {
-		log.Printf("newGPIOChip: %s\n",err)
+		log.Printf("newGPIOChip: %s\n", err)
 		return nil, fmt.Errorf("newGPIOChip %s: %w", path, err)
 	}
 
-	chip.Name = strings.Trim(string(info.name[:]), "\x00")
-	chip.Label = strings.Trim(string(info.label[:]), "\x00")
-	chip.LineCount = int(info.lines)
+	chip.name = strings.Trim(string(info.name[:]), "\x00")
+	chip.label = strings.Trim(string(info.label[:]), "\x00")
+	chip.lineCount = int(info.lines)
 	var line_info gpio_v2_line_info
 	for line := 0; line < int(info.lines); line++ {
 		line_info.offset = uint32(line)
 		err := ioctl_gpio_v2_line_info(chip.fd, &line_info)
 		if err != nil {
-			log.Println("newGPIOChip get line info",err)
+			log.Println("newGPIOChip get line info", err)
 			return nil, fmt.Errorf("reading line info: %w", err)
 		}
 		line := newGPIOLine(uint32(line), string(line_info.name[:]), string(line_info.consumer[:]), chip.fd)
-		chip.Lines = append(chip.Lines, line)
+		chip.lines = append(chip.lines, line)
 	}
 	return &chip, nil
 }
@@ -361,12 +387,12 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 func (chip *GPIOChip) Close() {
 	chip.file.Close()
 
-	for _, line := range chip.Lines {
+	for _, line := range chip.lines {
 		if line.fd != 0 {
 			line.Close()
 		}
 	}
-	for _, lineset := range chip.LineSets {
+	for _, lineset := range chip.lineSets {
 		lineset.Close()
 	}
 	syscall.Close(int(chip.fd))
@@ -375,7 +401,7 @@ func (chip *GPIOChip) Close() {
 // ByName returns a GPIOLine for a specific name. If not
 // found, returns nil.
 func (chip *GPIOChip) ByName(name string) *GPIOLine {
-	for _, line := range chip.Lines {
+	for _, line := range chip.lines {
 		if line.name == name {
 			return line
 		}
@@ -387,11 +413,11 @@ func (chip *GPIOChip) ByName(name string) *GPIOLine {
 // number. Note this has NO RELATIONSHIP to a pin # on
 // a board.
 func (chip *GPIOChip) ByNumber(number int) *GPIOLine {
-	if number < 0 || number >= len(chip.Lines) {
+	if number < 0 || number >= len(chip.lines) {
 		log.Printf("GPIOChip.ByNumber(%d) with out of range value.", number)
 		return nil
 	}
-	return chip.Lines[number]
+	return chip.lines[number]
 }
 
 // getFlags accepts a set of GPIO configuration values and returns an
@@ -424,7 +450,7 @@ func (chip *GPIOChip) LineSetFromConfig(config *LineSetConfig) (*LineSet, error)
 	for ix, name := range config.Lines {
 		gpioLine := chip.ByName(name)
 		if gpioLine == nil {
-			return nil, fmt.Errorf("Line %s not found in chip %s", name, chip.Name)
+			return nil, fmt.Errorf("Line %s not found in chip %s", name, chip.Name())
 		}
 		lines[ix] = uint32(gpioLine.Number())
 	}
@@ -472,15 +498,15 @@ func (chip *GPIOChip) newLineSetLine(line_number, offset int, config *LineSetCon
 // String returns the chip information, and line information in JSON format.
 func (chip *GPIOChip) String() string {
 	s := fmt.Sprintf("{\"Name\": \"%s\", \"Path\": \"%s\", \"Label\": \"%s\", \"LineCount\": %d, \"Lines\": [ \n",
-		chip.Name, chip.Path, chip.Label, chip.LineCount)
-	for _, line := range chip.Lines {
+		chip.Name(), chip.Path(), chip.Label(), chip.LineCount())
+	for _, line := range chip.lines {
 		s += line.String() + ",\n"
 	}
 	s = s[:len(s)-2] + "],"
-	s+="\n\"LineSets\": [ \n"
-	for _, ls:= range chip.LineSets {
+	s += "\n\"LineSets\": [ \n"
+	for _, ls := range chip.lineSets {
 		if ls.fd > 0 {
-			s+=ls.String()+",\n"
+			s += ls.String() + ",\n"
 		}
 	}
 	s = s[:len(s)-2] + "]}"
@@ -540,14 +566,13 @@ func (d *driverGPIO) Init() (bool, error) {
 			return false, err
 		}
 		Chips = append(Chips, chip)
-		for _, line := range chip.Lines {
+		for _, line := range chip.lines {
 			if len(line.name) > 0 && line.name != "_" && line.name != "-" {
 				if err = gpioreg.Register(line); err != nil {
-					log.Println("chip", chip.Name, " gpioreg.Register(line) ", line, " returned ", err)
+					log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
 				}
 			}
 		}
-		fmt.Println(chip)
 	}
 	return true, nil
 }

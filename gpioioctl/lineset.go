@@ -119,7 +119,7 @@ type LineSet struct {
 // Close the anonymous file descriptor allocated for this LineSet and release
 // the pins.
 func (ls *LineSet) Close() error {
-	if ls.fd==0 {
+	if ls.fd == 0 {
 		return nil
 	}
 	ls.mu.Lock()
@@ -144,7 +144,7 @@ func (ls *LineSet) LineCount() int {
 // Lines returns the set of LineSetLine that are in
 // this set.
 func (ls *LineSet) Lines() []*LineSetLine {
-    return ls.lines
+	return ls.lines
 }
 
 // Interrupt any calls to WaitForEdge().
@@ -192,7 +192,7 @@ func (ls *LineSet) Read(mask uint64) (uint64, error) {
 	return lvalues.bits, nil
 }
 
-// String returns the LineSet information in JSON, along with the details for 
+// String returns the LineSet information in JSON, along with the details for
 // all of the lines.
 func (ls *LineSet) String() string {
 	s := "{\"lines\": [\n"
@@ -249,32 +249,31 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number uint32, edge gpio.
 	return
 }
 
-
 // ByOffset returns a line by it's offset in the LineSet.
 func (ls *LineSet) ByOffset(offset int) *LineSetLine {
 	if offset < 0 || offset >= len(ls.lines) {
 		return nil
 	}
-    return ls.lines[offset]
+	return ls.lines[offset]
 }
 
 // ByName returns a Line by name from the LineSet.
 func (ls *LineSet) ByName(name string) *LineSetLine {
 
-    for _, line := range ls.lines {
-        if line.Name() == name {
-            return line
-        }
-    }
-    return nil
+	for _, line := range ls.lines {
+		if line.Name() == name {
+			return line
+		}
+	}
+	return nil
 }
 
 // LineNumber Return a line from the LineSet via it's GPIO line
 // number.
 func (ls *LineSet) ByNumber(number int) *LineSetLine {
-    for _, line := range ls.lines {
+	for _, line := range ls.lines {
 		if line.Number() == number {
-            return line
+			return line
 		}
 	}
 	return nil
@@ -311,6 +310,14 @@ func (lsl *LineSetLine) Name() string {
 
 func (lsl *LineSetLine) Function() string {
 	return "not implemented"
+}
+
+func (lsl *LineSetLine) Direction() LineDir {
+    return lsl.direction
+}
+
+func (lsl *LineSetLine) Edge() gpio.Edge {
+    return lsl.edge
 }
 
 /*
@@ -365,9 +372,9 @@ func (lsl *LineSetLine) String() string {
 		lsl.name,
 		lsl.offset,
 		lsl.number,
-		directionLabels[lsl.direction],
-		pullLabels[lsl.pull],
-		edgeLabels[lsl.edge])
+		DirectionLabels[lsl.direction],
+		PullLabels[lsl.pull],
+		EdgeLabels[lsl.edge])
 }
 
 // WaitForEdge will always return false for a LineSetLine. You MUST
@@ -397,4 +404,3 @@ func (lsl *LineSetLine) Offset() uint32 {
 var _ gpio.PinIO = &LineSetLine{}
 var _ gpio.PinIn = &LineSetLine{}
 var _ gpio.PinOut = &LineSetLine{}
-
