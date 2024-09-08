@@ -431,7 +431,7 @@ func (d *driverGPIO) String() string {
 }
 
 func (d *driverGPIO) Prerequisites() []string {
-	return []string{"gpioioctl"}
+	return []string{"ioctl-gpio"}
 }
 
 func (d *driverGPIO) After() []string {
