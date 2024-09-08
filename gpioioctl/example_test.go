@@ -16,7 +16,7 @@ import (
 	"periph.io/x/host/v3/gpioioctl"
 )
 
-func ExampleChips() {
+func Example() {
 	_, _ = host.Init()
 	_, _ = driverreg.Init()
 

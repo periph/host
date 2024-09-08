@@ -2,7 +2,7 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 //
-// The gpioioctl package provides access to Linux GPIO lines using the ioctl interface.
+// Package gpioioctl provides access to Linux GPIO lines using the ioctl interface.
 //
 // https://docs.kernel.org/userspace-api/gpio/index.html
 //
@@ -207,8 +207,8 @@ func (line *GPIOLine) String() string {
 
 	return fmt.Sprintf("{\"Line\": %d, \"Name\": \"%s\", \"Consumer\": \"%s\", \"Direction\": \"%s\", \"Pull\": \"%s\", \"Edges\": \"%s\"}",
 		line.number,
-		line.name,
-		line.consumer,
+		escapeJSONString(line.name),
+		escapeJSONString(line.consumer),
 		DirectionLabels[line.direction],
 		PullLabels[line.pull],
 		EdgeLabels[line.edge])
@@ -222,9 +222,7 @@ func (line *GPIOLine) String() string {
 // gpio.EdgeBoth configuration. If you really need the edge,
 // LineSet.WaitForEdge() does return the edge that triggered.
 //
-// # Parameters
-//
-// Timeout for the edge change to occur. If 0, waits forever.
+// timeout for the edge change to occur. If 0, waits forever.
 func (line *GPIOLine) WaitForEdge(timeout time.Duration) bool {
 	if line.edge == gpio.NoEdge || line.direction == LineDirNotSet {
 		log.Println("call to WaitForEdge() when line hasn't been configured for edge detection.")
@@ -498,7 +496,7 @@ func (chip *GPIOChip) newLineSetLine(line_number, offset int, config *LineSetCon
 // String returns the chip information, and line information in JSON format.
 func (chip *GPIOChip) String() string {
 	s := fmt.Sprintf("{\"Name\": \"%s\", \"Path\": \"%s\", \"Label\": \"%s\", \"LineCount\": %d, \"Lines\": [ \n",
-		chip.Name(), chip.Path(), chip.Label(), chip.LineCount())
+		escapeJSONString(chip.Name()), escapeJSONString(chip.Path()), escapeJSONString(chip.Label()), chip.LineCount())
 	for _, line := range chip.lines {
 		s += line.String() + ",\n"
 	}
@@ -595,6 +593,22 @@ func init() {
 
 		driverreg.MustRegister(&drvGPIO)
 	}
+}
+
+func escapeJSONString(str string) string {
+	var escaped string
+	for _, r := range str {
+		if r < rune(' ') {
+			escaped += fmt.Sprintf("\\u%.4X", int(r))
+		} else if r == rune('\\') {
+			escaped = escaped + string(r) + string(r)
+		} else if r == rune('"') {
+			escaped = escaped + "\\\""
+		} else {
+			escaped += string(r)
+		}
+	}
+	return escaped
 }
 
 // Ensure that Interfaces for these types are implemented fully.

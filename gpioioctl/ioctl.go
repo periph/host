@@ -3,13 +3,12 @@ package gpioioctl
 // Copyright 2024 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
-//
+
 // This file contains definitions and methods for using the GPIO IOCTL calls.
 //
 // Documentation for the ioctl() API is at:
 //
 // https://docs.kernel.org/userspace-api/gpio/index.html
-
 import (
 	"errors"
 	"fmt"

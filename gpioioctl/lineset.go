@@ -119,11 +119,11 @@ type LineSet struct {
 // Close the anonymous file descriptor allocated for this LineSet and release
 // the pins.
 func (ls *LineSet) Close() error {
+	ls.mu.Lock()
+	defer ls.mu.Unlock()
 	if ls.fd == 0 {
 		return nil
 	}
-	ls.mu.Lock()
-	defer ls.mu.Unlock()
 	var err error
 	if ls.fEdge != nil {
 		err = ls.fEdge.Close()
@@ -313,16 +313,13 @@ func (lsl *LineSetLine) Function() string {
 }
 
 func (lsl *LineSetLine) Direction() LineDir {
-    return lsl.direction
+	return lsl.direction
 }
 
 func (lsl *LineSetLine) Edge() gpio.Edge {
-    return lsl.edge
+	return lsl.edge
 }
 
-/*
-gpio.PinOut
-*/
 // Out writes to this specific GPIO line.
 func (lsl *LineSetLine) Out(l gpio.Level) error {
 	var mask, bits uint64
@@ -338,9 +335,6 @@ func (lsl *LineSetLine) PWM(gpio.Duty, physic.Frequency) error {
 	return errors.New("not implemented")
 }
 
-/*
-gpio.PinIn
-*/
 // Halt interrupts a pending WaitForEdge. You can't halt a read
 // for a single line in a LineSet, so this returns an error. Use
 // LineSet.Halt()
@@ -369,7 +363,7 @@ func (lsl *LineSetLine) Read() gpio.Level {
 // Return the line information in JSON format.
 func (lsl *LineSetLine) String() string {
 	return fmt.Sprintf("{\"Name\": \"%s\", \"Offset\": %d, \"Number\": %d, \"Direction\": \"%s\", \"Pull\": \"%s\", \"Edge\": \"%s\"}",
-		lsl.name,
+		escapeJSONString(lsl.name),
 		lsl.offset,
 		lsl.number,
 		DirectionLabels[lsl.direction],
@@ -388,8 +382,9 @@ func (lsl *LineSetLine) Pull() gpio.Pull {
 	return lsl.pull
 }
 
-// DefaultPull - return gpio.PullNoChange. Reviewing the GPIO v2 Kernel
-// IOCTL docs, this isn't possible. Returns gpio.PullNoChange
+// DefaultPull return gpio.PullNoChange.
+//
+// The GPIO v2 ioctls do not support this.
 func (lsl *LineSetLine) DefaultPull() gpio.Pull {
 	return gpio.PullNoChange
 }
