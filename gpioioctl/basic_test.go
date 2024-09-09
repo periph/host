@@ -20,7 +20,7 @@ var testLine *GPIOLine
 
 func init() {
 	var err error
-	
+
 	if len(Chips) == 0 {
 		/*
 		   During pipeline builds, GPIOChips may not be available, or
