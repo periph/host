@@ -220,7 +220,7 @@ func (line *GPIOLine) MarshalJSON() ([]byte, error) {
 		Edges:     EdgeLabels[line.edge]})
 }
 
-// String returns information about the line in JSON format.
+// String returns information about the line in valid JSON format.
 func (line *GPIOLine) String() string {
 	json, _ := json.MarshalIndent(line, "", "    ")
 	return string(json)
