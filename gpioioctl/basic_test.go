@@ -55,6 +55,7 @@ func init() {
 
 func TestChips(t *testing.T) {
 	chip := Chips[0]
+	t.Log(chip.String())
 	if len(chip.Name()) == 0 {
 		t.Error("chip.Name() is 0 length")
 	}
@@ -126,21 +127,5 @@ func TestString(t *testing.T) {
 	s := line.String()
 	if len(s) == 0 {
 		t.Errorf("GPIOLine.String() failed.")
-	}
-}
-
-func TestEscapeJSONString(t *testing.T) {
-	testVals := [][]string{
-		{"abc def", "abc def"},
-		{"abc\"def", "abc\\\"def"},
-		{"abc\n\ndef", "abc\\u000A\\u000Adef"},
-		{"abc\\def", "abc\\\\def"},
-	}
-	for _, test := range testVals {
-		s := escapeJSONString(test[0])
-		if s != test[1] {
-			t.Errorf("Error escaping %s, received %s", test[0], s)
-		}
-
 	}
 }

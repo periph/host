@@ -16,6 +16,7 @@ package gpioioctl
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -64,7 +65,7 @@ type GPIOLine struct {
 	// to the pin numbering scheme that may be in use on a board.
 	number uint32
 	// The name supplied by the OS Driver
-	name string
+	name string `json:"Name"`
 	// If the line is in use, this may be populated with the
 	// consuming application's information.
 	consumer  string
@@ -202,16 +203,27 @@ func (line *GPIOLine) Read() gpio.Level {
 	return data.bits&0x01 == 0x01
 }
 
+func (line *GPIOLine) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Line      int    `json:"Line"`
+		Name      string `json:"Name"`
+		Consumer  string `json:"Consumer"`
+		Direction Label  `json:"Direction"`
+		Pull      Label  `json:"Pull"`
+		Edges     Label  `json:"Edges"`
+	}{
+		Line:      line.Number(),
+		Name:      line.Name(),
+		Consumer:  line.Consumer(),
+		Direction: DirectionLabels[line.direction],
+		Pull:      PullLabels[line.pull],
+		Edges:     EdgeLabels[line.edge]})
+}
+
 // String returns information about the line in JSON format.
 func (line *GPIOLine) String() string {
-
-	return fmt.Sprintf("{\"Line\": %d, \"Name\": \"%s\", \"Consumer\": \"%s\", \"Direction\": \"%s\", \"Pull\": \"%s\", \"Edges\": \"%s\"}",
-		line.number,
-		escapeJSONString(line.name),
-		escapeJSONString(line.consumer),
-		DirectionLabels[line.direction],
-		PullLabels[line.pull],
-		EdgeLabels[line.edge])
+	json, _ := json.MarshalIndent(line, "", "    ")
+	return string(json)
 }
 
 // Wait for this line to trigger and edge event. You must call In() with
@@ -493,22 +505,27 @@ func (chip *GPIOChip) newLineSetLine(line_number, offset int, config *LineSetCon
 	return lsl
 }
 
+func (chip *GPIOChip) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Name      string      `json:"Name"`
+		Path      string      `json:"Path"`
+		Label     string      `json:"Label"`
+		LineCount int         `json:"LineCount"`
+		Lines     []*GPIOLine `json:"Lines"`
+		LineSets  []*LineSet  `json:"LineSets"`
+	}{
+		Name:      chip.Name(),
+		Path:      chip.Path(),
+		Label:     chip.Label(),
+		LineCount: chip.LineCount(),
+		Lines:     chip.lines,
+		LineSets:  chip.lineSets})
+}
+
 // String returns the chip information, and line information in JSON format.
 func (chip *GPIOChip) String() string {
-	s := fmt.Sprintf("{\"Name\": \"%s\", \"Path\": \"%s\", \"Label\": \"%s\", \"LineCount\": %d, \"Lines\": [ \n",
-		escapeJSONString(chip.Name()), escapeJSONString(chip.Path()), escapeJSONString(chip.Label()), chip.LineCount())
-	for _, line := range chip.lines {
-		s += line.String() + ",\n"
-	}
-	s = s[:len(s)-2] + "],"
-	s += "\n\"LineSets\": [ \n"
-	for _, ls := range chip.lineSets {
-		if ls.fd > 0 {
-			s += ls.String() + ",\n"
-		}
-	}
-	s = s[:len(s)-2] + "]}"
-	return s
+	json, _ := json.MarshalIndent(chip, "", "    ")
+	return string(json)
 }
 
 // LineSet requests a set of io pins and configures them according to the
@@ -593,22 +610,6 @@ func init() {
 
 		driverreg.MustRegister(&drvGPIO)
 	}
-}
-
-func escapeJSONString(str string) string {
-	var escaped string
-	for _, r := range str {
-		if r < rune(' ') {
-			escaped += fmt.Sprintf("\\u%.4X", int(r))
-		} else if r == rune('\\') {
-			escaped = escaped + string(r) + string(r)
-		} else if r == rune('"') {
-			escaped = escaped + "\\\""
-		} else {
-			escaped += string(r)
-		}
-	}
-	return escaped
 }
 
 // Ensure that Interfaces for these types are implemented fully.

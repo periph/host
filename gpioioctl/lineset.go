@@ -6,6 +6,7 @@ package gpioioctl
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -192,15 +193,18 @@ func (ls *LineSet) Read(mask uint64) (uint64, error) {
 	return lvalues.bits, nil
 }
 
+func (ls *LineSet) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Lines []*LineSetLine `json:"Lines"`
+	}{
+		Lines: ls.lines})
+}
+
 // String returns the LineSet information in JSON, along with the details for
 // all of the lines.
 func (ls *LineSet) String() string {
-	s := "{\"lines\": [\n"
-	for _, line := range ls.lines {
-		s += fmt.Stringer(line).String() + ",\n"
-	}
-	s += "]}"
-	return s
+	json, _ := json.MarshalIndent(ls, "", "    ")
+	return string(json)
 }
 
 // WaitForEdge waits for an edge to be triggered on the LineSet.
@@ -360,15 +364,27 @@ func (lsl *LineSetLine) Read() gpio.Level {
 	return (bits & mask) == mask
 }
 
-// Return the line information in JSON format.
+func (lsl *LineSetLine) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Name      string `json:"Name"`
+		Offset    uint32 `json:"Offset"`
+		Number    int    `json:"Number"`
+		Direction Label  `json:"Direction"`
+		Pull      Label  `json:"Pull"`
+		Edges     Label  `json:"Edges"`
+	}{
+		Name:      lsl.Name(),
+		Offset:    lsl.Offset(),
+		Number:    lsl.Number(),
+		Direction: DirectionLabels[lsl.direction],
+		Pull:      PullLabels[lsl.pull],
+		Edges:     EdgeLabels[lsl.edge]})
+}
+
+// String returns information about the line in JSON format.
 func (lsl *LineSetLine) String() string {
-	return fmt.Sprintf("{\"Name\": \"%s\", \"Offset\": %d, \"Number\": %d, \"Direction\": \"%s\", \"Pull\": \"%s\", \"Edge\": \"%s\"}",
-		escapeJSONString(lsl.name),
-		lsl.offset,
-		lsl.number,
-		DirectionLabels[lsl.direction],
-		PullLabels[lsl.pull],
-		EdgeLabels[lsl.edge])
+	json, _ := json.MarshalIndent(lsl, "", "    ")
+	return string(json)
 }
 
 // WaitForEdge will always return false for a LineSetLine. You MUST
