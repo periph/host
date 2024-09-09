@@ -399,7 +399,7 @@ func (chip *GPIOChip) Close() {
 
 	for _, line := range chip.lines {
 		if line.fd != 0 {
-			_ = line.Close()
+			line.Close()
 		}
 	}
 	for _, lineset := range chip.lineSets {
