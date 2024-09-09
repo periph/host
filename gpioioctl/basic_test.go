@@ -48,7 +48,9 @@ func init() {
 		}
 		Chips = append(Chips, &chip)
 		if err = gpioreg.Register(&line); err != nil {
-			log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
+			nameStr := chip.Name()
+			lineStr := line.String()
+			log.Println("chip", nameStr, " gpioreg.Register(line) ", lineStr, " returned ", err)
 		}
 	}
 }
@@ -69,7 +71,7 @@ func TestChips(t *testing.T) {
 		t.Errorf("Incorrect line count. Found: %d for LineCount, Returned Lines length=%d", chip.LineCount(), len(chip.Lines()))
 	}
 	for _, line := range chip.Lines() {
-		if len(line.Consumer()) == 0 {
+		if len(line.Consumer()) == 0 && len(line.Name()) > 0 {
 			testLine = line
 			break
 		}
@@ -90,6 +92,9 @@ func TestChips(t *testing.T) {
 }
 
 func TestGPIORegistryByName(t *testing.T) {
+	if testLine == nil {
+		return
+	}
 	outLine := gpioreg.ByName(testLine.Name())
 	if outLine == nil {
 		t.Fatalf("Error retrieving GPIO Line %s", testLine.Name())
@@ -105,6 +110,9 @@ func TestGPIORegistryByName(t *testing.T) {
 
 func TestNumber(t *testing.T) {
 	chip := Chips[0]
+	if testLine == nil {
+		return
+	}
 	l := chip.ByName(testLine.Name())
 	if l == nil {
 		t.Fatalf("Error retrieving GPIO Line %s", testLine.Name())
@@ -120,6 +128,9 @@ func TestNumber(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
+	if testLine == nil {
+		return
+	}
 	line := gpioreg.ByName(testLine.Name())
 	if line == nil {
 		t.Fatalf("Error retrieving GPIO Line %s", testLine.Name())

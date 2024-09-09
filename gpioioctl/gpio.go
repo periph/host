@@ -65,7 +65,7 @@ type GPIOLine struct {
 	// to the pin numbering scheme that may be in use on a board.
 	number uint32
 	// The name supplied by the OS Driver
-	name string `json:"Name"`
+	name string
 	// If the line is in use, this may be populated with the
 	// consuming application's information.
 	consumer  string
