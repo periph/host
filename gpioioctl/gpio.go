@@ -94,9 +94,9 @@ func (line *GPIOLine) Close() {
 	line.mu.Lock()
 	defer line.mu.Unlock()
 	if line.fEdge != nil {
-		line.fEdge.Close()
+		_ = line.fEdge.Close()
 	} else if line.fd != 0 {
-		syscall.Close(int(line.fd))
+		_ = syscall.Close(int(line.fd))
 	}
 	line.fd = 0
 	line.consumer = ""
@@ -359,7 +359,7 @@ func (chip *GPIOChip) LineSets() []*LineSet {
 // read information about the chip and it's associated lines.
 func newGPIOChip(path string) (*GPIOChip, error) {
 	chip := GPIOChip{path: path}
-	f, err := os.OpenFile(path, os.O_RDONLY, 0444)
+	f, err := os.OpenFile(path, os.O_RDONLY, 0400)
 	if err != nil {
 		err = fmt.Errorf("Opening GPIO Chip %s failed. Error: %w", path, err)
 		log.Println(err)
@@ -395,17 +395,17 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 // Close closes the file descriptor associated with the chipset,
 // along with any configured Lines and LineSets.
 func (chip *GPIOChip) Close() {
-	chip.file.Close()
+	_ = chip.file.Close()
 
 	for _, line := range chip.lines {
 		if line.fd != 0 {
-			line.Close()
+			_ = line.Close()
 		}
 	}
 	for _, lineset := range chip.lineSets {
-		lineset.Close()
+		_ = lineset.Close()
 	}
-	syscall.Close(int(chip.fd))
+	_ = syscall.Close(int(chip.fd))
 }
 
 // ByName returns a GPIOLine for a specific name. If not
