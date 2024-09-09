@@ -11,7 +11,6 @@ package gpioioctl
 // https://docs.kernel.org/userspace-api/gpio/index.html
 import (
 	"errors"
-	"fmt"
 	"syscall"
 	"unsafe"
 )
@@ -81,10 +80,6 @@ type gpiochip_info struct {
 	lines uint32
 }
 
-func (ci *gpiochip_info) String() string {
-	return fmt.Sprintf("{\"Name\": \"%s\", \"Label\": \"%s\", \"Lines\": %d}", string(ci.name[:]), string(ci.label[:]), ci.lines)
-}
-
 type gpio_v2_line_attribute struct {
 	id      uint32
 	padding uint32
@@ -129,65 +124,6 @@ type gpio_v2_line_info struct {
 	flags     uint64
 	attrs     [_GPIO_V2_LINE_NUM_ATTRS_MAX]gpio_v2_line_attribute
 	padding   [4]uint32
-}
-
-func (li *gpio_v2_line_info) String() string {
-	FLAG_LIST := [...]uint64{
-		_GPIO_V2_LINE_FLAG_USED,
-		_GPIO_V2_LINE_FLAG_ACTIVE_LOW,
-		_GPIO_V2_LINE_FLAG_INPUT,
-		_GPIO_V2_LINE_FLAG_OUTPUT,
-		_GPIO_V2_LINE_FLAG_EDGE_RISING,
-		_GPIO_V2_LINE_FLAG_EDGE_FALLING,
-		_GPIO_V2_LINE_FLAG_OPEN_DRAIN,
-		_GPIO_V2_LINE_FLAG_OPEN_SOURCE,
-		_GPIO_V2_LINE_FLAG_BIAS_PULL_UP,
-		_GPIO_V2_LINE_FLAG_BIAS_PULL_DOWN,
-		_GPIO_V2_LINE_FLAG_BIAS_DISABLED,
-		_GPIO_V2_LINE_FLAG_EVENT_CLOCK_REALTIME,
-		_GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE,
-	}
-	FLAG_NAMES := [...][2]string{
-		{"USED", "UNUSED"},
-		{"ACTIVE_LOW", ""},
-		{"INPUT", ""},
-		{"OUTPUT", ""},
-		{"EDGE_RISING", ""},
-		{"EDGE_FALLING", ""},
-		{"OPEN_DRAIN", ""},
-		{"OPEN_SOURCE", ""},
-		{"PULL_UP", ""},
-		{"PULL_DOWN", ""},
-		{"BIAS DISABLED", ""},
-		{"EVENT_CLOCK_REALTIME", ""},
-		{"EVENT_CLOCK_HTE", ""},
-	}
-
-	name := string(li.name[:])
-	consumer := string(li.consumer[:])
-	attr_string := "["
-	for attr := 0; attr < int(li.num_attrs); attr++ {
-		attr_string = attr_string + fmt.Sprintf("{id: %x, value: %x},", li.attrs[attr].id, li.attrs[attr].value)
-	}
-	attr_string = attr_string + "]"
-	flag_str := ""
-	for i := range FLAG_LIST {
-
-		if li.flags&FLAG_LIST[i] == FLAG_LIST[i] {
-			flag_str += FLAG_NAMES[i][0] + " "
-		} else {
-			if len(FLAG_NAMES[i][1]) > 0 {
-				flag_str += FLAG_NAMES[i][1] + " "
-			}
-		}
-	}
-	return fmt.Sprintf("{\"Name\": \"%s\", \"Consumer\": \"%s\", \"Offset\": %d, \"# Attrs\": %d, \"Flags\": \"%s\" 0x%x, \"Attributes\": \"%s\"}",
-		name, consumer,
-		li.offset,
-		li.num_attrs,
-		flag_str,
-		li.flags,
-		attr_string)
 }
 
 type gpio_v2_line_event struct {
