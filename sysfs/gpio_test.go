@@ -204,7 +204,7 @@ func TestPin_readInt(t *testing.T) {
 }
 
 func TestGPIODriver(t *testing.T) {
-	if len((&driverGPIO{}).Prerequisites()) != 0 {
+	if len((&driverGPIO{}).Prerequisites()) != 1 {
 		t.Fatal("unexpected GPIO prerequisites")
 	}
 }
