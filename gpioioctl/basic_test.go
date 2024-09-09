@@ -12,7 +12,6 @@ import (
 	"log"
 	"testing"
 
-	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
 )
@@ -20,11 +19,8 @@ import (
 var testLine *GPIOLine
 
 func init() {
-	_, err := driverreg.Init()
-	if err != nil {
-		log.Println(err)
-	}
-
+	var err error
+	
 	if len(Chips) == 0 {
 		/*
 		   During pipeline builds, GPIOChips may not be available, or
