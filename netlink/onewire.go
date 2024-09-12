@@ -8,11 +8,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"log"
-	"os"
 	"sync"
-	"syscall"
-	"time"
 
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/onewire"
@@ -263,6 +259,12 @@ type socket interface {
 	close() error
 }
 
+// w1Socket is a netlink connector socket for communicating with the w1 Linux
+// kernel module.
+type w1Socket struct {
+	s socket
+}
+
 // newW1Socket returns a socket instance.
 func newW1Socket() (*w1Socket, error) {
 	// Open netlink socket.
@@ -271,7 +273,7 @@ func newW1Socket() (*w1Socket, error) {
 		return nil, fmt.Errorf("failed to open netlink socket: %v", err)
 	}
 
-	return &w1Socket{s: s, fd: s.fd}, nil
+	return &w1Socket{s: s}, nil
 }
 
 func (ws *w1Socket) sendAndRecv(seq uint32, m *w1Msg) ([]byte, error) {
@@ -466,18 +468,6 @@ func (d *driver1W) Init() (bool, error) {
 		return false, fmt.Errorf("netlink-onewire: failed to open socket: %v", err)
 	}
 	defer s.close()
-
-	// When run in pipelines, this blocks infinitely. Set a reasonable timeout.
-	// Since this package has no tests that will run in the pipeline, it will
-	// work out.
-	err = syscall.SetNonblock(s.fd, true)
-	if err != nil {
-		log.Println("set nonblock failed in onewire.init. error: ", err)
-		return false, err
-	}
-	socketFile := os.NewFile(uintptr(s.fd), "onewire-socket")
-	_ = socketFile.SetReadDeadline(time.Now().Add(2 * time.Second))
-	defer socketFile.Close()
 
 	// Find bus masters.
 	m := &w1Msg{typ: msgListMasters}

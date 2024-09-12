@@ -7,6 +7,5 @@ package host
 import (
 	// Make sure required drivers are registered.
 	_ "periph.io/x/host/v3/gpioioctl"
-	_ "periph.io/x/host/v3/netlink"
 	_ "periph.io/x/host/v3/sysfs"
 )
