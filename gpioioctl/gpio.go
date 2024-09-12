@@ -354,7 +354,7 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 	chip := GPIOChip{path: path}
 	f, err := os.OpenFile(path, os.O_RDONLY, 0400)
 	if err != nil {
-		err = fmt.Errorf("Opening GPIO Chip %s failed. Error: %w", path, err)
+		err = fmt.Errorf("opening gpio chip %s failed. error: %w", path, err)
 		log.Println(err)
 		return nil, err
 	}
@@ -365,7 +365,7 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 	err = ioctl_gpiochip_info(chip.fd, &info)
 	if err != nil {
 		log.Printf("newGPIOChip: %s\n", err)
-		return nil, fmt.Errorf("newGPIOChip %s: %w", path, err)
+		return nil, fmt.Errorf("newgpiochip %s: %w", path, err)
 	}
 
 	chip.name = strings.Trim(string(info.name[:]), "\x00")
@@ -453,7 +453,7 @@ func (chip *GPIOChip) LineSetFromConfig(config *LineSetConfig) (*LineSet, error)
 	for ix, name := range config.Lines {
 		gpioLine := chip.ByName(name)
 		if gpioLine == nil {
-			return nil, fmt.Errorf("Line %s not found in chip %s", name, chip.Name())
+			return nil, fmt.Errorf("line %s not found in chip %s", name, chip.Name())
 		}
 		lines[ix] = uint32(gpioLine.Number())
 	}

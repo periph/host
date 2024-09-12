@@ -49,7 +49,7 @@ type LineSetConfig struct {
 // added.
 func (cfg *LineSetConfig) AddOverrides(direction LineDir, edge gpio.Edge, pull gpio.Pull, lines ...string) error {
 	if len(cfg.Overrides) == _GPIO_V2_LINE_NUM_ATTRS_MAX {
-		return fmt.Errorf("A maximum of %d override entries can be configured.", _GPIO_V2_LINE_NUM_ATTRS_MAX)
+		return fmt.Errorf("a maximum of %d override entries can be configured", _GPIO_V2_LINE_NUM_ATTRS_MAX)
 	}
 	for _, l := range lines {
 		if cfg.getLineOffset(l) < 0 {
@@ -78,7 +78,7 @@ func (cfg *LineSetConfig) getLineSetRequestStruct(lineNumbers []uint32) *gpio_v2
 		lr.consumer[ix] = char
 	}
 	for ix, lineNumber := range lineNumbers {
-		lr.offsets[ix] = lineNumber
+		lr.setLineNumber(ix, lineNumber)
 	}
 	lr.num_lines = uint32(len(cfg.Lines))
 	lr.config.flags = getFlags(cfg.DefaultDirection, cfg.DefaultEdge, cfg.DefaultPull)
