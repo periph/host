@@ -1,3 +1,6 @@
+//go:build linux
+// +build linux
+
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.
@@ -9,8 +12,6 @@ package gpioioctl
 // Documentation for the ioctl() API is at:
 //
 // https://docs.kernel.org/userspace-api/gpio/index.html
-
-// +build linux
 
 import (
 	"errors"

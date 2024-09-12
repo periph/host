@@ -10,3 +10,5 @@ require (
 	periph.io/x/conn/v3 v3.7.1
 	periph.io/x/d2xx v0.1.1
 )
+
+replace periph.io/x/conn/v3 v3.7.1 => /home/ugroups/develop/GoLCDMonitor/periph.io/x/conn
