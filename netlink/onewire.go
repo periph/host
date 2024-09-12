@@ -468,7 +468,7 @@ func (d *driver1W) Init() (bool, error) {
 	defer s.close()
 
 	// When run in pipelines, this blocks infinitely. Set a reasonable timeout.
-	// Since this package has not tests that will run in the pipeline, it will
+	// Since this package has no tests that will run in the pipeline, it will
 	// work out.
 	err = syscall.SetNonblock(s.fd, true)
 	if err != nil {
