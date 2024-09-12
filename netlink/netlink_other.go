@@ -11,7 +11,9 @@ import "errors"
 
 const isLinux = false
 
-type connSocket struct{}
+type connSocket struct {
+	fd int
+}
 
 func newConnSocket() (*connSocket, error) {
 	return nil, errors.New("netlink sockets are not supported")
