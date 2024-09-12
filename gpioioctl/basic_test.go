@@ -6,6 +6,8 @@
 // periph.io/x/cmd/periph-smoketest/gpiosmoketest
 // folder.
 
+// +build linux
+
 package gpioioctl
 
 import (

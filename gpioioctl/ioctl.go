@@ -9,6 +9,9 @@ package gpioioctl
 // Documentation for the ioctl() API is at:
 //
 // https://docs.kernel.org/userspace-api/gpio/index.html
+
+// +build linux
+
 import (
 	"errors"
 	"syscall"
