@@ -263,13 +263,6 @@ type socket interface {
 	close() error
 }
 
-// w1Socket is a netlink connector socket for communicating with the w1 Linux
-// kernel module.
-type w1Socket struct {
-	s  socket
-	fd int
-}
-
 // newW1Socket returns a socket instance.
 func newW1Socket() (*w1Socket, error) {
 	// Open netlink socket.

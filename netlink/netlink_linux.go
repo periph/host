@@ -11,11 +11,6 @@ import (
 
 const isLinux = true
 
-// connSocket is a simple wrapper around a Linux netlink connector socket.
-type connSocket struct {
-	fd int
-}
-
 // newConnSocket returns a socket instance.
 func newConnSocket() (*connSocket, error) {
 	// Open netlink socket.
