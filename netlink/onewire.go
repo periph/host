@@ -463,6 +463,9 @@ func (d *driver1W) After() []string {
 }
 
 func (d *driver1W) Init() (bool, error) {
+	if !isOneWireAvailable() {
+		return false, errors.New("no onewire buses found")
+	}
 	s, err := newW1Socket()
 	if err != nil {
 		return false, fmt.Errorf("netlink-onewire: failed to open socket: %v", err)

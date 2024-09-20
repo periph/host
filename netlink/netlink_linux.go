@@ -6,6 +6,7 @@ package netlink
 
 import (
 	"fmt"
+	"path/filepath"
 	"syscall"
 )
 
@@ -51,4 +52,18 @@ func (s *connSocket) close() error {
 	fd := s.fd
 	s.fd = 0
 	return syscall.Close(fd)
+}
+
+// isOneWireAvailable checks to see if the Linux onewire bus drivers are loaded.
+// It does this by looking for entries in the /sys/bus pseudo-filesystem.
+//
+// On a Raspberry Pi SBC, the onewire bus is enabled by creating entries in the
+// kernel config.txt file which is located in /boot, or /boot/firmware depending
+// on OS/kernel levels.
+func isOneWireAvailable() bool {
+	items, err := filepath.Glob("/sys/bus/w1/devices/*")
+	if err != nil || len(items) == 0 {
+		return false
+	}
+	return true
 }

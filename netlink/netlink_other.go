@@ -28,3 +28,7 @@ func (*connSocket) recv(_ []byte) (int, error) {
 func (*connSocket) close() error {
 	return errors.New("not implemented")
 }
+
+func isOneWireAvailable() bool {
+	return false
+}
