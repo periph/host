@@ -591,25 +591,27 @@ func (d *driverGPIO) After() []string {
 //
 // https://docs.kernel.org/userspace-api/gpio/chardev.html
 func (d *driverGPIO) Init() (bool, error) {
-	items, err := filepath.Glob("/dev/gpiochip*")
-	if err != nil {
-		return true, err
-	}
-	if len(items) == 0 {
-		return false, errors.New("no GPIO chips found")
-	}
-	Chips = make([]*GPIOChip, 0)
-	for _, item := range items {
-		chip, err := newGPIOChip(item)
+	if runtime.GOOS == "linux" {
+		items, err := filepath.Glob("/dev/gpiochip*")
 		if err != nil {
-			log.Println("gpioioctl.driverGPIO.Init() Error", err)
-			return false, err
+			return true, err
 		}
-		Chips = append(Chips, chip)
-		for _, line := range chip.lines {
-			if len(line.name) > 0 && line.name != "_" && line.name != "-" {
-				if err = gpioreg.Register(line); err != nil {
-					log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
+		if len(items) == 0 {
+			return false, errors.New("no GPIO chips found")
+		}
+		Chips = make([]*GPIOChip, 0)
+		for _, item := range items {
+			chip, err := newGPIOChip(item)
+			if err != nil {
+				log.Println("gpioioctl.driverGPIO.Init() Error", err)
+				return false, err
+			}
+			Chips = append(Chips, chip)
+			for _, line := range chip.lines {
+				if len(line.name) > 0 && line.name != "_" && line.name != "-" {
+					if err = gpioreg.Register(line); err != nil {
+						log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
+					}
 				}
 			}
 		}
@@ -620,21 +622,18 @@ func (d *driverGPIO) Init() (bool, error) {
 var drvGPIO driverGPIO
 
 func init() {
-	if runtime.GOOS == "linux" {
-
-		// Init our consumer name. It's used when a line is requested, and
-		// allows utility programs like gpioinfo to find out who has a line
-		// open.
-		fname := path.Base(os.Args[0])
-		s := fmt.Sprintf("%s@%d", fname, os.Getpid())
-		charBytes := []byte(s)
-		if len(charBytes) >= _GPIO_MAX_NAME_SIZE {
-			charBytes = charBytes[:_GPIO_MAX_NAME_SIZE-1]
-		}
-		consumer = charBytes
-
-		driverreg.MustRegister(&drvGPIO)
+	// Init our consumer name. It's used when a line is requested, and
+	// allows utility programs like gpioinfo to find out who has a line
+	// open.
+	fname := path.Base(os.Args[0])
+	s := fmt.Sprintf("%s@%d", fname, os.Getpid())
+	charBytes := []byte(s)
+	if len(charBytes) >= _GPIO_MAX_NAME_SIZE {
+		charBytes = charBytes[:_GPIO_MAX_NAME_SIZE-1]
 	}
+	consumer = charBytes
+
+	driverreg.MustRegister(&drvGPIO)
 }
 
 // Ensure that Interfaces for these types are implemented fully.
