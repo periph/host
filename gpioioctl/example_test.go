@@ -1,5 +1,3 @@
-//go:build linux
-
 package gpioioctl_test
 
 // Copyright 2024 The Periph Authors. All rights reserved.
