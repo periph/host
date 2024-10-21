@@ -1,4 +1,4 @@
-//go:build !linux
+//go:build windows
 
 // Copyright 2024 The Periph Authors. All rights reserved.
 // Use of this source code is governed under the Apache License, Version 2.0
