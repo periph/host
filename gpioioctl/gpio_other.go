@@ -8,6 +8,10 @@
 
 package gpioioctl
 
+import (
+	"periph.io/x/conn/v3/gpio"
+)
+
 func init() {
 	if len(Chips) == 0 {
 		line := GPIOLine{
