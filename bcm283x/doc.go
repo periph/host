@@ -5,7 +5,7 @@
 // Package bcm283x exposes the BCM283x GPIO functionality.
 //
 // This driver implements memory-mapped GPIO pin manipulation and leverages
-// sysfs-gpio for edge detection.
+// ioctl-gpio for edge detection.
 //
 // If you are looking for the actual implementation, open doc.go for further
 // implementation details.
@@ -14,6 +14,10 @@
 //
 // Aliases for GPCLK0, GPCLK1, GPCLK2 are created for corresponding CLKn pins.
 // Same for PWM0_OUT and PWM1_OUT, which point respectively to PWM0 and PWM1.
+//
+// For multi-pin IO, you should prefer using the /host/gpioioctl/GPIOChip.LineSet() 
+// functionality. It's chipset agnostic because it uses the ioctl interfaces,
+// and it offers multi-pin WaitForEdge().                                                                                 
 //
 // # Datasheet
 //

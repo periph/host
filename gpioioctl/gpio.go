@@ -25,6 +25,7 @@ import (
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/pin"
 )
 
 // LineDir is the configured direction of a GPIOLine.
@@ -108,11 +109,6 @@ func (line *GPIOLine) Consumer() string {
 // DefaultPull - return gpio.PullNoChange. Reviewing the GPIO v2 Kernel IOCTL docs, this isn't possible.
 func (line *GPIOLine) DefaultPull() gpio.Pull {
 	return gpio.PullNoChange
-}
-
-// Deprecated: Use PinFunc.Func. Will be removed in v4.
-func (line *GPIOLine) Function() string {
-	return "deprecated"
 }
 
 // Halt interrupts a pending WaitForEdge() command.
@@ -299,6 +295,46 @@ func (line *GPIOLine) setLine(flags uint64) error {
 	var req gpio_v2_line_config
 	req.flags = flags
 	return ioctl_gpio_v2_line_config(uintptr(req_fd), &req)
+}
+
+// Deprecated: Use PinFunc.Func. Will be removed in v4. Function implements pin.Pin.
+func (line *GPIOLine) Function() string {
+	return string(line.Func())
+}
+
+// Func implements pin.PinFunc.
+func (line *GPIOLine) Func() pin.Func {
+	if line.direction == LineInput {
+		if line.Read() {
+			return gpio.IN_HIGH
+		}
+		return gpio.IN_LOW
+	} else if line.direction == LineOutput {
+		if line.Read() {
+			return gpio.OUT_HIGH
+		}
+		return gpio.OUT_LOW
+	}
+	return pin.FuncNone
+}
+
+// SupportedFuncs implements pin.PinFunc.
+func (line *GPIOLine) SupportedFuncs() []pin.Func {
+	return []pin.Func{gpio.IN, gpio.OUT}
+}
+
+// SetFunc implements pin.PinFunc.
+func (line *GPIOLine) SetFunc(f pin.Func) error {
+	switch f {
+	case gpio.IN:
+		return line.In(gpio.PullNoChange, gpio.NoEdge)
+	case gpio.OUT_HIGH:
+		return line.Out(gpio.High)
+	case gpio.OUT, gpio.OUT_LOW:
+		return line.Out(gpio.Low)
+	default:
+		return errors.New("unsupported function")
+	}
 }
 
 // A representation of a Linux GPIO Chip. A computer may have
@@ -608,3 +644,4 @@ func init() {
 var _ gpio.PinIO = &GPIOLine{}
 var _ gpio.PinIn = &GPIOLine{}
 var _ gpio.PinOut = &GPIOLine{}
+var _ pin.PinFunc = &GPIOLine{}
