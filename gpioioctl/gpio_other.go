@@ -10,6 +10,7 @@ package gpioioctl
 
 import (
 	"periph.io/x/conn/v3/gpio"
+	"periph.io/x/conn/v3/gpio/gpioreg"
 )
 
 func init() {
@@ -30,5 +31,11 @@ func init() {
 			lines:     []*GPIOLine{&line},
 		}
 		Chips = append(Chips, &chip)
+		Chips = append(Chips, &chip)
+		if err = gpioreg.Register(&line); err != nil {
+			nameStr := chip.Name()
+			lineStr := line.String()
+			log.Println("chip", nameStr, " gpioreg.Register(line) ", lineStr, " returned ", err)
+		}
 	}
 }
