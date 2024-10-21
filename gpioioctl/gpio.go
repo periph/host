@@ -1,5 +1,3 @@
-//go:build linux
-
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.
@@ -18,13 +16,13 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"periph.io/x/conn/v3/driver/driverreg"
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/gpio/gpioreg"
 	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/pin"
 )
 
 // LineDir is the configured direction of a GPIOLine.
@@ -88,7 +86,7 @@ func (line *GPIOLine) Close() {
 	if line.fEdge != nil {
 		_ = line.fEdge.Close()
 	} else if line.fd != 0 {
-		_ = syscall.Close(int(line.fd))
+		_ = syscall_close_wrapper(int(line.fd))
 	}
 	line.fd = 0
 	line.consumer = ""
@@ -108,11 +106,6 @@ func (line *GPIOLine) Consumer() string {
 // DefaultPull - return gpio.PullNoChange. Reviewing the GPIO v2 Kernel IOCTL docs, this isn't possible.
 func (line *GPIOLine) DefaultPull() gpio.Pull {
 	return gpio.PullNoChange
-}
-
-// Deprecated: Use PinFunc.Func. Will be removed in v4.
-func (line *GPIOLine) Function() string {
-	return "deprecated"
 }
 
 // Halt interrupts a pending WaitForEdge() command.
@@ -234,7 +227,7 @@ func (line *GPIOLine) WaitForEdge(timeout time.Duration) bool {
 	}
 	var err error
 	if line.fEdge == nil {
-		err = syscall.SetNonblock(int(line.fd), true)
+		err = syscall_nonblock_wrapper(int(line.fd), true)
 		if err != nil {
 			log.Println("WaitForEdge() SetNonblock(): ", err)
 			return false
@@ -299,6 +292,46 @@ func (line *GPIOLine) setLine(flags uint64) error {
 	var req gpio_v2_line_config
 	req.flags = flags
 	return ioctl_gpio_v2_line_config(uintptr(req_fd), &req)
+}
+
+// Deprecated: Use PinFunc.Func. Will be removed in v4. Function implements pin.Pin.
+func (line *GPIOLine) Function() string {
+	return string(line.Func())
+}
+
+// Func implements pin.PinFunc.
+func (line *GPIOLine) Func() pin.Func {
+	if line.direction == LineInput {
+		if line.Read() {
+			return gpio.IN_HIGH
+		}
+		return gpio.IN_LOW
+	} else if line.direction == LineOutput {
+		if line.Read() {
+			return gpio.OUT_HIGH
+		}
+		return gpio.OUT_LOW
+	}
+	return pin.FuncNone
+}
+
+// SupportedFuncs implements pin.PinFunc.
+func (line *GPIOLine) SupportedFuncs() []pin.Func {
+	return []pin.Func{gpio.IN, gpio.OUT}
+}
+
+// SetFunc implements pin.PinFunc.
+func (line *GPIOLine) SetFunc(f pin.Func) error {
+	switch f {
+	case gpio.IN:
+		return line.In(gpio.PullNoChange, gpio.NoEdge)
+	case gpio.OUT_HIGH:
+		return line.Out(gpio.High)
+	case gpio.OUT, gpio.OUT_LOW:
+		return line.Out(gpio.Low)
+	default:
+		return errors.New("unsupported function")
+	}
 }
 
 // A representation of a Linux GPIO Chip. A computer may have
@@ -397,7 +430,7 @@ func (chip *GPIOChip) Close() {
 	for _, lineset := range chip.lineSets {
 		_ = lineset.Close()
 	}
-	_ = syscall.Close(int(chip.fd))
+	_ = syscall_close_wrapper(int(chip.fd))
 }
 
 // ByName returns a GPIOLine for a specific name. If not
@@ -558,25 +591,27 @@ func (d *driverGPIO) After() []string {
 //
 // https://docs.kernel.org/userspace-api/gpio/chardev.html
 func (d *driverGPIO) Init() (bool, error) {
-	items, err := filepath.Glob("/dev/gpiochip*")
-	if err != nil {
-		return true, err
-	}
-	if len(items) == 0 {
-		return false, errors.New("no GPIO chips found")
-	}
-	Chips = make([]*GPIOChip, 0)
-	for _, item := range items {
-		chip, err := newGPIOChip(item)
+	if runtime.GOOS == "linux" {
+		items, err := filepath.Glob("/dev/gpiochip*")
 		if err != nil {
-			log.Println("gpioioctl.driverGPIO.Init() Error", err)
-			return false, err
+			return true, err
 		}
-		Chips = append(Chips, chip)
-		for _, line := range chip.lines {
-			if len(line.name) > 0 && line.name != "_" && line.name != "-" {
-				if err = gpioreg.Register(line); err != nil {
-					log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
+		if len(items) == 0 {
+			return false, errors.New("no GPIO chips found")
+		}
+		Chips = make([]*GPIOChip, 0)
+		for _, item := range items {
+			chip, err := newGPIOChip(item)
+			if err != nil {
+				log.Println("gpioioctl.driverGPIO.Init() Error", err)
+				return false, err
+			}
+			Chips = append(Chips, chip)
+			for _, line := range chip.lines {
+				if len(line.name) > 0 && line.name != "_" && line.name != "-" {
+					if err = gpioreg.Register(line); err != nil {
+						log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
+					}
 				}
 			}
 		}
@@ -587,24 +622,22 @@ func (d *driverGPIO) Init() (bool, error) {
 var drvGPIO driverGPIO
 
 func init() {
-	if runtime.GOOS == "linux" {
-
-		// Init our consumer name. It's used when a line is requested, and
-		// allows utility programs like gpioinfo to find out who has a line
-		// open.
-		fname := path.Base(os.Args[0])
-		s := fmt.Sprintf("%s@%d", fname, os.Getpid())
-		charBytes := []byte(s)
-		if len(charBytes) >= _GPIO_MAX_NAME_SIZE {
-			charBytes = charBytes[:_GPIO_MAX_NAME_SIZE-1]
-		}
-		consumer = charBytes
-
-		driverreg.MustRegister(&drvGPIO)
+	// Init our consumer name. It's used when a line is requested, and
+	// allows utility programs like gpioinfo to find out who has a line
+	// open.
+	fname := path.Base(os.Args[0])
+	s := fmt.Sprintf("%s@%d", fname, os.Getpid())
+	charBytes := []byte(s)
+	if len(charBytes) >= _GPIO_MAX_NAME_SIZE {
+		charBytes = charBytes[:_GPIO_MAX_NAME_SIZE-1]
 	}
+	consumer = charBytes
+
+	driverreg.MustRegister(&drvGPIO)
 }
 
 // Ensure that Interfaces for these types are implemented fully.
 var _ gpio.PinIO = &GPIOLine{}
 var _ gpio.PinIn = &GPIOLine{}
 var _ gpio.PinOut = &GPIOLine{}
+var _ pin.PinFunc = &GPIOLine{}

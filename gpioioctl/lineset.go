@@ -1,5 +1,3 @@
-//go:build linux
-
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.
@@ -14,7 +12,6 @@ import (
 	"log"
 	"os"
 	"sync"
-	"syscall"
 	"time"
 
 	"periph.io/x/conn/v3/gpio"
@@ -131,7 +128,7 @@ func (ls *LineSet) Close() error {
 	if ls.fEdge != nil {
 		err = ls.fEdge.Close()
 	} else if ls.fd != 0 {
-		err = syscall.Close(int(ls.fd))
+		err = syscall_close_wrapper(int(ls.fd))
 	}
 	ls.fd = 0
 	ls.fEdge = nil
@@ -223,7 +220,7 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number uint32, edge gpio.
 	number = 0
 	edge = gpio.NoEdge
 	if ls.fEdge == nil {
-		err = syscall.SetNonblock(int(ls.fd), true)
+		err = syscall_nonblock_wrapper(int(ls.fd), true)
 		if err != nil {
 			err = fmt.Errorf("WaitForEdge() - SetNonblock: %w", err)
 			return

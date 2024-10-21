@@ -19,6 +19,7 @@ import (
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/host/v3/distro"
+	"periph.io/x/host/v3/gpioioctl"
 	"periph.io/x/host/v3/pmem"
 	"periph.io/x/host/v3/sysfs"
 	"periph.io/x/host/v3/videocore"
@@ -185,7 +186,7 @@ func PinsSetup28To45(drive physic.ElectricCurrent, slewLimit, hysteresis bool) e
 	return nil
 }
 
-// Pin is a GPIO number (GPIOnn) on BCM238(5|6|7).
+// Pin is a GPIO number (GPIOnn) on BCM283(5|6|7).
 //
 // Pin implements gpio.PinIO.
 type Pin struct {
@@ -195,7 +196,7 @@ type Pin struct {
 	defaultPull gpio.Pull // Default pull at system boot, as per datasheet.
 
 	// Immutable after driver initialization.
-	sysfsPin *sysfs.Pin // Set to the corresponding sysfs.Pin, if any.
+	ioctlPin *gpioioctl.GPIOLine // Set to the corresponding gpioioctl.GPIOLine, if any.
 
 	// Mutable.
 	usingEdge  bool           // Set when edge detection is enabled.
@@ -217,7 +218,7 @@ func (p *Pin) String() string {
 // disabled.
 func (p *Pin) Halt() error {
 	if p.usingEdge {
-		if err := p.sysfsPin.Halt(); err != nil {
+		if err := p.ioctlPin.Halt(); err != nil {
 			return p.wrap(err)
 		}
 		p.usingEdge = false
@@ -245,10 +246,10 @@ func (p *Pin) Function() string {
 // Func implements pin.PinFunc.
 func (p *Pin) Func() pin.Func {
 	if drvGPIO.gpioMemory == nil {
-		if p.sysfsPin == nil {
+		if p.ioctlPin == nil {
 			return pin.FuncNone
 		}
-		return p.sysfsPin.Func()
+		return p.ioctlPin.Func()
 	}
 	switch f := p.function(); f {
 	case in:
@@ -311,10 +312,10 @@ func (p *Pin) SupportedFuncs() []pin.Func {
 // SetFunc implements pin.PinFunc.
 func (p *Pin) SetFunc(f pin.Func) error {
 	if drvGPIO.gpioMemory == nil {
-		if p.sysfsPin == nil {
-			return p.wrap(errors.New("subsystem gpiomem not initialized and sysfs not accessible"))
+		if p.ioctlPin == nil {
+			return p.wrap(errors.New("subsystem gpiomem not initialized and gpioioctl not accessible"))
 		}
-		return p.sysfsPin.SetFunc(f)
+		return p.ioctlPin.SetFunc(f)
 	}
 	switch f {
 	case gpio.FLOAT:
@@ -369,29 +370,17 @@ func (p *Pin) SetFunc(f pin.Func) error {
 // possible to 'read back' what value was specified for each pin.
 //
 // Will fail if requesting to change a pin that is set to special functionality.
-//
-// Using edge detection requires opening a gpio sysfs file handle. On Raspbian,
-// make sure the user is member of group 'gpio'. The pin will be exported at
-// /sys/class/gpio/gpio*/. Note that the pin will not be unexported at
-// shutdown.
-//
-// For edge detection, the processor samples the input at its CPU clock rate
-// and looks for '011' to rising and '100' for falling detection to avoid
-// glitches. Because gpio sysfs is used, the latency is unpredictable.
 func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 	if p.usingEdge && edge == gpio.NoEdge {
-		if err := p.sysfsPin.Halt(); err != nil {
+		if err := p.ioctlPin.Halt(); err != nil {
 			return p.wrap(err)
 		}
 	}
 	if drvGPIO.gpioMemory == nil {
-		if p.sysfsPin == nil {
-			return p.wrap(errors.New("subsystem gpiomem not initialized and sysfs not accessible"))
+		if p.ioctlPin == nil {
+			return p.wrap(errors.New("subsystem gpiomem not initialized and gpioioctl not accessible"))
 		}
-		if pull != gpio.PullNoChange {
-			return p.wrap(errors.New("pull cannot be used when subsystem gpiomem not initialized"))
-		}
-		if err := p.sysfsPin.In(pull, edge); err != nil {
+		if err := p.ioctlPin.In(pull, edge); err != nil {
 			return p.wrap(err)
 		}
 		p.usingEdge = edge != gpio.NoEdge
@@ -457,11 +446,11 @@ func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 		}
 	}
 	if edge != gpio.NoEdge {
-		if p.sysfsPin == nil {
-			return p.wrap(fmt.Errorf("pin %d is not exported by sysfs", p.number))
+		if p.ioctlPin == nil {
+			return p.wrap(fmt.Errorf("pin %d is not exported by gpioioctl", p.number))
 		}
 		// This resets pending edges.
-		if err := p.sysfsPin.In(gpio.PullNoChange, edge); err != nil {
+		if err := p.ioctlPin.In(gpio.PullNoChange, edge); err != nil {
 			return p.wrap(err)
 		}
 		p.usingEdge = true
@@ -474,10 +463,10 @@ func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
 // This function is fast. It works even if the pin is set as output.
 func (p *Pin) Read() gpio.Level {
 	if drvGPIO.gpioMemory == nil {
-		if p.sysfsPin == nil {
+		if p.ioctlPin == nil {
 			return gpio.Low
 		}
-		return p.sysfsPin.Read()
+		return p.ioctlPin.Read()
 	}
 	if p.number < 32 {
 		// Important: do not remove the &31 here even if not necessary. Testing
@@ -501,8 +490,8 @@ func (p *Pin) FastRead() gpio.Level {
 
 // WaitForEdge implements gpio.PinIn.
 func (p *Pin) WaitForEdge(timeout time.Duration) bool {
-	if p.sysfsPin != nil {
-		return p.sysfsPin.WaitForEdge(timeout)
+	if p.ioctlPin != nil {
+		return p.ioctlPin.WaitForEdge(timeout)
 	}
 	return false
 }
@@ -512,7 +501,7 @@ func (p *Pin) WaitForEdge(timeout time.Duration) bool {
 // bcm2711/bcm2838 support querying the pull resistor of all GPIO pins. Prior
 // to it, bcm283x doesn't support querying the pull resistor of any GPIO pin.
 func (p *Pin) Pull() gpio.Pull {
-	// sysfs does not have the capability to read pull resistor.
+	// gpioioctl does not have the capability to read pull resistor.
 	if drvGPIO.gpioMemory != nil {
 		if drvGPIO.useLegacyPull {
 			// TODO(maruel): The best that could be added is to cache the last set value
@@ -545,10 +534,10 @@ func (p *Pin) DefaultPull() gpio.Pull {
 // Fails if requesting to change a pin that is set to special functionality.
 func (p *Pin) Out(l gpio.Level) error {
 	if drvGPIO.gpioMemory == nil {
-		if p.sysfsPin == nil {
-			return p.wrap(errors.New("subsystem gpiomem not initialized and sysfs not accessible"))
+		if p.ioctlPin == nil {
+			return p.wrap(errors.New("subsystem gpiomem not initialized and gpioioctl not accessible"))
 		}
-		return p.sysfsPin.Out(l)
+		return p.ioctlPin.Out(l)
 	}
 	// TODO(maruel): This function call is very costly.
 	if err := p.Halt(); err != nil {
@@ -973,7 +962,7 @@ var cpuPins = []Pin{
 // Mapping may be overridden during driverGPIO.Init().
 var mapping = mapping283x
 
-// BCM238x specific alternate function mapping (the default).
+// BCM283x specific alternate function mapping (the default).
 var mapping283x = [][6]pin.Func{
 	{"I2C0_SDA"}, // 0
 	{"I2C0_SCL"},
@@ -1331,16 +1320,19 @@ func (d *driverGPIO) String() string {
 }
 
 func (d *driverGPIO) Prerequisites() []string {
-	return nil
+	return []string{"ioctl-gpio"}
 }
 
 func (d *driverGPIO) After() []string {
-	return []string{"sysfs-gpio"}
+	return nil
 }
 
 func (d *driverGPIO) Init() (bool, error) {
 	if !Present() {
 		return false, errors.New("bcm283x CPU not detected")
+	}
+	if len(gpioioctl.Chips) == 0 {
+		return false, errors.New("gpioioctl not initialized")
 	}
 	// It's kind of messy, some report bcm283x while others show bcm27xx.
 	// Let's play safe here.
@@ -1381,17 +1373,18 @@ func (d *driverGPIO) Init() (bool, error) {
 	d.gpioBaseAddr = d.baseAddr + 0x200000
 
 	// Mark the right pins as available even if the memory map fails so they can
-	// callback to sysfs.Pins.
+	// callback to gpioioctl.Pins.
 	functions := map[pin.Func]struct{}{}
+	lines := gpioioctl.Chips[0].Lines()
 	for i := range cpuPins {
 		name := cpuPins[i].name
 		num := strconv.Itoa(cpuPins[i].number)
 
-		// Initializes the sysfs corresponding pin right away.
-		cpuPins[i].sysfsPin = sysfs.Pins[cpuPins[i].number]
+		// Initializes the ioctl corresponding pin right away.
+		cpuPins[i].ioctlPin = lines[cpuPins[i].number]
 
-		// Unregister the pin if already registered. This happens with sysfs-gpio.
-		// Do not error on it, since sysfs-gpio may have failed to load.
+		// Unregister the pin if already registered. This happens with ioctl-gpio.
+		// Do not error on it, since ioctl-gpio may have failed to load.
 		_ = gpioreg.Unregister(name)
 		_ = gpioreg.Unregister(num)
 

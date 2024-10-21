@@ -15,6 +15,7 @@ import (
 	"periph.io/x/conn/v3/pin"
 	"periph.io/x/conn/v3/spi"
 	"periph.io/x/conn/v3/uart"
+	_ "periph.io/x/host/v3/gpioioctl"
 	"periph.io/x/host/v3/pmem"
 	"periph.io/x/host/v3/videocore"
 )
@@ -315,7 +316,7 @@ func TestDriver(t *testing.T) {
 	if s := drvGPIO.String(); s != "bcm283x-gpio" {
 		t.Fatal(s)
 	}
-	if s := drvGPIO.Prerequisites(); s != nil {
+	if s := drvGPIO.Prerequisites(); s == nil {
 		t.Fatal(s)
 	}
 	// It will fail to initialize on non-bcm.
