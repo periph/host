@@ -10,6 +10,15 @@ package gpioioctl
 
 func init() {
 	if len(Chips) == 0 {
+		line := GPIOLine{
+			number:    0,
+			name:      "DummyGPIOLine",
+			consumer:  "",
+			edge:      gpio.NoEdge,
+			pull:      gpio.PullNoChange,
+			direction: LineDirNotSet,
+		}
+
 		chip := GPIOChip{name: "DummyGPIOChip",
 			path:      "/dev/gpiochipdummy",
 			label:     "Dummy GPIOChip for Testing Purposes",
