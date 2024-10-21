@@ -22,11 +22,7 @@ func init() {
 	var err error
 
 	if len(Chips) == 0 {
-		/*
-		   During pipeline builds, GPIOChips may not be available, or
-		   it may build on another OS. In that case, mock in enough
-		   for a test to pass.
-		*/
+		makeDummyChip()
 		line := GPIOLine{
 			number:    0,
 			name:      "DummyGPIOLine",
