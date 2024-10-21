@@ -15,9 +15,9 @@
 // Aliases for GPCLK0, GPCLK1, GPCLK2 are created for corresponding CLKn pins.
 // Same for PWM0_OUT and PWM1_OUT, which point respectively to PWM0 and PWM1.
 //
-// For multi-pin IO, you should prefer using the /host/gpioioctl/GPIOChip.LineSet() 
+// For multi-pin IO, you should prefer using the /host/gpioioctl/GPIOChip.LineSet()
 // functionality. It's chipset agnostic because it uses the ioctl interfaces,
-// and it offers multi-pin WaitForEdge().                                                                                 
+// and it offers multi-pin WaitForEdge().
 //
 // # Datasheet
 //

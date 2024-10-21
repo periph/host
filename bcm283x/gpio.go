@@ -1332,7 +1332,7 @@ func (d *driverGPIO) Init() (bool, error) {
 		return false, errors.New("bcm283x CPU not detected")
 	}
 	if len(gpioioctl.Chips) == 0 {
-		return false, errors.New("gpioioctl not initialized.")
+		return false, errors.New("gpioioctl not initialized")
 	}
 	// It's kind of messy, some report bcm283x while others show bcm27xx.
 	// Let's play safe here.
