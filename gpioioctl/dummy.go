@@ -36,7 +36,6 @@ func makeDummyChip() {
 		lines:     []*GPIOLine{&line},
 	}
 	Chips = append(Chips, &chip)
-	Chips = append(Chips, &chip)
 	if err := gpioreg.Register(&line); err != nil {
 		nameStr := chip.Name()
 		lineStr := line.String()
