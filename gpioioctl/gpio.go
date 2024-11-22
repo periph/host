@@ -608,8 +608,9 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 	// First, get all of the chips on the system.
 	chips := make([]*GPIOChip, 0)
+	var chip *GPIOChip
 	for _, item := range items {
-		chip, err := newGPIOChip(item)
+		chip, err = newGPIOChip(item)
 		if err == nil {
 			chips = append(chips, chip)
 		} else {
