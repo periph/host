@@ -595,7 +595,6 @@ func (d *driverGPIO) After() []string {
 //
 // https://docs.kernel.org/userspace-api/gpio/chardev.html
 func (d *driverGPIO) Init() (bool, error) {
-	Chips = make([]*GPIOChip, 0)
 	if runtime.GOOS != "linux" {
 		return true, nil
 	}
@@ -607,7 +606,7 @@ func (d *driverGPIO) Init() (bool, error) {
 		return false, errors.New("no GPIO chips found")
 	}
 	// First, get all of the chips on the system.
-	chips := make([]*GPIOChip, 0)
+	var chips []*GPIOChip
 	var chip *GPIOChip
 	for _, item := range items {
 		chip, err = newGPIOChip(item)
@@ -623,24 +622,22 @@ func (d *driverGPIO) Init() (bool, error) {
 	sort.Slice(chips, func(i, j int) bool {
 		I := chips[i]
 		J := chips[j]
-		if I.Label()[:8] == "pinctrl-" {
-			if J.Label()[:8] == "pinctrl-" {
+		if strings.HasPrefix(I.Label(), "pinctrl-") {
+			if strings.HasPrefix(J.Label(), "pinctrl-") {
 				return I.Label() < J.Label()
-			} else {
-				return true
 			}
-		} else if J.Label()[:8] == "pinctrl-" {
+			return true
+		} else if strings.HasPrefix(J.Label(), "pinctrl-") {
 			return false
-		} else {
-			return I.Label() < J.Label()
 		}
+		return I.Label() < J.Label()
 	})
 
-	mName := make(map[string]bool, 0)
+	mName := make(map[string]struct{})
 	// Get a list of already registered GPIO Line names.
-	registeredPins := make(map[string]bool)
+	registeredPins := make(map[string]struct{})
 	for _, pin := range gpioreg.All() {
-		registeredPins[pin.Name()] = true
+		registeredPins[pin.Name()] = struct{}{}
 	}
 
 	// Now, iterate over the chips we found and add their lines to conn/gpio/gpioreg
@@ -649,7 +646,7 @@ func (d *driverGPIO) Init() (bool, error) {
 		// ensures we don't duplicate the chip.
 		if _, found := mName[chip.Name()]; !found {
 			Chips = append(Chips, chip)
-			mName[chip.Name()] = true
+			mName[chip.Name()] = struct{}{}
 			// Now, iterate over the lines on this chip.
 			for _, line := range chip.lines {
 				// If the line has some sort of reasonable name...
@@ -665,7 +662,7 @@ func (d *driverGPIO) Init() (bool, error) {
 							continue
 						}
 					}
-					registeredPins[line.Name()] = true
+					registeredPins[line.Name()] = struct{}{}
 					if err = gpioreg.Register(line); err != nil {
 						log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
 					}
