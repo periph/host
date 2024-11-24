@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -402,6 +403,9 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 
 	chip.name = strings.Trim(string(info.name[:]), "\x00")
 	chip.label = strings.Trim(string(info.label[:]), "\x00")
+	if len(chip.label) == 0 {
+		chip.label = chip.name
+	}
 	chip.lineCount = int(info.lines)
 	var line_info gpio_v2_line_info
 	for line := 0; line < int(info.lines); line++ {
@@ -591,24 +595,74 @@ func (d *driverGPIO) After() []string {
 //
 // https://docs.kernel.org/userspace-api/gpio/chardev.html
 func (d *driverGPIO) Init() (bool, error) {
-	if runtime.GOOS == "linux" {
-		items, err := filepath.Glob("/dev/gpiochip*")
-		if err != nil {
-			return true, err
+	if runtime.GOOS != "linux" {
+		return true, nil
+	}
+	items, err := filepath.Glob("/dev/gpiochip*")
+	if err != nil {
+		return true, fmt.Errorf("gpioioctl: %w", err)
+	}
+	if len(items) == 0 {
+		return false, errors.New("no GPIO chips found")
+	}
+	// First, get all of the chips on the system.
+	var chips []*GPIOChip
+	var chip *GPIOChip
+	for _, item := range items {
+		chip, err = newGPIOChip(item)
+		if err == nil {
+			chips = append(chips, chip)
+		} else {
+			log.Println("gpioioctl.driverGPIO.Init() Error", err)
 		}
-		if len(items) == 0 {
-			return false, errors.New("no GPIO chips found")
-		}
-		Chips = make([]*GPIOChip, 0)
-		for _, item := range items {
-			chip, err := newGPIOChip(item)
-			if err != nil {
-				log.Println("gpioioctl.driverGPIO.Init() Error", err)
-				return false, err
+	}
+	// Now, sort the chips so that those labeled with pinctrl- ( a Pi kernel standard)
+	// come first. Otherwise, sort them by label. This _should_ protect us from any
+	// random changes in chip naming/ordering.
+	sort.Slice(chips, func(i, j int) bool {
+		I := chips[i]
+		J := chips[j]
+		if strings.HasPrefix(I.Label(), "pinctrl-") {
+			if strings.HasPrefix(J.Label(), "pinctrl-") {
+				return I.Label() < J.Label()
 			}
+			return true
+		} else if strings.HasPrefix(J.Label(), "pinctrl-") {
+			return false
+		}
+		return I.Label() < J.Label()
+	})
+
+	mName := make(map[string]struct{})
+	// Get a list of already registered GPIO Line names.
+	registeredPins := make(map[string]struct{})
+	for _, pin := range gpioreg.All() {
+		registeredPins[pin.Name()] = struct{}{}
+	}
+
+	// Now, iterate over the chips we found and add their lines to conn/gpio/gpioreg
+	for _, chip := range chips {
+		// On a pi, gpiochip0 is also symlinked to gpiochip4, checking the map
+		// ensures we don't duplicate the chip.
+		if _, found := mName[chip.Name()]; !found {
 			Chips = append(Chips, chip)
+			mName[chip.Name()] = struct{}{}
+			// Now, iterate over the lines on this chip.
 			for _, line := range chip.lines {
+				// If the line has some sort of reasonable name...
 				if len(line.name) > 0 && line.name != "_" && line.name != "-" {
+					// See if the name is already registered. On the Pi5, there are at
+					// least two chips that export "2712_WAKE" as the line name.
+					if _, ok := registeredPins[line.Name()]; ok {
+						// This is a duplicate name. Prefix the line name with the
+						// chip name.
+						line.name = chip.Name() + "-" + line.Name()
+						if _, found := registeredPins[line.Name()]; found {
+							// It's still not unique. Skip it.
+							continue
+						}
+					}
+					registeredPins[line.Name()] = struct{}{}
 					if err = gpioreg.Register(line); err != nil {
 						log.Println("chip", chip.Name(), " gpioreg.Register(line) ", line, " returned ", err)
 					}
@@ -616,7 +670,7 @@ func (d *driverGPIO) Init() (bool, error) {
 			}
 		}
 	}
-	return true, nil
+	return len(Chips) > 0, nil
 }
 
 var drvGPIO driverGPIO
