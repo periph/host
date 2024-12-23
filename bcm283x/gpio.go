@@ -1338,21 +1338,24 @@ func (d *driverGPIO) Init() (bool, error) {
 	// Let's play safe here.
 	dTCompatible := strings.Join(distro.DTCompatible(), " ")
 	// Reference: https://www.raspberrypi.org/documentation/hardware/raspberrypi/peripheral_addresses.md
-	if strings.Contains(dTCompatible, "bcm2708") ||
-		strings.Contains(dTCompatible, "bcm2835") {
+	switch {
+	case strings.Contains(dTCompatible, "bcm2708"), strings.Contains(dTCompatible, "bcm2835"):
 		// RPi0/1.
 		d.baseAddr = 0x20000000
 		d.dramBus = 0x40000000
 		d.useLegacyPull = true
-	} else if strings.Contains(dTCompatible, "bcm2709") ||
-		strings.Contains(dTCompatible, "bcm2836") ||
-		strings.Contains(dTCompatible, "bcm2710") ||
-		strings.Contains(dTCompatible, "bcm2837") {
+	case strings.Contains(dTCompatible, "bcm2709"), strings.Contains(dTCompatible, "bcm2836"), strings.Contains(dTCompatible, "bcm2710"), strings.Contains(dTCompatible, "bcm2837"):
 		// RPi2+
 		d.baseAddr = 0x3F000000
 		d.dramBus = 0xC0000000
 		d.useLegacyPull = true
-	} else {
+	case strings.Contains(dTCompatible, "bcm2712"):
+		// RPi5
+		d.baseAddr = 0xFE000000
+		d.dramBus = 0xC0000000
+		d.useLegacyPull = false
+		mapping = mapping2711
+	default:
 		// RPi4B+
 		d.baseAddr = 0xFE000000
 		d.dramBus = 0xC0000000
@@ -1370,6 +1373,7 @@ func (d *driverGPIO) Init() (bool, error) {
 	// virtual address space starting at address 0xF2000000. Thus a peripheral
 	// advertised here at bus address 0x7Ennnnnn is available in the ARM kenel at
 	// virtual address 0xF2nnnnnn.
+
 	d.gpioBaseAddr = d.baseAddr + 0x200000
 
 	// Mark the right pins as available even if the memory map fails so they can
