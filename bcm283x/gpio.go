@@ -1350,7 +1350,7 @@ func (d *driverGPIO) Init() (bool, error) {
 		d.dramBus = 0xC0000000
 		d.useLegacyPull = true
 	case strings.Contains(dTCompatible, "bcm2712"):
-		// RPi5
+		// RPi5 -- https://github.com/WiringPi/WiringPi/blob/master/wiringPi/wiringPi.c doesn't look optimistic
 		d.baseAddr = 0xFE000000
 		d.dramBus = 0xC0000000
 		d.useLegacyPull = false
