@@ -14,7 +14,7 @@ func ExampleMapAsPOD() {
 	// Let's say the CPU has 4 x 32 bits memory mapped registers at the address
 	// 0xDEADBEEF.
 	var reg *[4]uint32
-	if err := pmem.MapAsPOD(0xDEADBEAF, reg); err != nil {
+	if err := pmem.MapAsPOD(0xDEADBEAF, &reg); err != nil {
 		log.Fatal(err)
 	}
 	// reg now points to physical memory.
