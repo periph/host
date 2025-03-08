@@ -147,11 +147,10 @@ func (ls *LineSet) Lines() []*LineSetLine {
 	return ls.lines
 }
 
-func (ls *LineSet) Pins() []*pin.Pin {
-	pins := make([]*pin.Pin, len(ls.lines))
+func (ls *LineSet) Pins() []pin.Pin {
+	pins := make([]pin.Pin, len(ls.lines))
 	for ix, l := range ls.lines {
-		var p pin.Pin = l
-		pins[ix] = &p
+		pins[ix] = l
 	}
 	return pins
 }
