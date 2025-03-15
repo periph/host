@@ -47,8 +47,8 @@ func testRotary(chip *gpioioctl.GPIOChip, stateLine, dataLine, buttonLine string
 		log.Fatal(err)
 	}
 	defer ls.Close()
-	statePinNumber := uint32(ls.ByOffset(0).Number())
-	buttonPinNumber := uint32(ls.ByOffset(2).Number())
+	statePinNumber := ls.ByOffset(0).Number()
+	buttonPinNumber := ls.ByOffset(2).Number()
 
 	var tLast = time.Now().Add(-1 * time.Second)
 	var halting bool
@@ -68,7 +68,7 @@ func testRotary(chip *gpioioctl.GPIOChip, stateLine, dataLine, buttonLine string
 			}
 			tLast = tNow
 			if lineNumber == statePinNumber {
-				var bits uint64
+				var bits gpio.GPIOValue
 				tDeadline := tNow.UnixNano() + 20_000_000
 				var consecutive uint64
 				for time.Now().UnixNano() < tDeadline {

@@ -11,11 +11,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync"
-	"time"
-
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/physic"
+	"periph.io/x/conn/v3/pin"
+	"sync"
+	"time"
 )
 
 // LineConfigOverride is an override for a LineSet configuration.
@@ -147,6 +147,14 @@ func (ls *LineSet) Lines() []*LineSetLine {
 	return ls.lines
 }
 
+func (ls *LineSet) Pins() []pin.Pin {
+	pins := make([]pin.Pin, len(ls.lines))
+	for ix, l := range ls.lines {
+		pins[ix] = l
+	}
+	return pins
+}
+
 // Interrupt any calls to WaitForEdge().
 func (ls *LineSet) Halt() error {
 	if ls.fEdge != nil {
@@ -163,33 +171,33 @@ func (ls *LineSet) Halt() error {
 // bits is the values for each line in the bit set.
 //
 // mask is a bitmask indicating which bits should be applied.
-func (ls *LineSet) Out(bits, mask uint64) error {
+func (ls *LineSet) Out(bits, mask gpio.GPIOValue) error {
 	ls.mu.Lock()
 	defer ls.mu.Unlock()
 	var data gpio_v2_line_values
-	data.bits = bits
+	data.bits = uint64(bits)
 	if mask == 0 {
 		mask = (1 << ls.LineCount()) - 1
 	}
-	data.mask = mask
+	data.mask = uint64(mask)
 	return ioctl_set_gpio_v2_line_values(uintptr(ls.fd), &data)
 }
 
 // Read the pins in this LineSet. This is done as one syscall to the
 // operating system and will be very fast. mask is a bitmask of set pins
 // to read. If 0, then all pins are read.
-func (ls *LineSet) Read(mask uint64) (uint64, error) {
+func (ls *LineSet) Read(mask gpio.GPIOValue) (gpio.GPIOValue, error) {
 	ls.mu.Lock()
 	defer ls.mu.Unlock()
 	if mask == 0 {
 		mask = (1 << ls.LineCount()) - 1
 	}
 	var lvalues gpio_v2_line_values
-	lvalues.mask = mask
+	lvalues.mask = uint64(mask)
 	if err := ioctl_get_gpio_v2_line_values(uintptr(ls.fd), &lvalues); err != nil {
 		return 0, err
 	}
-	return lvalues.bits, nil
+	return gpio.GPIOValue(lvalues.bits), nil
 }
 
 func (ls *LineSet) MarshalJSON() ([]byte, error) {
@@ -216,7 +224,7 @@ func (ls *LineSet) String() string {
 // then the edge returned will be gpio.NoEdge
 //
 // err - Error value if any.
-func (ls *LineSet) WaitForEdge(timeout time.Duration) (number uint32, edge gpio.Edge, err error) {
+func (ls *LineSet) WaitForEdge(timeout time.Duration) (number int, edge gpio.Edge, err error) {
 	number = 0
 	edge = gpio.NoEdge
 	if ls.fEdge == nil {
@@ -248,21 +256,28 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number uint32, edge gpio.
 	} else if event.Id == _GPIO_V2_LINE_EVENT_FALLING_EDGE {
 		edge = gpio.FallingEdge
 	}
-	number = uint32(event.Offset)
+	number = int(event.Offset)
 	return
 }
 
-// ByOffset returns a line by it's offset in the LineSet.
-func (ls *LineSet) ByOffset(offset int) *LineSetLine {
+// ByOffset returns a line by it's offset in the LineSet.  See ByName() for an
+// example that casts the return value to a LineSetLine
+func (ls *LineSet) ByOffset(offset int) pin.Pin {
 	if offset < 0 || offset >= len(ls.lines) {
 		return nil
 	}
 	return ls.lines[offset]
 }
 
-// ByName returns a Line by name from the LineSet.
-func (ls *LineSet) ByName(name string) *LineSetLine {
-
+// ByName returns a Line by name from the LineSet. To cast the returned value
+// to a LineSet line, use:
+//
+//	var lsl *gpioioctl.LineSetLine
+//	lsl, ok := ls.ByNumber(line0.Number()).(*gpioioctl.LineSetLine)
+//	if !ok {
+//	  log.Fatal("error converting to LineSetLine")
+//	}
+func (ls *LineSet) ByName(name string) pin.Pin {
 	for _, line := range ls.lines {
 		if line.Name() == name {
 			return line
@@ -272,8 +287,9 @@ func (ls *LineSet) ByName(name string) *LineSetLine {
 }
 
 // LineNumber Return a line from the LineSet via it's GPIO line
-// number.
-func (ls *LineSet) ByNumber(number int) *LineSetLine {
+// number. See ByName() for an example that casts the return value to a
+// LineSetLine
+func (ls *LineSet) ByNumber(number int) pin.Pin {
 	for _, line := range ls.lines {
 		if line.Number() == number {
 			return line
@@ -325,7 +341,7 @@ func (lsl *LineSetLine) Edge() gpio.Edge {
 
 // Out writes to this specific GPIO line.
 func (lsl *LineSetLine) Out(l gpio.Level) error {
-	var mask, bits uint64
+	var mask, bits gpio.GPIOValue
 	mask = 1 << lsl.offset
 	if l {
 		bits |= mask
@@ -353,7 +369,7 @@ func (lsl *LineSetLine) In(pull gpio.Pull, edge gpio.Edge) error {
 
 // Read returns the value of this specific line.
 func (lsl *LineSetLine) Read() gpio.Level {
-	var mask uint64 = 1 << lsl.offset
+	var mask gpio.GPIOValue = 1 << lsl.offset
 	bits, err := lsl.parent.Read(mask)
 	if err != nil {
 		log.Printf("LineSetLine.Read() Error reading line %d. Error: %s\n", lsl.number, err)
@@ -411,6 +427,7 @@ func (lsl *LineSetLine) Offset() uint32 {
 }
 
 // Ensure that Interfaces for these types are implemented fully.
+var _ gpio.Group = &LineSet{}
 var _ gpio.PinIO = &LineSetLine{}
 var _ gpio.PinIn = &LineSetLine{}
 var _ gpio.PinOut = &LineSetLine{}
