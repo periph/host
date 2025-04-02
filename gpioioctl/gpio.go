@@ -353,7 +353,8 @@ type GPIOChip struct {
 	// The file descriptor to the Path device.
 	fd uintptr
 	// File associated with the file descriptor.
-	file *os.File
+	file   *os.File
+	osfile *os.File
 }
 
 func (chip *GPIOChip) Name() string {
@@ -393,7 +394,9 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 	}
 	chip.file = f
 	chip.fd = chip.file.Fd()
-	os.NewFile(uintptr(chip.fd), "GPIO Chip - "+path)
+	// failure to maintain a reference leads to the file being garbage
+	// collected and the handle closed...
+	chip.osfile = os.NewFile(uintptr(chip.fd), "GPIO Chip - "+path)
 	var info gpiochip_info
 	err = ioctl_gpiochip_info(chip.fd, &info)
 	if err != nil {
@@ -425,7 +428,10 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 // along with any configured Lines and LineSets.
 func (chip *GPIOChip) Close() {
 	_ = chip.file.Close()
-
+	_ = chip.osfile.Close()
+	chip.file = nil
+	chip.osfile = nil
+	chip.fd = 0
 	for _, line := range chip.lines {
 		if line.fd != 0 {
 			line.Close()
@@ -644,7 +650,9 @@ func (d *driverGPIO) Init() (bool, error) {
 	for _, chip := range chips {
 		// On a pi, gpiochip0 is also symlinked to gpiochip4, checking the map
 		// ensures we don't duplicate the chip.
-		if _, found := mName[chip.Name()]; !found {
+		if _, found := mName[chip.Name()]; found {
+			chip.Close()
+		} else {
 			Chips = append(Chips, chip)
 			mName[chip.Name()] = struct{}{}
 			// Now, iterate over the lines on this chip.
