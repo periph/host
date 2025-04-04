@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -309,7 +308,8 @@ func (p *Pin) Read() gpio.Level {
 //
 // This function is very fast.
 func (p *Pin) FastRead() gpio.Level {
-	return gpio.Level(drvGPIO.gpioMemory.groups[p.group].data&(1<<p.offset) != 0)
+	status := drvGPIO.gpioMemory.groups[p.group].data
+	return status&(1<<p.offset) != 0
 }
 
 // WaitForEdge implements gpio.PinIn.
@@ -652,6 +652,14 @@ var cpupins = map[string]*Pin{
 	"PG11": {group: 6, offset: 11, name: "PG11", defaultPull: gpio.Float},
 	"PG12": {group: 6, offset: 12, name: "PG12", defaultPull: gpio.Float},
 	"PG13": {group: 6, offset: 13, name: "PG13", defaultPull: gpio.Float},
+
+	"PG14": {group: 6, offset: 14, name: "PG14", defaultPull: gpio.Float},
+	"PG15": {group: 6, offset: 15, name: "PG15", defaultPull: gpio.Float},
+	"PG16": {group: 6, offset: 16, name: "PG16", defaultPull: gpio.Float},
+	"PG17": {group: 6, offset: 17, name: "PG17", defaultPull: gpio.Float},
+	"PG18": {group: 6, offset: 18, name: "PG18", defaultPull: gpio.Float},
+	"PG19": {group: 6, offset: 19, name: "PG19", defaultPull: gpio.Float},
+
 	"PH0":  {group: 7, offset: 0, name: "PH0", defaultPull: gpio.Float},
 	"PH1":  {group: 7, offset: 1, name: "PH1", defaultPull: gpio.Float},
 	"PH2":  {group: 7, offset: 2, name: "PH2", defaultPull: gpio.Float},
@@ -1028,13 +1036,20 @@ func (d *driverGPIO) Init() (bool, error) {
 		if err := mapH5Pins(); err != nil {
 			return true, err
 		}
+	case IsH6():
+		if err := mapH6Pins(); err != nil {
+			return true, err
+		}
 	default:
 		return false, errors.New("unknown Allwinner CPU model")
 	}
 
 	// gpioBaseAddr is the physical base address of the GPIO registers.
-	gpioBaseAddr := uint32(getBaseAddress())
-	if err := pmem.MapAsPOD(uint64(gpioBaseAddr), &d.gpioMemory); err != nil {
+	gpioBaseAddr, err := getBaseAddress()
+	if err != nil {
+		return true, err
+	}
+	if err := pmem.MapAsPOD(gpioBaseAddr, &d.gpioMemory); err != nil {
 		if os.IsPermission(err) {
 			return true, fmt.Errorf("need more access, try as root: %v", err)
 		}
@@ -1048,28 +1063,6 @@ func init() {
 	if isArm {
 		driverreg.MustRegister(&drvGPIO)
 	}
-}
-
-// getBaseAddress queries the virtual file system to retrieve the base address
-// of the GPIO registers for GPIO pins in groups PA to PI.
-//
-// Defaults to 0x01C20800 as per datasheet if it could not query the file
-// system.
-func getBaseAddress() uint64 {
-	base := uint64(0x01C20800)
-	link, err := os.Readlink("/sys/bus/platform/drivers/sun50i-pinctrl/driver")
-	if err != nil {
-		return base
-	}
-	parts := strings.SplitN(path.Base(link), ".", 2)
-	if len(parts) != 2 {
-		return base
-	}
-	base2, err := strconv.ParseUint(parts[0], 16, 64)
-	if err != nil {
-		return base
-	}
-	return base2
 }
 
 var drvGPIO driverGPIO

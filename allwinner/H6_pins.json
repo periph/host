@@ -1,0 +1,578 @@
+[
+  {
+    "Name": "PC0",
+    "function2": "NAND_WE",
+    "function3": "SDC2_DS",
+    "function4": "SPI0_CLK",
+    "function5": "",
+    "function6": "PC_EINT0"
+  },
+  {
+    "Name": "PC1",
+    "function2": "NAND_ALE",
+    "function3": "SDC2_RST",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT1"
+  },
+  {
+    "name": "PC2",
+    "function2": "NAND_CLE",
+    "function3": "",
+    "function4": "SPI0_MOSI",
+    "function5": "",
+    "function6": "PC_EINT2"
+  },
+  {
+    "name": "PC3",
+    "function2": "NAND_CE1",
+    "function3": "",
+    "function4": "SPI0_CS0",
+    "function5": "BOOT_SEL1",
+    "function6": "PC_EINT3"
+  },
+  {
+    "name": "PC4",
+    "function2": "NAND_CE0",
+    "function3": "",
+    "function4": "SPI0_MISO",
+    "function5": "BOOT_SEL2",
+    "function6": "PC_EINT4"
+  },
+  {
+    "name": "PC5",
+    "function2": "NAND_RE",
+    "function3": "SDC2_CLK",
+    "function4": "",
+    "function5": "BOOT_SEL3",
+    "function6": "PC_EINT5"
+  },
+  {
+    "name": "PC6",
+    "function2": "NAND_RB0",
+    "function3": "SDC2_CMD",
+    "function4": "",
+    "function5": "BOOT_SEL4",
+    "function6": "PC_EINT6"
+  },
+  {
+    "name": "PC7",
+    "function2": "NAND_RB1",
+    "function3": "",
+    "function4": "SPI0_CS1",
+    "function5": "",
+    "function6": "PC_EINT7"
+  },
+  {
+    "name": "PC8",
+    "function2": "NAND_DQ7",
+    "function3": "SDC2_D3",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT8"
+  },
+  {
+    "name": "PC9",
+    "function2": "NAND_DQ6",
+    "function3": "SDC2_D4",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT9"
+  },
+  {
+    "name": "PC10",
+    "function2": "NAND_DQ5",
+    "function3": "SDC2_D0",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT10"
+  },
+  {
+    "name": "PC11",
+    "function2": "NAND_DQ4",
+    "function3": "SDC2_D5",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT11"
+  },
+  {
+    "name": "PC12",
+    "function2": "NAND_DQS",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT12"
+  },
+  {
+    "name": "PC13",
+    "function2": "NAND_DQ3",
+    "function3": "SDC2_D1",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT13"
+  },
+  {
+    "name": "PC14",
+    "function2": "NAND_DQ2",
+    "function3": "SDC2_D6",
+    "function4": "",
+    "function5": "",
+    "function6": "PC_EINT14"
+  },
+  {
+    "name": "PC15",
+    "function2": "NAND_DQ1",
+    "function3": "SDC2_D2",
+    "function4": "SPI0_WP",
+    "function5": "",
+    "function6": "PC_EINT15"
+  },
+  {
+    "name": "PC16",
+    "function2": "NAND_DQ0",
+    "function3": "SDC2_D7",
+    "function4": "SPI0_HOLD",
+    "function5": "",
+    "function6": "PC_EINT16"
+  },
+  {
+    "name": "PF0",
+    "function2": "SDC0_D1",
+    "function3": "JTAG_MS",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT0"
+  },
+  {
+    "name": "PF1",
+    "function2": "SDC0_D0",
+    "function3": "JTAG_DI",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT1"
+  },
+  {
+    "name": "PF2",
+    "function2": "SDC0_CLK",
+    "function3": "UART0_TX",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT2"
+  },
+  {
+    "name": "PF3",
+    "function2": "SDC0_CMD",
+    "function3": "JTAG_DO",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT3"
+  },
+  {
+    "name": "PF4",
+    "function2": "SDC0_D3",
+    "function3": "UART0_RX",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT4"
+  },
+  {
+    "name": "PF5",
+    "function2": "SDC0_D2",
+    "function3": "JTAG_CK",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT5"
+  },
+  {
+    "name": "PF6",
+    "function2": "",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PF_EINT6"
+  },
+  {
+    "name": "PG0",
+    "function2": "SDC1_CLK",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT0"
+  },
+  {
+    "name": "PG1",
+    "function2": "SDC1_CMD",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT1"
+  },
+  {
+    "name": "PG2",
+    "function2": "SDC1_D0",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT2"
+  },
+  {
+    "name": "PG3",
+    "function2": "SDC1_D1",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT3"
+  },
+  {
+    "name": "PG4",
+    "function2": "SDC1_D2",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT4"
+  },
+  {
+    "name": "PG5",
+    "function2": "SDC1_D3",
+    "function3": "",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT5"
+  },
+  {
+    "name": "PG6",
+    "function2": "UART1_TX",
+    "function3": "",
+    "function4": "JTAG_MS",
+    "function5": "",
+    "function6": "PG_EINT6"
+  },
+  {
+    "name": "PG7",
+    "function2": "UART1_RX",
+    "function3": "",
+    "function4": "JTAG_CK",
+    "function5": "",
+    "function6": "PG_EINT7"
+  },
+  {
+    "name": "PG8",
+    "function2": "UART1_RTS",
+    "function3": "PLL_LOCK_DBG",
+    "function4": "JTAG_DO",
+    "function5": "",
+    "function6": "PG_EINT8"
+  },
+  {
+    "name": "PG9",
+    "function2": "UART1_CTS",
+    "function3": "",
+    "function4": "JTAG_DI",
+    "function5": "",
+    "function6": "PG_EINT9"
+  },
+  {
+    "name": "PG10",
+    "function2": "H_I2S2_MCLK",
+    "function3": "X32KFOUT",
+    "function4": "",
+    "function5": "",
+    "function6": "PG_EINT10"
+  },
+  {
+    "name": "PG11",
+    "function2": "H_I2S2_BCLK",
+    "function3": "",
+    "function4": "BIST_RESULT0",
+    "function5": "",
+    "function6": "PG_EINT11"
+  },
+  {
+    "name": "PG12",
+    "function2": "H_I2S2_LRCK",
+    "function3": "",
+    "function4": "BIST_RESULT1",
+    "function5": "",
+    "function6": "PG_EINT12"
+  },
+  {
+    "name": "PG13",
+    "function2": "H_I2S2_DOUT0",
+    "function3": "H_I2S2_DIN1",
+    "function4": "BIST_RESULT2",
+    "function5": "",
+    "function6": "PG_EINT13"
+  },
+  {
+    "name": "PG14",
+    "function2": "H_I2S2_DIN0",
+    "function3": "H_I2S2_DOUT1",
+    "function4": "BIST_RESULT3",
+    "function5": "",
+    "function6": "PG_EINT14"
+  },
+  {
+    "name": "PG15",
+    "function2": "UART2_TX",
+    "function3": "",
+    "function4": "",
+    "function5": "TWI4_SCK",
+    "function6": "PG_EINT15"
+  },
+  {
+    "name": "PG16",
+    "function2": "UART2_RX",
+    "function3": "",
+    "function4": "",
+    "function5": "TWI4_SDA",
+    "function6": "PG_EINT16"
+  },
+  {
+    "name": "PG17",
+    "function2": "UART2_RTS",
+    "function3": "",
+    "function4": "",
+    "function5": "TWI3_SCK",
+    "function6": "PG_EINT17"
+  },
+  {
+    "name": "PG18",
+    "function2": "UART2_CTS",
+    "function3": "",
+    "function4": "",
+    "function5": "TWI3_SDA",
+    "function6": "PG_EINT18"
+  },
+  {
+    "name": "PG19",
+    "function2": "",
+    "function3": "",
+    "function4": "PWM1",
+    "function5": "",
+    "function6": "PG_EINT19"
+  },
+  {
+    "name": "PH0",
+    "function2": "UART0_TX",
+    "function3": "",
+    "function4": "PWM3",
+    "function5": "TWI1_SCK",
+    "function6": "PH_EINT0"
+  },
+  {
+    "name": "PH1",
+    "function2": "UART0_RX",
+    "function3": "",
+    "function4": "PWM4",
+    "function5": "TWI1_SDA",
+    "function6": "PH_EINT1"
+  },
+  {
+    "name": "PH2",
+    "function2": "UART5_TX",
+    "function3": "OWA_MCLK",
+    "function4": "PWM2",
+    "function5": "TWI2_SCK",
+    "function6": "PH_EINT2"
+  },
+  {
+    "name": "PH3",
+    "function2": "UART5_RX",
+    "function3": "",
+    "function4": "PWM1",
+    "function5": "TWI2_SDA",
+    "function6": "PH_EINT3"
+  },
+  {
+    "name": "PH4",
+    "function2": "",
+    "function3": "OWA_OUT",
+    "function4": "",
+    "function5": "TWI3_SCK",
+    "function6": "PH_EINT4"
+  },
+  {
+    "name": "PH5",
+    "function2": "UART2_TX",
+    "function3": "H_I2S3_MCLK",
+    "function4": "SPI1_CS0",
+    "function5": "TWI3_SDA",
+    "function6": "PH_EINT5"
+  },
+  {
+    "name": "PH6",
+    "function2": "UART2_RX",
+    "function3": "H_I2S3_BCLK",
+    "function4": "SPI1_CLK",
+    "function5": "TWI4_SCK",
+    "function6": "PH_EINT6"
+  },
+  {
+    "name": "PH7",
+    "function2": "UART2_RTS",
+    "function3": "H_I2S3_LRCK",
+    "function4": "SPI1_MOSI",
+    "function5": "TWI4_SDA",
+    "function6": "PH_EINT7"
+  },
+  {
+    "name": "PH8",
+    "function2": "UART2_CTS",
+    "function3": "H_I2S3_DOUT0",
+    "function4": "SPI1_MISO",
+    "function5": "H_I2S3_DIN1",
+    "function6": "PH_EINT8"
+  },
+  {
+    "name": "PH9",
+    "function2": "",
+    "function3": "H_I2S3_DIN0",
+    "function4": "SPI1_CS1",
+    "function5": "H_I2S3_DOUT1",
+    "function6": "PH_EINT9"
+  },
+  {
+    "name": "PH10",
+    "function2": "",
+    "function3": "IR_RX",
+    "function4": "TCON_TRIG1",
+    "function5": "",
+    "function6": "PH_EINT10"
+  },
+  {
+    "name": "PI0",
+    "function2": "RGMII_RXD3",
+    "function3": "DMIC_CLK",
+    "function4": "H_I2S0_MCLK",
+    "function5": "HDMI_SCL",
+    "function6": "PI_EINT0"
+  },
+  {
+    "name": "PI1",
+    "function2": "RGMII_RXD2",
+    "function3": "DMIC_DATA0",
+    "function4": "H_I2S0_BCLK",
+    "function5": "HDMI_SDA",
+    "function6": "PI_EINT1"
+  },
+  {
+    "name": "PI2",
+    "function2": "RGMII_RXD1",
+    "function3": "DMIC_DATA1",
+    "function4": "H_I2S0_LRCK",
+    "function5": "HDMI_CEC",
+    "function6": "PI_EINT2"
+  },
+  {
+    "name": "PI3",
+    "function2": "RGMII_RXD0",
+    "function3": "DMIC_DATA2",
+    "function4": "H_I2S0_DOUT0",
+    "function5": "H_I2S0_DIN1",
+    "function6": "PI_EINT3"
+  },
+  {
+    "name": "PI4",
+    "function2": "RGMII_RXCK/",
+    "function3": "DMIC_DATA3",
+    "function4": "H_I2S0_DIN0",
+    "function5": "H_I2S0_DOUT1",
+    "function6": "PI_EINT4"
+  },
+  {
+    "name": "PI5",
+    "function2": "RGMII_RXCTL",
+    "function3": "UART2_TX",
+    "function4": "TS0_CLK",
+    "function5": "TWI0_SCK",
+    "function6": "PI_EINT5"
+  },
+  {
+    "name": "PI6",
+    "function2": "RGMII_NULL",
+    "function3": "UART2_RX",
+    "function4": "TS0_ERR",
+    "function5": "TWI0_SDA",
+    "function6": "PI_EINT6"
+  },
+  {
+    "name": "PI7",
+    "function2": "RGMII_TXD3",
+    "function3": "UART2_RTS",
+    "function4": "TS0_SYNC",
+    "function5": "TWI1_SCK",
+    "function6": "PI_EINT7"
+  },
+  {
+    "name": "PI8",
+    "function2": "RGMII_TXD2",
+    "function3": "UART2_CTS",
+    "function4": "TS0_DVLD",
+    "function5": "TWI1_SDA",
+    "function6": "PI_EINT8"
+  },
+  {
+    "name": "PI9",
+    "function2": "RGMII_TXD1",
+    "function3": "UART3_TX",
+    "function4": "TS0_D0",
+    "function5": "TWI2_SCK",
+    "function6": "PI_EINT9"
+  },
+  {
+    "name": "PI10",
+    "function2": "RGMII_TXD0",
+    "function3": "UART3_RX",
+    "function4": "TS0_D1",
+    "function5": "TWI2_SDA",
+    "function6": "PI_EINT10"
+  },
+  {
+    "name": "PI11",
+    "function2": "RGMII_TXCK",
+    "function3": "UART3_RTS",
+    "function4": "TS0_D2",
+    "function5": "PWM1",
+    "function6": "PI_EINT11"
+  },
+  {
+    "name": "PI12",
+    "function2": "RGMII_TXCTL",
+    "function3": "UART3_CTS",
+    "function4": "TS0_D3",
+    "function5": "PWM2",
+    "function6": "PI_EINT12"
+  },
+  {
+    "name": "PI13",
+    "function2": "RGMII_CLKIN",
+    "function3": "UART4_TX",
+    "function4": "TS0_D4",
+    "function5": "PWM3",
+    "function6": "PI_EINT13"
+  },
+  {
+    "name": "PI14",
+    "function2": "MDC",
+    "function3": "UART4_RX",
+    "function4": "TS0_D5",
+    "function5": "PWM4",
+    "function6": "PI_EINT14"
+  },
+  {
+    "name": "PI15",
+    "function2": "MDIO",
+    "function3": "UART4_RTS",
+    "function4": "TS0_D6",
+    "function5": "CLK_FANOUT0",
+    "function6": "PI_EINT15"
+  },
+  {
+    "name": "PI16",
+    "function2": "EPHY_25M",
+    "function3": "UART4_CTS",
+    "function4": "TS0_D7",
+    "function5": "CLK_FANOUT1",
+    "function6": "PI_EINT16"
+  }
+]
