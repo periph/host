@@ -431,11 +431,11 @@ func (d *driverGPIO) String() string {
 }
 
 func (d *driverGPIO) Prerequisites() []string {
-	return []string{"ioctl-gpio"}
+	return nil
 }
 
 func (d *driverGPIO) After() []string {
-	return nil
+	return []string{"ioctl-gpio"}
 }
 
 // Init initializes GPIO sysfs handling code.

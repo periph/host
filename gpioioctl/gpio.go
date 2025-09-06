@@ -415,7 +415,12 @@ func newGPIOChip(path string) (*GPIOChip, error) {
 		line_info.offset = uint32(line)
 		err := ioctl_gpio_v2_line_info(chip.fd, &line_info)
 		if err != nil {
-			log.Println("newGPIOChip get line info", err)
+			// older kernels don't support the GPIO v2 API. In this case the above syscall returns an EINVAL
+			// error. That's ok, in this case just don't continue accessing this GPIO chip with this interface
+			// any further.
+			if err.Error() == "invalid argument" {
+				return nil, nil
+			}
 			return nil, fmt.Errorf("reading line info: %w", err)
 		}
 		line := newGPIOLine(uint32(line), string(line_info.name[:]), string(line_info.consumer[:]), chip.fd)
@@ -616,9 +621,9 @@ func (d *driverGPIO) Init() (bool, error) {
 	var chip *GPIOChip
 	for _, item := range items {
 		chip, err = newGPIOChip(item)
-		if err == nil {
+		if chip != nil && err == nil {
 			chips = append(chips, chip)
-		} else {
+		} else if err != nil {
 			log.Println("gpioioctl.driverGPIO.Init() Error", err)
 		}
 	}
