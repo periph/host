@@ -210,6 +210,12 @@ func (i *I2C) smbusTx(addr uint16, w, r []byte) error {
 	case len(w) == 2 && len(r) == 0:
 		// SMBus Write Byte Data
 		return i.smbusCmd(addr, false, w[0], protocolByteData, w[1:])
+	case len(w) == 1 && len(r) > 2 && len(r) <= 32:
+		// SMBus Read Block Data
+		return i.smbusCmd(addr, true, w[0], protocolBlockData, r)
+	case len(w) > 2 && len(w) <= 32 && len(r) == 0:
+		// SMBus Write Block Data
+		return i.smbusCmd(addr, false, w[0], protocolBlockData, w[1:])
 	default:
 		return errors.New("sysfs-i2c: unsupported SMBus transaction")
 	}
@@ -219,7 +225,8 @@ func (i *I2C) smbusTx(addr uint16, w, r []byte) error {
 type smbusProtocol uint32
 
 const (
-	protocolByteData smbusProtocol = 2
+	protocolByteData  smbusProtocol = 2
+	protocolBlockData smbusProtocol = 5
 )
 
 func (i *I2C) smbusCmd(addr uint16, read bool, reg byte, protocol smbusProtocol, data []byte) error {
