@@ -1446,22 +1446,8 @@ func (d *driverGPIO) Init() (bool, error) {
 
 	m, err := pmem.MapGPIO()
 	if err != nil {
-		// Try without /dev/gpiomem. This is the case of not running on Raspbian or
-		// raspbian before Jessie. This requires running as root.
-		var err2 error
-		m, err2 = pmem.Map(uint64(d.gpioBaseAddr), 4096)
-		var err error
-		if err2 != nil {
-			if distro.IsRaspbian() {
-				// Raspbian specific error code to help guide the user to troubleshoot
-				// the problems.
-				if os.IsNotExist(err) && os.IsPermission(err2) {
-					return true, fmt.Errorf("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
-				}
-			}
-			if os.IsPermission(err2) {
-				return true, fmt.Errorf("need more access, try as root: %v", err)
-			}
+		m, err = d.mapGPIOFallback(err)
+		if err != nil {
 			return true, err
 		}
 	}
@@ -1470,6 +1456,25 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 
 	return true, sysfs.I2CSetSpeedHook(setSpeed)
+}
+
+// mapGPIOFallback attempts to map GPIO memory via /dev/mem when /dev/gpiomem
+// is unavailable. gpioErr is the error from the initial MapGPIO() attempt.
+// Returns the mapped view, or an error if the fallback also fails.
+func (d *driverGPIO) mapGPIOFallback(gpioErr error) (*pmem.View, error) {
+	m, mapErr := pmem.Map(uint64(d.gpioBaseAddr), 4096)
+	if mapErr != nil {
+		if distro.IsRaspbian() {
+			if os.IsNotExist(gpioErr) && os.IsPermission(mapErr) {
+				return nil, fmt.Errorf("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
+			}
+		}
+		if os.IsPermission(mapErr) {
+			return nil, fmt.Errorf("need more access, try as root: %v", gpioErr)
+		}
+		return nil, mapErr
+	}
+	return m, nil
 }
 
 func setSpeed(f physic.Frequency) error {
