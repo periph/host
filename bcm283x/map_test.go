@@ -87,18 +87,18 @@ type fakePin struct {
 
 var _ gpio.PinIO = &fakePin{} // compile-time interface check
 
-func (p *fakePin) String() string                            { return p.name }
-func (p *fakePin) Name() string                              { return p.name }
-func (p *fakePin) Number() int                               { return -1 }
-func (p *fakePin) Function() string                          { return "" }
-func (p *fakePin) Func() pin.Func                            { return "" }
-func (p *fakePin) SupportedFuncs() []pin.Func                { return nil }
-func (p *fakePin) SetFunc(pin.Func) error                    { return nil }
-func (p *fakePin) Halt() error                               { return nil }
-func (p *fakePin) In(gpio.Pull, gpio.Edge) error             { return nil }
-func (p *fakePin) Read() gpio.Level                          { return false }
-func (p *fakePin) WaitForEdge(time.Duration) bool            { return false }
-func (p *fakePin) Pull() gpio.Pull                           { return 0 }
-func (p *fakePin) DefaultPull() gpio.Pull                    { return 0 }
-func (p *fakePin) Out(gpio.Level) error                      { return nil }
-func (p *fakePin) PWM(gpio.Duty, physic.Frequency) error     { return nil }
+func (p *fakePin) String() string                        { return p.name }
+func (p *fakePin) Name() string                          { return p.name }
+func (p *fakePin) Number() int                           { return -1 }
+func (p *fakePin) Function() string                      { return "" }
+func (p *fakePin) Func() pin.Func                        { return "" }
+func (p *fakePin) SupportedFuncs() []pin.Func            { return nil }
+func (p *fakePin) SetFunc(pin.Func) error                { return nil }
+func (p *fakePin) Halt() error                           { return nil }
+func (p *fakePin) In(gpio.Pull, gpio.Edge) error         { return nil }
+func (p *fakePin) Read() gpio.Level                      { return false }
+func (p *fakePin) WaitForEdge(time.Duration) bool        { return false }
+func (p *fakePin) Pull() gpio.Pull                       { return 0 }
+func (p *fakePin) DefaultPull() gpio.Pull                { return 0 }
+func (p *fakePin) Out(gpio.Level) error                  { return nil }
+func (p *fakePin) PWM(gpio.Duty, physic.Frequency) error { return nil }
