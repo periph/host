@@ -1476,6 +1476,21 @@ func (d *driverGPIO) mapGPIOFallback(gpioErr error) (*pmem.View, error) {
 			}
 		}
 		if os.IsPermission(mapErr) {
+			// Check if /dev/gpiomem exists but has restrictive permissions.
+			// Raspberry Pi OS sets /dev/gpiomem to root:gpio 0660, but Ubuntu
+			// sets it to root:root 0600 — making it inaccessible to non-root
+			// users even if they are in the gpio group. A udev rule is needed:
+			//   KERNEL=="gpiomem", GROUP="gpio", MODE="0660"
+			if os.IsPermission(gpioErr) {
+				if info, statErr := os.Stat("/dev/gpiomem"); statErr == nil {
+					return nil, fmt.Errorf(
+						"/dev/gpiomem exists (mode %v) but is not accessible, "+
+							"and /dev/mem requires root; on Ubuntu, add a udev rule to grant group access: "+
+							`KERNEL=="gpiomem", GROUP="gpio", MODE="0660" `+
+							"(Raspberry Pi OS sets this automatically): %v",
+						info.Mode(), gpioErr)
+				}
+			}
 			return nil, fmt.Errorf("need more access, try as root: %v", gpioErr)
 		}
 		return nil, mapErr
