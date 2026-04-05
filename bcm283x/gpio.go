@@ -7,6 +7,7 @@ package bcm283x
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -1440,7 +1441,12 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 	for _, a := range aliases {
 		if err := gpioreg.RegisterAlias(a[0], a[1]); err != nil {
-			return true, err
+			// Non-fatal: if the ioctl-gpio driver already registered this name
+			// as a real pin, the alias is redundant. Aborting here would prevent
+			// the mmap-based GPIO memory from being initialised, forcing all
+			// operations through the ioctl fallback path — which cannot read the
+			// state of output pins that were set by a previous process.
+			log.Printf("bcm283x: skipping alias %s→%s: %v", a[0], a[1], err)
 		}
 	}
 
