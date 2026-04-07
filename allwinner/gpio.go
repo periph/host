@@ -10,6 +10,7 @@ package allwinner
 import (
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"path"
 	"strconv"
@@ -1033,8 +1034,11 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 
 	// gpioBaseAddr is the physical base address of the GPIO registers.
-	gpioBaseAddr := uint32(getBaseAddress())
-	if err := pmem.MapAsPOD(uint64(gpioBaseAddr), &d.gpioMemory); err != nil {
+	gpioBaseAddr := getBaseAddress()
+	if gpioBaseAddr > math.MaxUint32 {
+		return true, fmt.Errorf("gpio base address 0x%X overflows uint32", gpioBaseAddr)
+	}
+	if err := pmem.MapAsPOD(gpioBaseAddr, &d.gpioMemory); err != nil {
 		if os.IsPermission(err) {
 			return true, fmt.Errorf("need more access, try as root: %v", err)
 		}
