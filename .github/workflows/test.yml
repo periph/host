@@ -35,10 +35,10 @@ jobs:
     - name: Turn off git core.autocrlf
       if: matrix.os == 'windows-latest'
       run: git config --global core.autocrlf false
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 2
-    - uses: actions/setup-go@v5
+    - uses: actions/setup-go@v6
       with:
         go-version-file: go.mod
     - name: 'go install necessary tools'
@@ -49,7 +49,7 @@ jobs:
       if: always()
       run: go test -timeout=120s -covermode=count -coverprofile coverage.txt -bench=. -benchtime=1x ./...
       # Don't send code coverage if anything failed to reduce spam.
-    - uses: codecov/codecov-action@v4
+    - uses: codecov/codecov-action@v6
       with:
         token: ${{secrets.CODECOV_TOKEN}}
     - name: 'Cleanup'
@@ -57,6 +57,9 @@ jobs:
       run: rm coverage.txt
     - name: 'Check: go test -race'
       run: go test -timeout=120s -race -bench=. -benchtime=1x ./...
+        # codecov leaves junk behind, remove that first.
+    - run: rm -f codecov codecov.SHA256SUM codecov.SHA256SUM.sig  codecov.exe.SHA256SUM codecov.exe.SHA256SUM.sig
+      if: always()
     - name: 'Check: benchmark 📈'
       run: ba -against HEAD~1
     - name: 'Check: go test -short (CGO_ENABLED=0)'
@@ -105,8 +108,8 @@ jobs:
     - name: Turn off git core.autocrlf
       if: matrix.os == 'windows-latest'
       run: git config --global core.autocrlf false
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
       with:
         go-version-file: go.mod
     - name: 'go install necessary tools'
@@ -256,15 +259,15 @@ jobs:
     permissions:
       security-events: write
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
       with:
         go-version-file: go.mod
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: go
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v3
+      uses: github/codeql-action/autobuild@v4
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
