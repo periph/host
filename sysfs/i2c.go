@@ -97,6 +97,11 @@ func (i *I2C) Tx(addr uint16, w, r []byte) error {
 		return nil
 	}
 
+	// If I2C is not supported, fallback to SMBus
+	if i.fn&funcI2C == 0 {
+		return i.smbusTx(addr, w, r)
+	}
+
 	// Convert the messages to the internal format.
 	var buf [2]i2cMsg
 	msgs := buf[0:0]
@@ -197,6 +202,72 @@ func (i *I2C) initPins() {
 	i.mu.Unlock()
 }
 
+func (i *I2C) smbusTx(addr uint16, w, r []byte) error {
+	switch {
+	case len(w) == 1 && len(r) == 1:
+		// SMBus Read Byte Data
+		return i.smbusCmd(addr, true, w[0], protocolByteData, r)
+	case len(w) == 2 && len(r) == 0:
+		// SMBus Write Byte Data
+		return i.smbusCmd(addr, false, w[0], protocolByteData, w[1:])
+	case len(w) == 1 && len(r) > 2 && len(r) <= 32:
+		// SMBus Read Block Data
+		return i.smbusCmd(addr, true, w[0], protocolBlockData, r)
+	case len(w) > 2 && len(w) <= 32 && len(r) == 0:
+		// SMBus Write Block Data
+		return i.smbusCmd(addr, false, w[0], protocolBlockData, w[1:])
+	default:
+		return errors.New("sysfs-i2c: unsupported SMBus transaction")
+	}
+}
+
+// SMBus IOCTL calls this size but it's not actually a size field.
+type smbusProtocol uint32
+
+const (
+	protocolByteData  smbusProtocol = 2
+	protocolBlockData smbusProtocol = 5
+)
+
+func (i *I2C) smbusCmd(addr uint16, read bool, reg byte, protocol smbusProtocol, data []byte) error {
+	rw := byte(0) // write
+	if read {
+		rw = byte(1) // read
+	}
+
+	// Make a contiguous copy of data to avoid issues with slices.
+	buf := make([]byte, len(data))
+	copy(buf, data)
+	defer copy(data, buf)
+
+	// Prepare the I2C_SMBUS ioctl command.
+	cmd := struct {
+		rw      byte
+		command byte
+		size    uint32
+		data    unsafe.Pointer
+	}{
+		rw,
+		reg,
+		uint32(protocol),
+		unsafe.Pointer(&buf[0]),
+	}
+
+	i.mu.Lock()
+	defer i.mu.Unlock()
+
+	// Set the slave address.
+	if err := i.f.Ioctl(ioctlSlave, uintptr(addr)); err != nil {
+		return fmt.Errorf("sysfs-smbus: %v", err)
+	}
+
+	// Perform the transaction.
+	if err := i.f.Ioctl(ioctlSmbus, uintptr(unsafe.Pointer(&cmd))); err != nil {
+		return fmt.Errorf("sysfs-smbus: %v", err)
+	}
+	return nil
+}
+
 // i2cdev driver IOCTL control codes.
 //
 // Constants and structure definition can be found at
@@ -208,6 +279,7 @@ const (
 	ioctlTenBits = 0x704 // TODO(maruel): Expose this but the header says it's broken (!?)
 	ioctlFuncs   = 0x705
 	ioctlRdwr    = 0x707
+	ioctlSmbus   = 0x720
 )
 
 // flags

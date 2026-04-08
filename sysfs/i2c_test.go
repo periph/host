@@ -19,7 +19,7 @@ func TestNewI2C(t *testing.T) {
 
 func TestI2C_faked(t *testing.T) {
 	// Create a fake I2C to test methods.
-	bus := I2C{f: &ioctlClose{}, busNumber: 24}
+	bus := I2C{f: &ioctlClose{}, busNumber: 24, fn: funcI2C}
 	if s := bus.String(); s != "I2C24" {
 		t.Fatal(s)
 	}
@@ -103,7 +103,7 @@ func TestDriver_Init(t *testing.T) {
 func BenchmarkI2C(b *testing.B) {
 	b.ReportAllocs()
 	i := ioctlClose{}
-	bus := I2C{f: &i}
+	bus := I2C{f: &i, fn: funcI2C}
 	var w [16]byte
 	var r [16]byte
 	for i := 0; i < b.N; i++ {
