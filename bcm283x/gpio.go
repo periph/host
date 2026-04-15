@@ -7,6 +7,7 @@ package bcm283x
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -1440,28 +1441,19 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 	for _, a := range aliases {
 		if err := gpioreg.RegisterAlias(a[0], a[1]); err != nil {
-			return true, err
+			// Non-fatal: if the ioctl-gpio driver already registered this name
+			// as a real pin, the alias is redundant. Aborting here would prevent
+			// the mmap-based GPIO memory from being initialised, forcing all
+			// operations through the ioctl fallback path — which cannot read the
+			// state of output pins that were set by a previous process.
+			log.Printf("bcm283x: skipping alias %s→%s: %v", a[0], a[1], err)
 		}
 	}
 
 	m, err := pmem.MapGPIO()
 	if err != nil {
-		// Try without /dev/gpiomem. This is the case of not running on Raspbian or
-		// raspbian before Jessie. This requires running as root.
-		var err2 error
-		m, err2 = pmem.Map(uint64(d.gpioBaseAddr), 4096)
-		var err error
-		if err2 != nil {
-			if distro.IsRaspbian() {
-				// Raspbian specific error code to help guide the user to troubleshoot
-				// the problems.
-				if os.IsNotExist(err) && os.IsPermission(err2) {
-					return true, fmt.Errorf("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
-				}
-			}
-			if os.IsPermission(err2) {
-				return true, fmt.Errorf("need more access, try as root: %v", err)
-			}
+		m, err = d.mapGPIOFallback(err)
+		if err != nil {
 			return true, err
 		}
 	}
@@ -1470,6 +1462,40 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 
 	return true, sysfs.I2CSetSpeedHook(setSpeed)
+}
+
+// mapGPIOFallback attempts to map GPIO memory via /dev/mem when /dev/gpiomem
+// is unavailable. gpioErr is the error from the initial MapGPIO() attempt.
+// Returns the mapped view, or an error if the fallback also fails.
+func (d *driverGPIO) mapGPIOFallback(gpioErr error) (*pmem.View, error) {
+	m, mapErr := pmem.Map(uint64(d.gpioBaseAddr), 4096)
+	if mapErr != nil {
+		if distro.IsRaspbian() {
+			if os.IsNotExist(gpioErr) && os.IsPermission(mapErr) {
+				return nil, fmt.Errorf("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
+			}
+		}
+		if os.IsPermission(mapErr) {
+			// Check if /dev/gpiomem exists but has restrictive permissions.
+			// Raspberry Pi OS sets /dev/gpiomem to root:gpio 0660, but Ubuntu
+			// sets it to root:root 0600 — making it inaccessible to non-root
+			// users even if they are in the gpio group. A udev rule is needed:
+			//   KERNEL=="gpiomem", GROUP="gpio", MODE="0660"
+			if os.IsPermission(gpioErr) {
+				if info, statErr := os.Stat("/dev/gpiomem"); statErr == nil {
+					return nil, fmt.Errorf(
+						"/dev/gpiomem exists (mode %v) but is not accessible, "+
+							"and /dev/mem requires root; on Ubuntu, add a udev rule to grant group access: "+
+							`KERNEL=="gpiomem", GROUP="gpio", MODE="0660" `+
+							"(Raspberry Pi OS sets this automatically): %v",
+						info.Mode(), gpioErr)
+				}
+			}
+			return nil, fmt.Errorf("need more access, try as root: %v", gpioErr)
+		}
+		return nil, mapErr
+	}
+	return m, nil
 }
 
 func setSpeed(f physic.Frequency) error {

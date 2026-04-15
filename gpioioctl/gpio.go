@@ -168,15 +168,12 @@ func (line *GPIOLine) PWM(gpio.Duty, physic.Frequency) error {
 	return errors.New("PWM() not implemented")
 }
 
-// Read the value of this line. Implements gpio.PinIn
+// Read the value of this line. Implements gpio.PinIn.
+//
+// For output pins, this reads the currently driven value without reconfiguring
+// the pin direction. The GPIO v2 chardev ioctl supports reading the value of
+// output lines directly.
 func (line *GPIOLine) Read() gpio.Level {
-	if line.direction != LineInput {
-		err := line.In(gpio.PullUp, gpio.NoEdge)
-		if err != nil {
-			log.Println("GPIOLine.Read(): ", err)
-			return false
-		}
-	}
 	line.mu.Lock()
 	defer line.mu.Unlock()
 	var data gpio_v2_line_values
