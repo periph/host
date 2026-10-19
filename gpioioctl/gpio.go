@@ -1,3 +1,5 @@
+// GPIO character-device lines, direction, pull configuration, and I/O.
+
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.

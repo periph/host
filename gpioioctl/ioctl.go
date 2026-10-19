@@ -1,3 +1,5 @@
+// Linux GPIO v2 ioctl structures, flags, and request encoding.
+
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.

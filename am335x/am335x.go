@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Detect AM335x processors and register hardware support.
+
 package am335x
 
 import (

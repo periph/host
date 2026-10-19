@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// MT7688 GPIO register mapping and supported pin tables.
+
 package mt7688
 
 import (

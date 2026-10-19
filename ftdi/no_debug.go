@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Disable FTDI diagnostic logging when the debug build tag is absent.
+
 //go:build !periph_host_ftdi_debug
 // +build !periph_host_ftdi_debug
 

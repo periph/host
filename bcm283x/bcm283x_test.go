@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Tests Broadcom driver initialization and GPIO mappings.
+
 package bcm283x
 
 import "periph.io/x/host/v3/fs"

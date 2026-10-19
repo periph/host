@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Allwinner SPI controller registers and configuration fields.
+
 package allwinner
 
 import (

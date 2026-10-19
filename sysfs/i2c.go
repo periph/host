@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Linux I²C device transactions, bus discovery, and speed hooks.
+
 package sysfs
 
 import (

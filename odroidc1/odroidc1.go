@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Detect ODROID-C1 boards and register header pins.
+
 package odroidc1
 
 import (

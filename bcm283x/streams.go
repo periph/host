@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Encode timed GPIO streams for Broadcom DMA and peripheral transfers.
+
 package bcm283x
 
 import (

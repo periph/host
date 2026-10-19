@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Detect TI PRU-ICSS support and register the processor driver.
+
 package pru
 
 import (

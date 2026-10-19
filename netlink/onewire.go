@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Access Linux 1-wire master buses through netlink transactions and searches.
+
 package netlink
 
 import (

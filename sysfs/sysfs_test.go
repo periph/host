@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Shared fake sysfs files, ioctl handles, and driver test setup.
+
 package sysfs
 
 import (

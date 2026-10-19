@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Tests Broadcom DMA control blocks, transfers, and failure paths.
+
 package bcm283x
 
 import (

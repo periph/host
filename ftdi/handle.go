@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Manage FTDI D2XX handles, bit modes, initialization, and I/O.
+
 package ftdi
 
 import (

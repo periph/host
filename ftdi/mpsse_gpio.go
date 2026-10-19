@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// FTDI MPSSE GPIO pin access and cached port state.
+
 package ftdi
 
 import (

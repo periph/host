@@ -6,6 +6,8 @@
 //
 // Create a dummy chip because ioctl is only supported on Linux
 
+// Initialize dummy GPIO support on non-Linux systems.
+
 package gpioioctl
 
 func init() {

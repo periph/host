@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// MIPS-specific ioctl request field widths and direction constants.
+
 //go:build mips || mipsle
 // +build mips mipsle
 

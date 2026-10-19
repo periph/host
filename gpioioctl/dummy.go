@@ -4,6 +4,8 @@
 //
 // Create a dummy chip for testing an non-Linux os.
 
+// Construct a dummy GPIO chip for non-Linux operation.
+
 package gpioioctl
 
 import (

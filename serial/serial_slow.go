@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Serial baud-rate constants for macOS, DragonFly BSD, and OpenBSD.
+
 //go:build darwin || dragonfly || openbsd
 // +build darwin dragonfly openbsd
 

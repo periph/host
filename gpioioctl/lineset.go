@@ -1,3 +1,5 @@
+// Configure and operate groups of GPIO character-device lines.
+
 package gpioioctl
 
 // Copyright 2024 The Periph Authors. All rights reserved.
@@ -11,11 +13,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
+	"time"
+
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/conn/v3/physic"
 	"periph.io/x/conn/v3/pin"
-	"sync"
-	"time"
 )
 
 // LineConfigOverride is an override for a LineSet configuration.

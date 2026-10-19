@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Select unsupported ARM platform detection for nanopi.
+
 //go:build !arm && !arm64
 // +build !arm,!arm64
 

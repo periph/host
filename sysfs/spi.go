@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Linux SPI device configuration, packet transfers, and streaming I/O.
+
 package sysfs
 
 import (

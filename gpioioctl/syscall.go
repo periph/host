@@ -9,6 +9,8 @@
 // as the first arg, while on windows it's a syscall.Handle. It also handles
 // syscall.SYS_IOCTL not being defined things besides linux.
 
+// Linux syscall wrappers for GPIO descriptors and nonblocking I/O.
+
 package gpioioctl
 
 import (

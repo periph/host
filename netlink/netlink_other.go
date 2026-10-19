@@ -2,6 +2,8 @@
 // Use of this source code is governed under the Apache License, Version 2.0
 // that can be found in the LICENSE file.
 
+// Unavailable netlink connector operations on non-Linux systems.
+
 //go:build !linux
 // +build !linux
 

@@ -5,6 +5,8 @@
 // that can be found in the LICENSE file.
 package gpioioctl
 
+// Non-Linux syscall shims for the GPIO character-device implementation.
+
 import (
 	"syscall"
 )
