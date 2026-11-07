@@ -182,7 +182,7 @@ func mapGPIOLinux() (*View, error) {
 	if gpioMemView == nil && gpioMemErr == nil {
 		if f, err := openFile("/dev/gpiomem", os.O_RDWR|os.O_SYNC); err == nil {
 			defer f.Close()
-			if i, err2 := mmap(f.Fd(), 0, pageSize); err2 == nil {
+			if i, err2 := mmap(f.Fd(), 0, pageSize); err2 == nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
 				gpioMemView = &View{Slice: i, orig: i, phys: 0}
 			} else {
 				gpioMemErr = wrapf("failed to memory map in user space GPIO memory: %w", err2)
@@ -202,7 +202,9 @@ func mapLinux(base uint64, size int) (*View, error) {
 	}
 	// Align base and size at 4Kb.
 	offset := int(base & 0xFFF)
+	//nolint:staticcheck // SA4023: Related diagnostic for the platform-dependent error check below.
 	i, err := mmap(f.Fd(), int64(base&^0xFFF), (size+offset+0xFFF)&^0xFFF)
+	//nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
 	if err != nil {
 		return nil, wrapf("mapping at 0x%x failed: %w", base, err)
 	}

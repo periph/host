@@ -38,7 +38,7 @@ type Mem struct {
 // It is important to call this function otherwise the memory is locked until
 // the host reboots.
 func (m *Mem) Close() error {
-	if err := m.View.Close(); err != nil {
+	if err := m.View.Close(); err != nil { //nolint:staticcheck // SA4023: Non-Linux unmapping always fails; Linux calls may succeed.
 		return wrapf("failed to close physical view: %v", err)
 	}
 	if _, err := mailboxTx32(mbUnlockMemory, m.handle); err != nil {

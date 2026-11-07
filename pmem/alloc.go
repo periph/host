@@ -64,7 +64,7 @@ type MemAlloc struct {
 
 // Close unmaps the physical memory allocation.
 func (m *MemAlloc) Close() error {
-	if err := munlock(m.orig); err != nil {
+	if err := munlock(m.orig); err != nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
 		return err
 	}
 	return munmap(m.orig)
@@ -104,7 +104,7 @@ func uallocMemLocked(size int) ([]byte, error) {
 		for i := range b {
 			b[i] = 0
 		}
-		if err = mlock(b); err != nil {
+		if err = mlock(b); err != nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
 			// Ignore the unmap error.
 			_ = munmap(b)
 			return nil, wrapf("locking %d bytes failed: %v", size, err)
