@@ -89,7 +89,7 @@ func (line *GPIOLine) Close() {
 	if line.fEdge != nil {
 		_ = line.fEdge.Close()
 	} else if line.fd != 0 {
-		_ = syscall_close_wrapper(int(line.fd))
+		_ = syscallCloseWrapper(int(line.fd))
 	}
 	line.fd = 0
 	line.consumer = ""
@@ -233,7 +233,7 @@ func (line *GPIOLine) WaitForEdge(timeout time.Duration) bool {
 	}
 	var err error
 	if line.fEdge == nil {
-		err = syscall_nonblock_wrapper(int(line.fd), true)
+		err = syscallNonblockWrapper(int(line.fd), true)
 		if err != nil {
 			log.Println("WaitForEdge() SetNonblock(): ", err)
 			return false
@@ -445,7 +445,7 @@ func (chip *GPIOChip) Close() {
 	for _, lineset := range chip.lineSets {
 		_ = lineset.Close()
 	}
-	_ = syscall_close_wrapper(int(chip.fd))
+	_ = syscallCloseWrapper(int(chip.fd))
 }
 
 // ByName returns a GPIOLine for a specific name. If not

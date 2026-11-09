@@ -5,13 +5,12 @@
 // Resource-busy error fallback on non-Linux systems.
 
 //go:build !linux
-// +build !linux
 
 package sysfs
 
 const isLinux = false
 
-func isErrBusy(err error) bool {
+func isErrBusy(_ error) bool {
 	// This function is not used on non-linux.
 	return false
 }

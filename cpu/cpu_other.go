@@ -5,7 +5,6 @@
 // Fallback busy-wait implementation on other operating systems.
 
 //go:build !linux
-// +build !linux
 
 package cpu
 
@@ -13,5 +12,5 @@ import "time"
 
 const isLinux = false
 
-func nanospinLinux(d time.Duration) {
+func nanospinLinux(_ time.Duration) {
 }

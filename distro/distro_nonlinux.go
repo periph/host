@@ -5,7 +5,6 @@
 // Select unsupported Linux platform detection for distro.
 
 //go:build !linux
-// +build !linux
 
 package distro
 

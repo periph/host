@@ -144,7 +144,7 @@ type gpio_v2_line_event struct {
 
 func ioctl_get_gpio_v2_line_values(fd uintptr, data *gpio_v2_line_values) error {
 	arg := _IOWR(0xb4, 0x0e, unsafe.Sizeof(gpio_v2_line_values{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}
@@ -153,7 +153,7 @@ func ioctl_get_gpio_v2_line_values(fd uintptr, data *gpio_v2_line_values) error 
 
 func ioctl_set_gpio_v2_line_values(fd uintptr, data *gpio_v2_line_values) error {
 	arg := _IOWR(0xb4, 0x0f, unsafe.Sizeof(gpio_v2_line_values{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}
@@ -161,7 +161,7 @@ func ioctl_set_gpio_v2_line_values(fd uintptr, data *gpio_v2_line_values) error 
 }
 func ioctl_gpiochip_info(fd uintptr, data *gpiochip_info) error {
 	arg := _IOR(0xb4, 0x01, unsafe.Sizeof(gpiochip_info{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}
@@ -170,7 +170,7 @@ func ioctl_gpiochip_info(fd uintptr, data *gpiochip_info) error {
 
 func ioctl_gpio_v2_line_info(fd uintptr, data *gpio_v2_line_info) error {
 	arg := _IOWR(0xb4, 0x05, unsafe.Sizeof(gpio_v2_line_info{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}
@@ -179,7 +179,7 @@ func ioctl_gpio_v2_line_info(fd uintptr, data *gpio_v2_line_info) error {
 
 func ioctl_gpio_v2_line_config(fd uintptr, data *gpio_v2_line_config) error {
 	arg := _IOWR(0xb4, 0x0d, unsafe.Sizeof(gpio_v2_line_config{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}
@@ -188,7 +188,7 @@ func ioctl_gpio_v2_line_config(fd uintptr, data *gpio_v2_line_config) error {
 
 func ioctl_gpio_v2_line_request(fd uintptr, data *gpio_v2_line_request) error {
 	arg := _IOWR(0xb4, 0x07, unsafe.Sizeof(gpio_v2_line_request{}))
-	_, _, ep := syscall_wrapper(_IOCTL_FUNCTION, fd, arg, uintptr(unsafe.Pointer(data)))
+	_, _, ep := syscallWrapper(ioctlFunction, fd, arg, uintptr(unsafe.Pointer(data)))
 	if ep != 0 {
 		return errors.New(ep.Error())
 	}

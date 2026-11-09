@@ -5,7 +5,6 @@
 // Windows serial-platform selection and baud-rate support.
 
 //go:build windows
-// +build windows
 
 package serial
 

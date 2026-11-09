@@ -129,7 +129,7 @@ func (ls *LineSet) Close() error {
 	if ls.fEdge != nil {
 		err = ls.fEdge.Close()
 	} else if ls.fd != 0 {
-		err = syscall_close_wrapper(int(ls.fd))
+		err = syscallCloseWrapper(int(ls.fd))
 	}
 	ls.fd = 0
 	ls.fEdge = nil
@@ -231,7 +231,7 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number int, edge gpio.Edg
 	number = 0
 	edge = gpio.NoEdge
 	if ls.fEdge == nil {
-		err = syscall_nonblock_wrapper(int(ls.fd), true)
+		err = syscallNonblockWrapper(int(ls.fd), true)
 		if err != nil {
 			err = fmt.Errorf("WaitForEdge() - SetNonblock: %w", err)
 			return number, edge, err

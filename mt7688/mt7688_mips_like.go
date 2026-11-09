@@ -5,7 +5,6 @@
 // Enable MT7688 processor detection on MIPS builds.
 
 //go:build mips || mipsle
-// +build mips mipsle
 
 package mt7688
 

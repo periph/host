@@ -5,7 +5,6 @@
 // Fallback serial baud-rate table on unsupported operating systems.
 
 //go:build !freebsd && !linux && !netbsd && !solaris && !darwin && !dragonfly && !openbsd
-// +build !freebsd,!linux,!netbsd,!solaris,!darwin,!dragonfly,!openbsd
 
 package serial
 

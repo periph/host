@@ -5,7 +5,6 @@
 // Enable FTDI driver diagnostic logging with the debug build tag.
 
 //go:build periph_host_ftdi_debug
-// +build periph_host_ftdi_debug
 
 package ftdi
 

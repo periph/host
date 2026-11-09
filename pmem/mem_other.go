@@ -5,25 +5,24 @@
 // Unsupported-platform physical memory mapping and allocation operations.
 
 //go:build !linux
-// +build !linux
 
 package pmem
 
 const isLinux = false
 
-func mmap(fd uintptr, offset int64, length int) ([]byte, error) {
+func mmap(_ uintptr, _ int64, _ int) ([]byte, error) {
 	return nil, wrapf("syscall.Mmap() not implemented on this OS")
 }
 
-func munmap(b []byte) error {
+func munmap(_ []byte) error {
 	return wrapf("syscall.Munmap() not implemented on this OS")
 }
 
-func mlock(b []byte) error {
+func mlock(_ []byte) error {
 	return wrapf("syscall.Mlock() not implemented on this OS")
 }
 
-func munlock(b []byte) error {
+func munlock(_ []byte) error {
 	return wrapf("syscall.Munlock() not implemented on this OS")
 }
 

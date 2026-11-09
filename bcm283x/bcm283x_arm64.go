@@ -5,7 +5,6 @@
 // Select supported ARM platform detection for bcm283x.
 
 //go:build arm64
-// +build arm64
 
 package bcm283x
 

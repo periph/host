@@ -5,7 +5,6 @@
 // Unavailable netlink connector operations on non-Linux systems.
 
 //go:build !linux
-// +build !linux
 
 package netlink
 

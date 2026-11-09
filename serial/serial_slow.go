@@ -5,7 +5,6 @@
 // Serial baud-rate constants for macOS, DragonFly BSD, and OpenBSD.
 
 //go:build darwin || dragonfly || openbsd
-// +build darwin dragonfly openbsd
 
 package serial
 
