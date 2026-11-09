@@ -8,7 +8,6 @@ package orangepi
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"periph.io/x/conn/v3/driver/driverreg"
@@ -154,7 +153,7 @@ func (d *driver) Init() (bool, error) {
 
 	model := distro.DTModel()
 	if model == "<unknown>" {
-		return true, fmt.Errorf("orangepi: failed to obtain model")
+		return true, errors.New("orangepi: failed to obtain model")
 	}
 
 	err := registerHeaders(model)

@@ -160,7 +160,7 @@ func (d *i2cBus) setI2CLinesIdle() error {
 	const mask = 0xFF &^ (i2cSCL | i2cSDAOut | i2cSDAIn)
 	// TODO(maruel): d.pullUp
 	d.f.dbus.direction = d.f.dbus.direction&mask | i2cSCL | i2cSDAOut
-	d.f.dbus.value = d.f.dbus.value & mask
+	d.f.dbus.value &= mask
 	cmd := [...]byte{gpioSetD, d.f.dbus.value | i2cSCL | i2cSDAOut, d.f.dbus.direction}
 	_, err := d.f.h.Write(cmd[:])
 	return err

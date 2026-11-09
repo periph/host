@@ -49,12 +49,12 @@ const (
 	timerM0 = 1 << 0 // M0
 )
 
-// Page 173
+// Page 173.
 type timerCtl uint32
 
 // timerMap represents the registers to access the 1Mhz timer.
 //
-// Page 172
+// Page 172.
 type timerMap struct {
 	ctl  timerCtl // CS
 	low  uint32   // CLO

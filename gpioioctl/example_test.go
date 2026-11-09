@@ -81,7 +81,7 @@ func testRotary(chip *gpioioctl.GPIOChip, stateLine, dataLine, buttonLine string
 						// We're bouncing.
 						consecutive = 0
 					} else {
-						consecutive += 1
+						consecutive++
 						if consecutive > 25 {
 							if bits == 0x01 {
 								fmt.Printf("Clockwise bits=%d\n", bits)

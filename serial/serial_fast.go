@@ -5,7 +5,6 @@
 // Serial baud-rate constants for Linux and supported Unix platforms.
 
 //go:build freebsd || linux || netbsd || solaris
-// +build freebsd linux netbsd solaris
 
 package serial
 

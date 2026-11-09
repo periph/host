@@ -24,7 +24,7 @@ type function uint8
 const (
 	in  function = 0
 	out function = 1
-	// TODO: work out how to change pin functions
+	// TODO: work out how to change pin functions.
 	alt0 function = 2
 	alt1 function = 3
 	alt2 function = 4
@@ -132,12 +132,12 @@ func (p *Pin) Func() pin.Func {
 	switch f := p.function(); f {
 	case in:
 		// TODO: implement FastRead
-		//if p.FastRead() {
+		// if p.FastRead() {
 		//	return gpio.IN_HIGH
 		//}
 		return gpio.IN_LOW
 	case out:
-		//if p.FastRead() {
+		// if p.FastRead() {
 		//	return gpio.OUT_HIGH
 		//}
 		return gpio.OUT_LOW
@@ -178,7 +178,7 @@ func (p *Pin) SetFunc(pin.Func) error {
 // In implements gpio.PinIn.
 //
 // Not implemented yet.
-func (p *Pin) In(pull gpio.Pull, edge gpio.Edge) error {
+func (p *Pin) In(_ gpio.Pull, _ gpio.Edge) error {
 	return errors.New("not implemented")
 }
 
@@ -192,7 +192,7 @@ func (p *Pin) Read() gpio.Level {
 // WaitForEdge implements gpio.PinIn.
 //
 // Not implemented yet.
-func (p *Pin) WaitForEdge(timeout time.Duration) bool {
+func (p *Pin) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -211,14 +211,14 @@ func (p *Pin) DefaultPull() gpio.Pull {
 // Out implements gpio.PinOut.
 //
 // Not implemented yet.
-func (p *Pin) Out(l gpio.Level) error {
+func (p *Pin) Out(_ gpio.Level) error {
 	return errors.New("not implemented")
 }
 
 // PWM implements gpio.PinOut.
 //
 // Not implemented yet.
-func (p *Pin) PWM(duty gpio.Duty, f physic.Frequency) error {
+func (p *Pin) PWM(_ gpio.Duty, _ physic.Frequency) error {
 	return errors.New("not implemented")
 }
 

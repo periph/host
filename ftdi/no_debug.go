@@ -5,12 +5,11 @@
 // Disable FTDI diagnostic logging when the debug build tag is absent.
 
 //go:build !periph_host_ftdi_debug
-// +build !periph_host_ftdi_debug
 
 package ftdi
 
 // logf is disabled when the build tag host_ftdi_debug is not specified.
-func logf(fmt string, v ...interface{}) {
+func logf(_ string, _ ...any) {
 }
 
 func (d *driver) resetLog() {

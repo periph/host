@@ -30,6 +30,7 @@ import (
 // The memory is mapped in user space.
 type Mem struct {
 	*pmem.View
+
 	handle uint32
 }
 
@@ -38,7 +39,7 @@ type Mem struct {
 // It is important to call this function otherwise the memory is locked until
 // the host reboots.
 func (m *Mem) Close() error {
-	if err := m.View.Close(); err != nil { //nolint:staticcheck // SA4023: Non-Linux unmapping always fails; Linux calls may succeed.
+	if err := m.View.Close(); err != nil {
 		return wrapf("failed to close physical view: %v", err)
 	}
 	if _, err := mailboxTx32(mbUnlockMemory, m.handle); err != nil {
@@ -93,13 +94,13 @@ func Alloc(size int) (*Mem, error) {
 var (
 	mu         sync.Mutex
 	mailbox    messager
-	mailboxErr error
+	errMailbox error
 
 	mbIoctl = fs.IOWR('d', 0, uint(unsafe.Sizeof(new(byte))))
 )
 
 const (
-	// All of these return anything but zero (‽)
+	// All of these return anything but zero (‽).
 	mbFirmwareVersion = 0x1     // 0, 4
 	mbBoardModel      = 0x10001 // 0, 4
 	mbBoardRevision   = 0x10002 // 0, 4
@@ -108,7 +109,7 @@ const (
 	mbARMMemory       = 0x10005 // 0, 8
 	mbVCMemory        = 0x10006 // 0, 8
 	mbClocks          = 0x10007 // 0, variable
-	// These work:
+	// These work:.
 	mbAllocateMemory = 0x3000C    // 12, 4
 	mbLockMemory     = 0x3000D    // 4, 4
 	mbUnlockMemory   = 0x3000E    // 4, 4
@@ -140,16 +141,16 @@ func (m *messageBox) sendMessage(b []uint32) error {
 func openMailbox() error {
 	mu.Lock()
 	defer mu.Unlock()
-	if mailbox != nil || mailboxErr != nil {
-		return mailboxErr
+	if mailbox != nil || errMailbox != nil {
+		return errMailbox
 	}
 	f, err := fs.Open("/dev/vcio", os.O_RDWR|os.O_SYNC)
-	mailboxErr = err
+	errMailbox = err
 	if err == nil {
 		mailbox = &messageBox{f}
-		mailboxErr = smokeTest()
+		errMailbox = smokeTest()
 	}
-	return mailboxErr
+	return errMailbox
 }
 
 // genPacket creates a message to be sent to the GPU via the "mailbox".
@@ -160,23 +161,20 @@ func genPacket(cmd uint32, replyLen uint32, args ...uint32) []uint32 {
 	p := make([]uint32, 48)
 	offset := uintptr(unsafe.Pointer(&p[0])) & 15
 	b := p[16-offset : 32+16-offset]
-	max := uint32(len(args) * 4)
-	if replyLen > max {
-		max = replyLen
-	}
-	max = ((max + 3) / 4) * 4
+	maxSize := max(uint32(len(args)*4), replyLen)
+	maxSize = ((maxSize + 3) / 4) * 4
 	// size + zero + cmd + in + out + <max> + zero
-	b[0] = uint32(6*4) + max     // message total length in bytes, including trailing zero
+	b[0] = uint32(6*4) + maxSize // message total length in bytes, including trailing zero
 	b[2] = cmd                   //
 	b[3] = uint32(len(args)) * 4 // inputs length in bytes
 	b[4] = replyLen              // outputs length in bytes
 	copy(b[5:], args)
-	return b[:6+max/4]
+	return b[:6+maxSize/4]
 }
 
 func sendPacket(b []uint32) error {
 	if err := mailbox.sendMessage(b); err != nil {
-		return fmt.Errorf("failed to send IOCTL: %v", err)
+		return fmt.Errorf("failed to send IOCTL: %w", err)
 	}
 	if b[1] != mbReply {
 		// 0x80000001 means partial response.
@@ -222,7 +220,7 @@ func smokeTest() error {
 	return err
 }
 
-func wrapf(format string, a ...interface{}) error {
+func wrapf(format string, a ...any) error {
 	return fmt.Errorf("videocore: "+format, a...)
 }
 

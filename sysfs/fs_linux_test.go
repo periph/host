@@ -81,26 +81,25 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	notExpectChan(t, c, "should not have produced an event")
 
 	// Produce a single event.
-	if _, err = w.Write([]byte("foo")); err != nil {
+	if _, err = w.WriteString("foo"); err != nil {
 		t.Fatal(err)
 	}
 	expectChan(t, c, start)
 	notExpectChan(t, c, "should have produced a single event")
 
 	buf := [8]byte{}
-	n := 0
-	if n, err = r.Read(buf[:]); err != nil {
-		t.Fatal(err)
+	if n, readErr := r.Read(buf[:]); readErr != nil {
+		t.Fatal(readErr)
 	} else if n != 3 {
 		t.Fatal("expected foo")
 	}
 	notExpectChan(t, c, "no event for read")
 
 	// Produce one or two events.
-	if _, err = w.Write([]byte("bar")); err != nil {
+	if _, err = w.WriteString("bar"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err = w.Write([]byte("baz")); err != nil {
+	if _, err = w.WriteString("baz"); err != nil {
 		t.Fatal(err)
 	}
 	expectChan(t, c, start)
@@ -111,8 +110,8 @@ func TestManual_Listen_Pipe(t *testing.T) {
 	default:
 	}
 
-	if n, err = r.Read(buf[:]); err != nil {
-		t.Fatal(err)
+	if n, readErr := r.Read(buf[:]); readErr != nil {
+		t.Fatal(readErr)
 	} else if n != 6 {
 		t.Fatal("expected foo")
 	}
@@ -193,9 +192,8 @@ func TestManual_Listen_Socket(t *testing.T) {
 	// Empty the buffer.
 	var buf [16]byte
 	expected := "bar\nbaz\n"
-	n := 0
-	if n, err = recv.Read(buf[:]); n != len(expected) || err != nil {
-		t.Fatal(n, err)
+	if n, readErr := recv.Read(buf[:]); n != len(expected) || readErr != nil {
+		t.Fatal(n, readErr)
 	}
 	if s := string(buf[:len(expected)]); s != expected {
 		t.Fatal(s)
@@ -207,7 +205,7 @@ func TestManual_Listen_Socket(t *testing.T) {
 	}
 	expectChan(t, c, start)
 	// This is part of https://github.com/google/periph/issues/323
-	//notExpectChan(t, c, "should have produced a single event")
+	// notExpectChan(t, c, "should have produced a single event")
 	// Instead consume any extraneous event.
 	select {
 	case <-c:

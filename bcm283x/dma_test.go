@@ -140,10 +140,10 @@ func TestDmaMap_GoString(t *testing.T) {
 
 func TestStructSizes(t *testing.T) {
 	// Verify internal assumptions.
-	if s := reflect.TypeOf((*controlBlock)(nil)).Elem().Size(); s != 256/8 {
+	if s := reflect.TypeFor[controlBlock]().Size(); s != 256/8 {
 		t.Fatalf("controlBlock size: %d", s)
 	}
-	if s := reflect.TypeOf((*dmaChannel)(nil)).Elem().Size(); s != 0x100 {
+	if s := reflect.TypeFor[dmaChannel]().Size(); s != 0x100 {
 		t.Fatalf("dmaChannel size: %d", s)
 	}
 }

@@ -71,7 +71,6 @@ func (cfg *LineSetConfig) getLineOffset(lineName string) int {
 // Return a gpio_v2_line_request that represents this LineSetConfig.
 // the returned value can then be used to request the lines.
 func (cfg *LineSetConfig) getLineSetRequestStruct(lineNumbers []uint32) *gpio_v2_line_request {
-
 	var lr gpio_v2_line_request
 	for ix, char := range []byte(consumer) {
 		lr.consumer[ix] = char
@@ -87,10 +86,9 @@ func (cfg *LineSetConfig) getLineSetRequestStruct(lineNumbers []uint32) *gpio_v2
 		for _, line := range lco.Lines {
 			offset := cfg.getLineOffset(line)
 			mask |= uint64(1 << offset)
-
 		}
 		lr.config.attrs[lr.config.num_attrs] = gpio_v2_line_config_attribute{attr: attr, mask: mask}
-		lr.config.num_attrs += 1
+		lr.config.num_attrs++
 	}
 
 	return &lr
@@ -158,13 +156,12 @@ func (ls *LineSet) Pins() []pin.Pin {
 	return pins
 }
 
-// Interrupt any calls to WaitForEdge().
+// Halt Interrupt any calls to WaitForEdge().
 func (ls *LineSet) Halt() error {
 	if ls.fEdge != nil {
 		return ls.fEdge.SetReadDeadline(time.UnixMilli(0))
 	}
 	return nil
-
 }
 
 // Out writes the set of bits to the LineSet's lines. If mask is 0, then the
@@ -213,8 +210,11 @@ func (ls *LineSet) MarshalJSON() ([]byte, error) {
 // String returns the LineSet information in JSON, along with the details for
 // all of the lines.
 func (ls *LineSet) String() string {
-	json, _ := json.MarshalIndent(ls, "", "    ")
-	return string(json)
+	data, err := json.MarshalIndent(ls, "", "    ")
+	if err != nil {
+		log.Printf("marshal GPIO state: %v", err)
+	}
+	return string(data)
 }
 
 // WaitForEdge waits for an edge to be triggered on the LineSet.
@@ -234,7 +234,7 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number int, edge gpio.Edg
 		err = syscall_nonblock_wrapper(int(ls.fd), true)
 		if err != nil {
 			err = fmt.Errorf("WaitForEdge() - SetNonblock: %w", err)
-			return
+			return number, edge, err
 		}
 		ls.fEdge = os.NewFile(uintptr(ls.fd), "gpio-lineset")
 	}
@@ -246,13 +246,13 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number int, edge gpio.Edg
 	}
 	if err != nil {
 		err = fmt.Errorf("WaitForEdge() - SetReadDeadline(): %w", err)
-		return
+		return number, edge, err
 	}
 
 	var event gpio_v2_line_event
 	err = binary.Read(ls.fEdge, binary.LittleEndian, &event)
 	if err != nil {
-		return
+		return number, edge, err
 	}
 	if event.Id == _GPIO_V2_LINE_EVENT_RISING_EDGE {
 		edge = gpio.RisingEdge
@@ -260,11 +260,11 @@ func (ls *LineSet) WaitForEdge(timeout time.Duration) (number int, edge gpio.Edg
 		edge = gpio.FallingEdge
 	}
 	number = int(event.Offset)
-	return
+	return number, edge, err
 }
 
 // ByOffset returns a line by it's offset in the LineSet.  See ByName() for an
-// example that casts the return value to a LineSetLine
+// example that casts the return value to a LineSetLine.
 func (ls *LineSet) ByOffset(offset int) pin.Pin {
 	if offset < 0 || offset >= len(ls.lines) {
 		return nil
@@ -289,9 +289,9 @@ func (ls *LineSet) ByName(name string) pin.Pin {
 	return nil
 }
 
-// LineNumber Return a line from the LineSet via it's GPIO line
+// ByNumber LineNumber Return a line from the LineSet via it's GPIO line
 // number. See ByName() for an example that casts the return value to a
-// LineSetLine
+// LineSetLine.
 func (ls *LineSet) ByNumber(number int) pin.Pin {
 	for _, line := range ls.lines {
 		if line.Number() == number {
@@ -320,12 +320,12 @@ type LineSetLine struct {
    gpio.Pin
 */
 
-// Number returns the Line's GPIO Line Number. Implements gpio.Pin
+// Number returns the Line's GPIO Line Number. Implements gpio.Pin.
 func (lsl *LineSetLine) Number() int {
 	return int(lsl.number)
 }
 
-// Name returns the line's name. Implements gpio.Pin
+// Name returns the line's name. Implements gpio.Pin.
 func (lsl *LineSetLine) Name() string {
 	return lsl.name
 }
@@ -359,14 +359,14 @@ func (lsl *LineSetLine) PWM(gpio.Duty, physic.Frequency) error {
 
 // Halt interrupts a pending WaitForEdge. You can't halt a read
 // for a single line in a LineSet, so this returns an error. Use
-// LineSet.Halt()
+// LineSet.Halt().
 func (lsl *LineSetLine) Halt() error {
 	return errors.New("you can't halt an individual line in a LineSet. you must halt the LineSet")
 }
 
 // In configures the line for input. Since individual lines in a
 // LineSet cannot be re-configured this always returns an error.
-func (lsl *LineSetLine) In(pull gpio.Pull, edge gpio.Edge) error {
+func (lsl *LineSetLine) In(_ gpio.Pull, _ gpio.Edge) error {
 	return errors.New("a LineSet line cannot be re-configured")
 }
 
@@ -401,13 +401,16 @@ func (lsl *LineSetLine) MarshalJSON() ([]byte, error) {
 
 // String returns information about the line in JSON format.
 func (lsl *LineSetLine) String() string {
-	json, _ := json.MarshalIndent(lsl, "", "    ")
-	return string(json)
+	data, err := json.MarshalIndent(lsl, "", "    ")
+	if err != nil {
+		log.Printf("marshal GPIO state: %v", err)
+	}
+	return string(data)
 }
 
 // WaitForEdge will always return false for a LineSetLine. You MUST
-// use LineSet.WaitForEdge()
-func (lsl *LineSetLine) WaitForEdge(timeout time.Duration) bool {
+// use LineSet.WaitForEdge().
+func (lsl *LineSetLine) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -424,7 +427,7 @@ func (lsl *LineSetLine) DefaultPull() gpio.Pull {
 }
 
 // Offset returns the offset if this LineSetLine within the LineSet.
-// 0..LineSet.LineCount
+// 0..LineSet.LineCount.
 func (lsl *LineSetLine) Offset() uint32 {
 	return lsl.offset
 }

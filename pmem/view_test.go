@@ -115,7 +115,7 @@ func TestSlice_Errors4(t *testing.T) {
 	}
 
 	{
-		var v []interface{}
+		var v []any
 		if s.AsPOD(&v) == nil {
 			t.Fatal("slice of non-POD")
 		}
@@ -123,7 +123,7 @@ func TestSlice_Errors4(t *testing.T) {
 
 	{
 		var v *struct {
-			A interface{}
+			A any
 		}
 		if s.AsPOD(&v) == nil {
 			t.Fatal("struct of non-POD")
@@ -157,7 +157,7 @@ func TestSlice_Errors1(t *testing.T) {
 
 // These are really just exercising code, not real tests.
 
-func TestMapGPIO(t *testing.T) {
+func TestMapGPIO(_ *testing.T) {
 	defer reset()
 	// It can fail, depending on the platform.
 	_, _ = MapGPIO()
@@ -191,7 +191,7 @@ func TestMapAsPOD(t *testing.T) {
 	}
 }
 
-func TestView(t *testing.T) {
+func TestView(_ *testing.T) {
 	defer reset()
 	v := View{}
 	// Close fails on invalid View.
@@ -225,7 +225,7 @@ func (s *simpleFile) Read(b []byte) (int, error) {
 	return len(s.data), nil
 }
 
-func (s *simpleFile) Seek(offset int64, whence int) (int64, error) {
+func (s *simpleFile) Seek(_ int64, _ int) (int64, error) {
 	return 0, nil
 }
 
@@ -240,24 +240,24 @@ func (f *failFile) Fd() uintptr {
 	return 0
 }
 
-func (f *failFile) Read(b []byte) (int, error) {
+func (f *failFile) Read(_ []byte) (int, error) {
 	return 0, errors.New("injected error")
 }
 
-func (f *failFile) Seek(offset int64, whence int) (int64, error) {
+func (f *failFile) Seek(_ int64, _ int) (int64, error) {
 	return 0, errors.New("injected error")
 }
 
 func reset() {
 	mu.Lock()
 	defer mu.Unlock()
-	gpioMemErr = nil
+	errGPIOMem = nil
 	gpioMemView = nil
 	devMem = nil
-	devMemErr = nil
+	errDevMem = nil
 	openFile = openFileOrig
 	pageMap = nil
-	pageMapErr = nil
+	errPageMap = nil
 }
 
 func init() {

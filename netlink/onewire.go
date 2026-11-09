@@ -10,6 +10,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 
 	"periph.io/x/conn/v3/driver/driverreg"
@@ -52,7 +53,7 @@ func (o *OneWire) Close() error {
 	defer o.mu.Unlock()
 
 	if err := o.s.close(); err != nil {
-		return fmt.Errorf("netlink-onewire: %v", err)
+		return fmt.Errorf("netlink-onewire: %w", err)
 	}
 	return nil
 }
@@ -88,7 +89,7 @@ func (o *OneWire) Tx(w, r []byte, _ onewire.Pullup) error {
 
 	d, err := o.s.sendAndRecv(o.seq, m)
 	if err != nil {
-		return fmt.Errorf("netlink-onewire: transaction failed: %v", err)
+		return fmt.Errorf("netlink-onewire: transaction failed: %w", err)
 	}
 	copy(r, d)
 
@@ -118,7 +119,7 @@ func (o *OneWire) Search(alarmOnly bool) ([]onewire.Address, error) {
 
 	d, err := o.s.sendAndRecv(o.seq, m)
 	if err != nil {
-		return nil, fmt.Errorf("netlink-onewire: search command failed: %v", err)
+		return nil, fmt.Errorf("netlink-onewire: search command failed: %w", err)
 	}
 
 	l := len(d)
@@ -141,7 +142,7 @@ func (o *OneWire) Search(alarmOnly bool) ([]onewire.Address, error) {
 func newOneWire(masterID uint32) (*OneWire, error) {
 	s, err := newW1Socket()
 	if err != nil {
-		return nil, fmt.Errorf("netlink-onewire: failed to create socket: %v", err)
+		return nil, fmt.Errorf("netlink-onewire: failed to create socket: %w", err)
 	}
 
 	return &OneWire{
@@ -272,7 +273,7 @@ func newW1Socket() (*w1Socket, error) {
 	// Open netlink socket.
 	s, err := newConnSocket()
 	if err != nil {
-		return nil, fmt.Errorf("failed to open netlink socket: %v", err)
+		return nil, fmt.Errorf("failed to open netlink socket: %w", err)
 	}
 
 	return &w1Socket{s: s}, nil
@@ -280,7 +281,7 @@ func newW1Socket() (*w1Socket, error) {
 
 func (ws *w1Socket) sendAndRecv(seq uint32, m *w1Msg) ([]byte, error) {
 	if err := ws.sendMsg(m.serialize(), seq); err != nil {
-		return nil, fmt.Errorf("failed to send W1 message: %v", err)
+		return nil, fmt.Errorf("failed to send W1 message: %w", err)
 	}
 
 	var data []byte
@@ -306,7 +307,7 @@ func (ws *w1Socket) sendAndRecv(seq uint32, m *w1Msg) ([]byte, error) {
 	}
 
 	if err1 != nil {
-		return nil, fmt.Errorf("failed to receive response / acks: %v", err1)
+		return nil, fmt.Errorf("failed to receive response / acks: %w", err1)
 	}
 
 	return data, nil
@@ -339,7 +340,7 @@ func (ws *w1Socket) sendMsg(data []byte, seq uint32) error {
 	copy(cn[sizeofCnMsg:], data)
 
 	if err := ws.s.send(nl); err != nil {
-		return fmt.Errorf("failed to send message: %v", err)
+		return fmt.Errorf("failed to send message: %w", err)
 	}
 	return nil
 }
@@ -470,19 +471,23 @@ func (d *driver1W) Init() (bool, error) {
 	}
 	s, err := newW1Socket()
 	if err != nil {
-		return false, fmt.Errorf("netlink-onewire: failed to open socket: %v", err)
+		return false, fmt.Errorf("netlink-onewire: failed to open socket: %w", err)
 	}
-	defer s.close()
+	defer func() {
+		if closeErr := s.close(); closeErr != nil {
+			log.Printf("close s: %v", closeErr)
+		}
+	}()
 
 	// Find bus masters.
 	m := &w1Msg{typ: msgListMasters}
 	if err = s.sendMsg(m.serialize(), 0); err != nil {
-		return false, fmt.Errorf("netlink-onewire: failed to send list bus msg: %v", err)
+		return false, fmt.Errorf("netlink-onewire: failed to send list bus msg: %w", err)
 	}
 
 	b, err := s.recvMsg(0, 1, msgListMasters)
 	if err != nil {
-		return false, fmt.Errorf("netlink-onewire: failed to receive bus IDs: %v", err)
+		return false, fmt.Errorf("netlink-onewire: failed to receive bus IDs: %w", err)
 	}
 
 	l := len(b)

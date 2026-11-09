@@ -58,7 +58,7 @@ func (s *SmokeTest) Run(f *flag.FlagSet, args []string) error {
 		pwm = &loggingPin{allwinner.PB2, start}
 		other = &loggingPin{allwinner.PB3, start}
 	} else if pine64.Present() {
-		//pwm = &loggingPin{allwinner.PD22}
+		// pwm = &loggingPin{allwinner.PD22}
 		return errors.New("implement and test for pine64")
 	} else {
 		return errors.New("implement and test for this host")
@@ -95,15 +95,16 @@ func printPin(p gpio.PinIO) {
 
 // since returns time in µs since the test start.
 func since(start time.Time) string {
-	µs := (time.Since(start) + time.Microsecond/2) / time.Microsecond
-	ms := µs / 1000
-	µs %= 1000
-	return fmt.Sprintf("%3d.%03dms", ms, µs)
+	us := (time.Since(start) + time.Microsecond/2) / time.Microsecond
+	ms := us / 1000
+	us %= 1000
+	return fmt.Sprintf("%3d.%03dms", ms, us)
 }
 
 // loggingPin logs when its state changes.
 type loggingPin struct {
 	*allwinner.Pin
+
 	start time.Time
 }
 

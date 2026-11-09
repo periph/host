@@ -22,7 +22,7 @@ import (
 type bitMode uint8
 
 const (
-	// Resets all Pins to their default value
+	// Resets all Pins to their default value.
 	bitModeReset bitMode = 0x00
 	// Sets the DBus to asynchronous bit-bang.
 	bitModeAsyncBitbang bitMode = 0x01
@@ -205,10 +205,7 @@ func (h *handle) Read(b []byte) (int, error) {
 	if p == 0 || e != 0 {
 		return int(p), toErr("Read/GetQueueStatus", e)
 	}
-	v := int(p)
-	if v > len(b) {
-		v = len(b)
-	}
+	v := min(int(p), len(b))
 	n, e := h.h.Read(b[:v])
 	return n, toErr("Read", e)
 }
@@ -224,10 +221,7 @@ func (h *handle) ReadAll(ctx context.Context, b []byte) (int, error) {
 		if ctx.Err() != nil {
 			return offset, io.EOF
 		}
-		chunk := len(b) - offset
-		if chunk > 4096 {
-			chunk = 4096
-		}
+		chunk := min(len(b)-offset, 4096)
 		n, err := h.Read(b[offset : offset+chunk])
 		if offset += n; err != nil {
 			return offset, err
@@ -250,10 +244,7 @@ func (h *handle) WriteFast(b []byte) (int, error) {
 // Write blocks until all data is written.
 func (h *handle) Write(b []byte) (int, error) {
 	for offset := 0; offset != len(b); {
-		chunk := len(b) - offset
-		if chunk > 4096 {
-			chunk = 4096
-		}
+		chunk := min(len(b)-offset, 4096)
 		p, err := h.WriteFast(b[offset : offset+chunk])
 		if err != nil {
 			return offset + p, err

@@ -230,7 +230,7 @@ func (s *Benchmark) benchmarkFastOutClock(b *testing.B) {
 	}
 	n := (b.N + 1) / 2
 	b.ResetTimer()
-	for i := 0; i < n; i++ {
+	for range n {
 		p.FastOut(gpio.High)
 		p.FastOut(gpio.Low)
 	}
@@ -270,7 +270,7 @@ func (s *Benchmark) benchmarkFastOutBitsLSBLoop(b *testing.B) {
 	}
 	b.ResetTimer()
 	for _, l := range buf {
-		for i := 0; i < 8; i++ {
+		for i := range 8 {
 			mask := byte(1) << uint(i)
 			p.FastOut(gpio.Level(l&mask != 0))
 		}

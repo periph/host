@@ -15,7 +15,7 @@ import (
 const pwmClock = 24000000
 const pwmMaxPeriod = 0x10000
 
-// prescalers is the value for pwm0Prescale*
+// prescalers is the value for pwm0Prescale*.
 var prescalers = []struct {
 	freq   uint32
 	scaler pwmPrescale
@@ -52,13 +52,13 @@ const (
 	pwm0Prescale240  pwmCtl = pwmCtl(pwmPrescale240)
 	pwm0Prescale360  pwmCtl = pwmCtl(pwmPrescale360)
 	pwm0Prescale480  pwmCtl = pwmCtl(pwmPrescale480)
-	// 5, 6, 7 reserved
+	// 5, 6, 7 reserved.
 	pwm0Prescale12000 pwmCtl = pwmCtl(pwmPrescale12000)
 	pwm0Prescale24000 pwmCtl = pwmCtl(pwmPrescale24000)
 	pwm0Prescale36000 pwmCtl = pwmCtl(pwmPrescale36000)
 	pwm0Prescale48000 pwmCtl = pwmCtl(pwmPrescale48000)
 	pwm0Prescale72000 pwmCtl = pwmCtl(pwmPrescale72000)
-	// 13, 14 reserved
+	// 13, 14 reserved.
 	pwm0Prescale1 pwmCtl = pwmCtl(pwmPrescale1)
 )
 
@@ -111,13 +111,13 @@ const (
 	pwmPrescale240  pwmPrescale = 2
 	pwmPrescale360  pwmPrescale = 3
 	pwmPrescale480  pwmPrescale = 4
-	// 5, 6, 7 reserved
+	// 5, 6, 7 reserved.
 	pwmPrescale12000 pwmPrescale = 8
 	pwmPrescale24000 pwmPrescale = 9
 	pwmPrescale36000 pwmPrescale = 10
 	pwmPrescale48000 pwmPrescale = 11
 	pwmPrescale72000 pwmPrescale = 12
-	// 13, 14 reserved
+	// 13, 14 reserved.
 	pwmPrescale1 pwmPrescale = 15
 )
 
@@ -153,7 +153,7 @@ func (p pwmPrescale) String() string {
 }
 
 // A64: Page 195.
-// R8: Page 84
+// R8: Page 84.
 type pwmPeriod uint32
 
 func (p pwmPeriod) String() string {

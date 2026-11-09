@@ -149,7 +149,7 @@ func testChipGpioNames() error {
 	return nil
 }
 
-// testChipAliases tests that the various gpio pin aliases get set-up
+// testChipAliases tests that the various gpio pin aliases get set-up.
 func testChipAliases() error {
 	tests := map[string]string{ // alias->real
 		"XIO-P4":   "GPIO1017",

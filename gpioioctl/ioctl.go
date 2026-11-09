@@ -113,7 +113,7 @@ type gpio_v2_line_request struct {
 	fd                int32
 }
 
-// setLineNumber works around the false positive in gosec for using copy
+// setLineNumber works around the false positive in gosec for using copy.
 func (lr *gpio_v2_line_request) setLineNumber(element int, number uint32) {
 	lr.offsets[element] = number
 }

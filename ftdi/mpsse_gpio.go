@@ -57,7 +57,7 @@ func (g *gpiosMPSSE) in(n int) error {
 	if g.h == nil {
 		return errors.New("d2xx: device not open")
 	}
-	g.direction = g.direction & ^(1 << uint(n))
+	g.direction &= ^(1 << uint(n))
 	if g.cbus {
 		return g.h.MPSSECBus(g.direction, g.value)
 	}
@@ -81,7 +81,7 @@ func (g *gpiosMPSSE) out(n int, l gpio.Level) error {
 	if g.h == nil {
 		return errors.New("d2xx: device not open")
 	}
-	g.direction = g.direction | (1 << uint(n))
+	g.direction |= 1 << uint(n)
 	if l {
 		g.value |= 1 << uint(n)
 	} else {
@@ -163,7 +163,7 @@ func (g *gpioMPSSE) Read() gpio.Level {
 }
 
 // WaitForEdge implements gpio.PinIn.
-func (g *gpioMPSSE) WaitForEdge(t time.Duration) bool {
+func (g *gpioMPSSE) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -184,7 +184,7 @@ func (g *gpioMPSSE) Out(l gpio.Level) error {
 }
 
 // PWM implements gpio.PinOut.
-func (g *gpioMPSSE) PWM(d gpio.Duty, f physic.Frequency) error {
+func (g *gpioMPSSE) PWM(_ gpio.Duty, _ physic.Frequency) error {
 	return errors.New("d2xx: not implemented")
 }
 

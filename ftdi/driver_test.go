@@ -35,7 +35,7 @@ func TestDriver(t *testing.T) {
 	}
 }
 
-func reset(t *testing.T) {
+func reset(_ *testing.T) {
 	drv.reset()
 }
 

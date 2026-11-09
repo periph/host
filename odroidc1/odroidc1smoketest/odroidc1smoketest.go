@@ -128,7 +128,7 @@ func testOdroidC1GpioNames() error {
 	return nil
 }
 
-// testOdroidC1Aliases tests that the various gpio pin aliases get set-up
+// testOdroidC1Aliases tests that the various gpio pin aliases get set-up.
 func testOdroidC1Aliases() error {
 	tests := map[string]string{ // alias->real
 		"I2CA_SDA":  "GPIO74",

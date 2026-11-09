@@ -75,22 +75,22 @@ func TestSplitNull(t *testing.T) {
 	}
 }
 
-func TestIsArmbian(t *testing.T) {
+func TestIsArmbian(_ *testing.T) {
 	// At least ensure it doesn't crash.
 	IsArmbian()
 }
 
-func TestIsDebian(t *testing.T) {
+func TestIsDebian(_ *testing.T) {
 	// At least ensure it doesn't crash.
 	IsDebian()
 }
 
-func TestIsRaspbian(t *testing.T) {
+func TestIsRaspbian(_ *testing.T) {
 	// At least ensure it doesn't crash.
 	IsRaspbian()
 }
 
-func TestIsUbuntu(t *testing.T) {
+func TestIsUbuntu(_ *testing.T) {
 	// At least ensure it doesn't crash.
 	IsUbuntu()
 }
@@ -151,7 +151,7 @@ func reset() {
 	dtCompatible = nil
 	dtModel = ""
 	osRelease = nil
-	readFile = func(filename string) ([]byte, error) {
+	readFile = func(_ string) ([]byte, error) {
 		return nil, errors.New("no file can be opened in unit tests")
 	}
 }

@@ -84,7 +84,7 @@ const (
 	maxLite = 65535
 )
 
-// Pages 47-50
+// Pages 47-50.
 type dmaStatus uint32
 
 const (
@@ -110,7 +110,7 @@ const (
 	dmaPriorityMask  = 0xF << dmaPriorityShift // PRIORITY
 	// 15:9 reserved
 	dmaErrorStatus dmaStatus = 1 << 8 // ERROR DMA error was detected; must be cleared manually.
-	// 7 reserved
+	// 7 reserved.
 	dmaWaitingForOutstandingWrites dmaStatus = 1 << 6 // WAITING_FOR_OUTSTANDING_WRITES; Indicates if the DMA is currently waiting for any outstanding writes to be received, and is not transferring data.
 	dmaDreqStopsDMA                dmaStatus = 1 << 5 // DREQ_STOPS_DMA; Indicates if the DMA is currently paused and not transferring data due to the DREQ being inactive.
 	// Indicates if the DMA is currently paused and not transferring data. This
@@ -186,12 +186,12 @@ func (d dmaStatus) String() string {
 	return strings.Join(out, "|")
 }
 
-// Pages 50-52
+// Pages 50-52.
 type dmaTransferInfo uint32
 
 const (
 	// 31:27 reserved
-	// Don't do wide writes as 2 beat burst; only for channels 0 to 6
+	// Don't do wide writes as 2 beat burst; only for channels 0 to 6.
 	dmaNoWideBursts dmaTransferInfo = 1 << 26 // NO_WIDE_BURSTS
 	// 25:21 Slows down the DMA throughput by setting the number of dummy cycles
 	// burnt after each DMA read or write is completed.
@@ -204,7 +204,7 @@ const (
 	// It is the source used to pace the data reads and writes operations, each
 	// pace being a DReq (Data Request).
 	//
-	// Page 61
+	// Page 61.
 	dmaPerMapShift                   = 16
 	dmaPerMapMask    dmaTransferInfo = 31 << dmaPerMapShift
 	dmaFire          dmaTransferInfo = 0 << dmaPerMapShift  // PERMAP; Continuous trigger
@@ -334,7 +334,7 @@ func (d dmaTransferInfo) String() string {
 	return strings.Join(out, "|")
 }
 
-// Page 55
+// Page 55.
 type dmaDebug uint32
 
 const (
@@ -352,7 +352,7 @@ const (
 	// 7:4   outstandingWrites
 	dmaOutstandingWritesShift = 4
 	dmaOutstandingWritesMask  = 0xF << dmaOutstandingWritesShift // OUTSTANDING_WRITES
-	// 3     reserved
+	// 3     reserved.
 	dmaReadError           dmaDebug = 1 << 2 // READ_ERROR slave read error; clear by writing a 1
 	dmaFIFOError           dmaDebug = 1 << 1 // FIF_ERROR fifo error; clear by writing a 1
 	dmaReadLastNotSetError dmaDebug = 1 << 0 // READ_LAST_NOT_SET_ERROR last AXI read signal was not set when expected
@@ -559,7 +559,7 @@ func (d *dmaChannel) startIO(cb uint32) {
 func (d *dmaChannel) wait() error {
 	// TODO(maruel): Calculate the number of bytes remaining, the clock rate and
 	// do a short sleep instead of a spin. To do so, it'll need the clock rate.
-	// Spin until the the bit is reset, to release the DMA controller channel.
+	// Spin until the bit is reset, to release the DMA controller channel.
 	for d.cs&dmaActive != 0 && d.debug&(dmaReadError|dmaFIFOError|dmaReadLastNotSetError) == 0 {
 	}
 	if d.debug&dmaReadError != 0 {
@@ -598,7 +598,7 @@ type dmaMap struct {
 
 func indent(s, indent string) string {
 	var out []string
-	for _, x := range strings.Split(s, "\n") {
+	for x := range strings.SplitSeq(s, "\n") {
 		if len(x) != 0 {
 			out = append(out, indent+x)
 		} else {
@@ -647,7 +647,7 @@ func pickChannel(blacklist ...int) (int, *dmaChannel) {
 		}
 	}
 	// Uncomment to understand the state of the DMA channels.
-	//log.Printf("%#v", drvDMA.dmaMemory)
+	// log.Printf("%#v", drvDMA.dmaMemory)
 	return -1, nil
 }
 
@@ -683,7 +683,7 @@ func allocateCB(size int) ([]controlBlock, *videocore.Mem, error) {
 
 // dmaWriteStreamPCM streams data to a PCM enabled pin as a half-duplex I²S
 // channel.
-func dmaWriteStreamPCM(p *Pin, w gpiostream.Stream) error {
+func dmaWriteStreamPCM(_ *Pin, w gpiostream.Stream) error {
 	d := w.Duration()
 	if d == 0 {
 		return nil
@@ -710,7 +710,11 @@ func dmaWriteStreamPCM(p *Pin, w gpiostream.Stream) error {
 	if err != nil {
 		return err
 	}
-	defer buf.Close()
+	defer func() {
+		if closeErr := buf.Close(); closeErr != nil {
+			log.Printf("close buf: %v", closeErr)
+		}
+	}()
 	if err = copyStreamToDMABuf(w, buf.Uint32()); err != nil {
 		return err
 	}
@@ -719,7 +723,11 @@ func dmaWriteStreamPCM(p *Pin, w gpiostream.Stream) error {
 	if err != nil {
 		return err
 	}
-	defer pCB.Close()
+	defer func() {
+		if closeErr := pCB.Close(); closeErr != nil {
+			log.Printf("close pCB: %v", closeErr)
+		}
+	}()
 	reg := drvDMA.pcmBaseAddr + 0x4 // pcmMap.fifo
 	if err = cb[0].initBlock(uint32(buf.PhysAddr()), reg, uint32(l), false, true, true, false, dmaPCMTX); err != nil {
 		return err
@@ -786,7 +794,7 @@ func startPWMbyDMA(p *Pin, rng, data uint32) (*dmaChannel, *videocore.Mem, error
 	}
 	// High
 	ptr := physBuf
-	for i := uint32(0); i < data; i++ {
+	for i := range data {
 		if err := cb[i].initBlock(physBit, dest[1], uint32Size, false, true, false, false, dmaPWM); err != nil {
 			_ = buf.Close()
 			return nil, nil, err
@@ -796,14 +804,12 @@ func startPWMbyDMA(p *Pin, rng, data uint32) (*dmaChannel, *videocore.Mem, error
 	}
 	// Low
 	for i := data; i < rng; i++ {
-
 		if err := cb[i].initBlock(physBit, dest[0], uint32Size, false, true, false, false, dmaPWM); err != nil {
 			_ = buf.Close()
 			return nil, nil, err
 		}
 		ptr += controlBlockSize
 		cb[i].nextCB = ptr
-
 	}
 	cb[rng].nextCB = physBuf // Loop back to cb[0]
 
@@ -859,12 +865,20 @@ func dmaReadStream(p *Pin, b *gpiostream.BitStream) error {
 	if err != nil {
 		return err
 	}
-	defer buf.Close()
+	defer func() {
+		if closeErr := buf.Close(); closeErr != nil {
+			log.Printf("close buf: %v", closeErr)
+		}
+	}()
 	cb, pCB, err := allocateCB(uint32Size)
 	if err != nil {
 		return err
 	}
-	defer pCB.Close()
+	defer func() {
+		if closeErr := pCB.Close(); closeErr != nil {
+			log.Printf("close pCB: %v", closeErr)
+		}
+	}()
 
 	reg := drvGPIO.gpioBaseAddr + 0x34 + uint32Size*uint32(p.number/32) // GPIO Pin Level 0
 	if err = cb[0].initBlock(reg, uint32(buf.PhysAddr()), uint32(l), true, false, false, true, dmaPWM); err != nil {
@@ -928,7 +942,11 @@ func dmaWriteStreamEdges(p *Pin, w gpiostream.Stream) error {
 	if err != nil {
 		return err
 	}
-	defer buf.Close()
+	defer func() {
+		if closeErr := buf.Close(); closeErr != nil {
+			log.Printf("close buf: %v", closeErr)
+		}
+	}()
 
 	// Setup the single mask buffer of 4Kb.
 	mask := uint32(1) << uint(p.number&31)
@@ -940,7 +958,7 @@ func dmaWriteStreamEdges(p *Pin, w gpiostream.Stream) error {
 	// Other constants during the loop.
 	// Waits does not seem to work as expected. Not counted as DREQ pulses?
 	// Use PWM's rng1 instead for this.
-	//waits := divs - 1
+	// waits := divs - 1
 	dest := [2]uint32{
 		drvGPIO.gpioBaseAddr + 0x28 + uint32Size*uint32(p.number/32), // clear
 		drvGPIO.gpioBaseAddr + 0x1C + uint32Size*uint32(p.number/32), // set
@@ -994,17 +1012,29 @@ func dmaWriteStreamDualChannel(p *Pin, w gpiostream.Stream) error {
 	if err != nil {
 		return err
 	}
-	defer bufSet.Close()
+	defer func() {
+		if closeErr := bufSet.Close(); closeErr != nil {
+			log.Printf("close bufSet: %v", closeErr)
+		}
+	}()
 	bufClear, err := drvDMA.dmaBufAllocator(bufLen)
 	if err != nil {
 		return err
 	}
-	defer bufClear.Close()
+	defer func() {
+		if closeErr := bufClear.Close(); closeErr != nil {
+			log.Printf("close bufClear: %v", closeErr)
+		}
+	}()
 	cb, pCB, err := allocateCB(4096)
 	if err != nil {
 		return err
 	}
-	defer pCB.Close()
+	defer func() {
+		if closeErr := pCB.Close(); closeErr != nil {
+			log.Printf("close pCB: %v", closeErr)
+		}
+	}()
 
 	// Needs 64x the memory since each write is 2 full uint32. On the other
 	// hand one could write 32 contiguous pins simultaneously at no cost.
@@ -1097,7 +1127,11 @@ func smokeTest() error {
 		if err2 != nil {
 			return err2
 		}
-		defer pCB.Close()
+		defer func() {
+			if closeErr := pCB.Close(); closeErr != nil {
+				log.Printf("close pCB: %v", closeErr)
+			}
+		}()
 		var cb *controlBlock
 		if err := pCB.AsPOD(&cb); err != nil {
 			return err
@@ -1198,7 +1232,7 @@ func (d *driverDMA) Init() (bool, error) {
 	// baseAddr is initialized by prerequisite driver bcm283x-gpio.
 	if err := pmem.MapAsPOD(uint64(drvGPIO.baseAddr+0x7000), &d.dmaMemory); err != nil {
 		if os.IsPermission(err) {
-			return true, fmt.Errorf("need more access, try as root: %v", err)
+			return true, fmt.Errorf("need more access, try as root: %w", err)
 		}
 		return true, err
 	}

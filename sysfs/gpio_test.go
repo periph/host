@@ -225,7 +225,7 @@ func (f *fakeGPIOFile) Fd() uintptr {
 	return 0
 }
 
-func (f *fakeGPIOFile) Ioctl(op uint, data uintptr) error {
+func (f *fakeGPIOFile) Ioctl(_ uint, _ uintptr) error {
 	return errors.New("injected")
 }
 
@@ -245,6 +245,6 @@ func (f *fakeGPIOFile) Write(b []byte) (int, error) {
 	return len(f.data), nil
 }
 
-func (f *fakeGPIOFile) Seek(offset int64, whence int) (int64, error) {
+func (f *fakeGPIOFile) Seek(_ int64, _ int) (int64, error) {
 	return 0, nil
 }

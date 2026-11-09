@@ -31,11 +31,11 @@ func TestAlloc_fail(t *testing.T) {
 	if m, err := Alloc(1); m != nil || err == nil {
 		t.Fatal("can't alloc non 4096 bytes increments")
 	}
-	mailboxErr = errors.New("error")
+	errMailbox = errors.New("error")
 	if m, err := Alloc(4096); m != nil || err == nil {
-		t.Fatal("mailboxErr is not nil")
+		t.Fatal("errMailbox is not nil")
 	}
-	mailboxErr = nil
+	errMailbox = nil
 	mailbox = &dummy{}
 	if m, err := Alloc(4096); m != nil || err == nil {
 		t.Fatal("can't map arbitrary physical pages")
@@ -80,14 +80,14 @@ func TestOpenMailbox(t *testing.T) {
 	defer reset(t)
 	mailbox = &playback{}
 	if err := openMailbox(); err != nil {
-		if mailboxErr != err {
+		if !errors.Is(errMailbox, err) {
 			t.Fatal("error is different")
 		}
 		if mailbox != nil {
 			t.Fatal("mailbox should be nil")
 		}
 	} else {
-		if mailboxErr != nil {
+		if errMailbox != nil {
 			t.Fatal("should have error'ed")
 		}
 		if mailbox == nil {
@@ -178,7 +178,7 @@ func reset(t *testing.T) {
 		}
 	}
 	mailbox = nil
-	mailboxErr = nil
+	errMailbox = nil
 }
 
 func init() {

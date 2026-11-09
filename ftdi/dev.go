@@ -110,15 +110,15 @@ func (b *broken) Header() []gpio.PinIO {
 	return nil
 }
 
-func (b *broken) SetSpeed(f physic.Frequency) error {
+func (b *broken) SetSpeed(_ physic.Frequency) error {
 	return b.err
 }
 
-func (b *broken) EEPROM(ee *EEPROM) error {
+func (b *broken) EEPROM(_ *EEPROM) error {
 	return b.err
 }
 
-func (b *broken) WriteEEPROM(ee *EEPROM) error {
+func (b *broken) WriteEEPROM(_ *EEPROM) error {
 	return b.err
 }
 
@@ -130,7 +130,7 @@ func (b *broken) UserArea() ([]byte, error) {
 	return nil, b.err
 }
 
-func (b *broken) WriteUserArea(ua []byte) error {
+func (b *broken) WriteUserArea(_ []byte) error {
 	return b.err
 }
 
@@ -653,10 +653,7 @@ func (f *FT232R) txLocked(w, r []byte) error {
 		}
 		for len(r) != 0 {
 			// TODO(maruel): Optimize.
-			c := len(r)
-			if c > chunk {
-				c = chunk
-			}
+			c := min(len(r), chunk)
 			if _, err := f.h.Write(scratch[:c]); err != nil {
 				return err
 			}
@@ -670,10 +667,7 @@ func (f *FT232R) txLocked(w, r []byte) error {
 		// The first write is 128 bytes to fill the buffer.
 		chunk = 128
 		for len(w) != 0 {
-			c := len(w)
-			if c > chunk {
-				c = chunk
-			}
+			c := min(len(w), chunk)
 			if _, err := f.h.Write(w[:c]); err != nil {
 				return err
 			}
@@ -691,10 +685,7 @@ func (f *FT232R) txLocked(w, r []byte) error {
 		// Always write one 'w' ahead.
 		// The first write is 128 bytes to fill the buffer.
 		chunk = 128
-		cw := len(w)
-		if cw > chunk {
-			cw = chunk
-		}
+		cw := min(len(w), chunk)
 		if _, err := f.h.Write(w[:cw]); err != nil {
 			return err
 		}
@@ -702,19 +693,13 @@ func (f *FT232R) txLocked(w, r []byte) error {
 		chunk = 64
 		for len(r) != 0 {
 			// Read then write.
-			cr := len(r)
-			if cr > chunk {
-				cr = chunk
-			}
+			cr := min(len(r), chunk)
 			if _, err := f.h.ReadAll(context.Background(), r[:cr]); err != nil {
 				return err
 			}
 			r = r[cr:]
 
-			cw = len(w)
-			if cw > chunk {
-				cw = chunk
-			}
+			cw = min(len(w), chunk)
 			if cw != 0 {
 				if _, err := f.h.Write(w[:cw]); err != nil {
 					return err
@@ -805,7 +790,7 @@ func (f *FT232R) dbusSyncGPIOOut(n int, l gpio.Level) error {
 	return f.dbusSyncGPIOOutLocked(n, l)
 }
 
-func (f *FT232R) dbusSyncGPIOOutLocked(n int, l gpio.Level) error {
+func (f *FT232R) dbusSyncGPIOOutLocked(_ int, _ gpio.Level) error {
 	b := [1]byte{f.dvalue}
 	if _, err := f.h.Write(b[:]); err != nil {
 		return err

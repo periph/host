@@ -36,7 +36,7 @@ const (
 	// When both dataOut and dataIn are specified, one of dataOutFall or
 	// dataInFall should be specified, at least for most sane protocols.
 	//
-	// Flags:
+	// Flags:.
 	dataOut     byte = 0x10 // Enable output, default on +VE (Rise)
 	dataIn      byte = 0x20 // Enable input, default on +VE (Rise)
 	dataOutFall byte = 0x01 // instead of Rise
@@ -46,7 +46,7 @@ const (
 
 	// Data line drives low when the data is 0 and tristates on data 1. This is
 	// used with I²C.
-	// <op>, <ADBus pins>, <ACBus pins>
+	// <op>, <ADBus pins>, <ACBus pins>.
 	dataTristate byte = 0x9E
 
 	// TSM operation (for JTAG).
@@ -55,22 +55,22 @@ const (
 	// - Bit 7 is passed to TDI/DO before the first clock of TMS and is held
 	//   static for the duration of TMS clocking.
 	//
-	// <op>, <Length>, <byte>
+	// <op>, <Length>, <byte>.
 	tmsOutLSBFRise byte = 0x4A
 	tmsOutLSBFFall byte = 0x4B
 	tmsIOLSBInRise byte = 0x6A
 	tmsIOLSBInFall byte = 0x6B
-	// Unclear: 0x6E and 0x6F
+	// Unclear: 0x6E and 0x6F.
 
 	// GPIO operation.
 	//
 	// - Operates on 8 GPIOs at a time, e.g. C0~C7 or D0~D7.
 	// - Direction 1 means output, 0 means input.
 	//
-	// <op>, <value>, <direction>
+	// <op>, <value>, <direction>.
 	gpioSetD byte = 0x80
 	gpioSetC byte = 0x82
-	// <op>, returns <value>
+	// <op>, returns <value>.
 	gpioReadD byte = 0x81
 	gpioReadC byte = 0x83
 
@@ -103,7 +103,7 @@ const (
 	// - ...
 	// - 0xFFFF(65536) 91.553Hz / 457.763Hz
 	//
-	// <op>, <valueL-1>, <valueH-1>
+	// <op>, <valueL-1>, <valueH-1>.
 	clockSetDivisor byte = 0x86
 	// Uses 3 phases data clocking: data is valid on both clock edges. Needed
 	// for I²C.
@@ -112,10 +112,10 @@ const (
 	clock2Phase byte = 0x8D
 	// Enables clock even while not doing any operation. Used with JTAG.
 	// Enables the clock between [1, 8] pulses.
-	// <op>, <length-1>
+	// <op>, <length-1>.
 	clockOnShort byte = 0x8E
 	// Enables the clock between [8, 524288] pulses in 8 multiples.
-	// <op>, <lengthL-1>, <lengthH-1>
+	// <op>, <lengthL-1>, <lengthH-1>.
 	clockOnLong byte = 0x8F
 	// Enables clock until D5 is high or low. Used with JTAG.
 	clockUntilHigh byte = 0x94
@@ -134,13 +134,13 @@ const (
 	//
 	// Access the device registers like a memory mapped device.
 	//
-	// <op>, <addrLow>
+	// <op>, <addrLow>.
 	cpuReadShort byte = 0x90
-	// <op>, <addrHi>, <addrLow>
+	// <op>, <addrHi>, <addrLow>.
 	cpuReadFar byte = 0x91
-	// <op>, <addrLow>, <data>
+	// <op>, <addrLow>, <data>.
 	cpuWriteShort byte = 0x92
-	// <op>, <addrHi>, <addrLow>, <data>
+	// <op>, <addrHi>, <addrLow>, <data>.
 	cpuWriteFar byte = 0x91
 
 	// Buffer operations.

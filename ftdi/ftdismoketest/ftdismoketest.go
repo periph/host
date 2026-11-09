@@ -100,7 +100,7 @@ func gpioPerfTest(p gpio.PinIO) error {
 		return err
 	}
 	start := time.Now()
-	for i := 0; i < loops; i++ {
+	for range loops {
 		p.Read()
 	}
 	s := time.Since(start)
@@ -110,7 +110,7 @@ func gpioPerfTest(p gpio.PinIO) error {
 		return err
 	}
 	start = time.Now()
-	for i := 0; i < loops; i++ {
+	for range loops {
 		if err := p.Out(gpio.Low); err != nil {
 			return err
 		}

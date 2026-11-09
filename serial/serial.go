@@ -78,7 +78,7 @@ func (p *Port) String() string {
 }
 
 // Connect implements uart.Port.
-func (p *Port) Connect(f physic.Frequency, stopBit uart.Stop, parity uart.Parity, flow uart.Flow, bits int) (conn.Conn, error) {
+func (p *Port) Connect(f physic.Frequency, _ uart.Stop, _ uart.Parity, flow uart.Flow, bits int) (conn.Conn, error) {
 	if f > physic.GigaHertz {
 		return nil, fmt.Errorf("sysfs-uart: invalid speed %s; maximum supported clock is 1GHz", f)
 	}
@@ -91,12 +91,12 @@ func (p *Port) Connect(f physic.Frequency, stopBit uart.Stop, parity uart.Parity
 
 	// Find the closest value in acceptedBauds.
 	baud := uint32(f / physic.Hertz)
-	//var op uint32
+	// var op uint32
 	for _, line := range acceptedBauds {
 		if line[0] > baud {
 			break
 		}
-		//op = line[1]
+		// op = line[1]
 	}
 
 	p.conn.mu.Lock()

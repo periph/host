@@ -175,7 +175,7 @@ func (d *driver) Init() (bool, error) {
 		return true, err
 	}
 	multi := num > 1
-	for i := 0; i < num; i++ {
+	for i := range num {
 		// TODO(maruel): Close the device one day. :)
 		if dev, err1 := open(d.d2xxOpen, i); err1 == nil {
 			d.all = append(d.all, dev)

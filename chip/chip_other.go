@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for chip.
 
 //go:build !arm
-// +build !arm
 
 package chip
 

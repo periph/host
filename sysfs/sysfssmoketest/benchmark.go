@@ -11,6 +11,8 @@ import (
 	"flag"
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 
 	"periph.io/x/conn/v3/gpio"
 	"periph.io/x/host/v3/sysfs"
@@ -56,13 +58,15 @@ func (s *Benchmark) Run(f *flag.FlagSet, args []string) error {
 		}
 		sort.Ints(list)
 		valid := ""
+		var validSb59 strings.Builder
 		for i, v := range list {
 			if i == 0 {
-				valid += fmt.Sprintf("%d", v)
+				validSb59.WriteString(strconv.Itoa(v))
 			} else {
-				valid += fmt.Sprintf(", %d", v)
+				validSb59.WriteString(fmt.Sprintf(", %d", v))
 			}
 		}
+		valid += validSb59.String()
 		return fmt.Errorf("invalid pin %d; valid: %s", *num, valid)
 	}
 	s.pull = gpio.PullNoChange

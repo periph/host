@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -61,7 +62,7 @@ func (s *SPI) Close() error {
 	s.conn.mu.Lock()
 	defer s.conn.mu.Unlock()
 	if err := s.conn.f.Close(); err != nil {
-		return fmt.Errorf("sysfs-spi: %v", err)
+		return fmt.Errorf("sysfs-spi: %w", err)
 	}
 	s.conn.f = nil
 	return nil
@@ -134,12 +135,12 @@ func (s *SPI) Connect(f physic.Frequency, mode spi.Mode, bits int) (spi.Conn, er
 	// Only the first 8 bits are used. This only works because the system is
 	// running in little endian.
 	if err := s.conn.setFlag(spiIOCMode, uint64(m)); err != nil {
-		return nil, fmt.Errorf("sysfs-spi: setting mode %v failed: %v", mode, err)
+		return nil, fmt.Errorf("sysfs-spi: setting mode %v failed: %w", mode, err)
 	}
 	return &s.conn, nil
 }
 
-// MaxTxSize implements conn.Limits
+// MaxTxSize implements conn.Limits.
 func (s *SPI) MaxTxSize() int {
 	return drvSPI.bufSize
 }
@@ -176,7 +177,7 @@ func newSPI(busNumber, chipSelect int) (*SPI, error) {
 	// Use the devfs path for now.
 	f, err := ioctlOpen(fmt.Sprintf("/dev/spidev%d.%d", busNumber, chipSelect), os.O_RDWR)
 	if err != nil {
-		return nil, fmt.Errorf("sysfs-spi: %v", err)
+		return nil, fmt.Errorf("sysfs-spi: %w", err)
 	}
 	return &SPI{
 		spiConn{
@@ -236,7 +237,7 @@ func (s *spiConn) Read(b []byte) (int, error) {
 	s.p[0].W = nil
 	s.p[0].R = b
 	if err := s.txPackets(s.p[:1]); err != nil {
-		return 0, fmt.Errorf("sysfs-spi: Read() failed: %v", err)
+		return 0, fmt.Errorf("sysfs-spi: Read() failed: %w", err)
 	}
 	return len(b), nil
 }
@@ -254,7 +255,7 @@ func (s *spiConn) Write(b []byte) (int, error) {
 	s.p[0].W = b
 	s.p[0].R = nil
 	if err := s.txPackets(s.p[:1]); err != nil {
-		return 0, fmt.Errorf("sysfs-spi: Write() failed: %v", err)
+		return 0, fmt.Errorf("sysfs-spi: Write() failed: %w", err)
 	}
 	return len(b), nil
 }
@@ -298,7 +299,7 @@ func (s *spiConn) Tx(w, r []byte) error {
 		s.p[0].KeepCS = false
 	}
 	if err := s.txPackets(p); err != nil {
-		return fmt.Errorf("sysfs-spi: Tx() failed: %v", err)
+		return fmt.Errorf("sysfs-spi: Tx() failed: %w", err)
 	}
 	return nil
 }
@@ -339,7 +340,7 @@ func (s *spiConn) TxPackets(p []spi.Packet) error {
 		}
 	}
 	if err := s.txPackets(p); err != nil {
-		return fmt.Errorf("sysfs-spi: TxPackets() failed: %v", err)
+		return fmt.Errorf("sysfs-spi: TxPackets() failed: %w", err)
 	}
 	return nil
 }
@@ -584,7 +585,11 @@ func (d *driverSPI) Init() (bool, error) {
 	if err != nil {
 		return true, err
 	}
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Printf("close f: %v", closeErr)
+		}
+	}()
 	b, err := io.ReadAll(f)
 	if err != nil {
 		return true, err

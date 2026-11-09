@@ -45,7 +45,7 @@ func getBit(b byte, index int, msb bool) byte {
 	return (b >> shift) & 1
 }
 
-func raster32Bits(s gpiostream.Stream, skip int, clear, set []uint32, mask uint32) error {
+func raster32Bits(s gpiostream.Stream, skip int, clearBits, set []uint32, mask uint32) error {
 	var msb bool
 	var bits []byte
 	switch b := s.(type) {
@@ -55,21 +55,21 @@ func raster32Bits(s gpiostream.Stream, skip int, clear, set []uint32, mask uint3
 	default:
 		return fmt.Errorf("unsupported type %T", b)
 	}
-	m := len(clear) / 8
+	m := len(clearBits) / 8
 	if n := len(bits); n < m {
 		m = n
 	}
 	index := 0
 	for i := 0; i < m; i++ {
-		for j := 0; j < 8; j++ {
+		for j := range 8 {
 			if getBit(bits[i], j, msb) != 0 {
-				for k := 0; k < skip; k++ {
+				for range skip {
 					set[index] |= mask
 					index++
 				}
 			} else {
-				for k := 0; k < skip; k++ {
-					clear[index] |= mask
+				for range skip {
+					clearBits[index] |= mask
 					index++
 				}
 			}
@@ -82,23 +82,23 @@ func raster32Bits(s gpiostream.Stream, skip int, clear, set []uint32, mask uint3
 // put in the correctly slice when the bit is set and when it is clear.
 //
 // `s` must be one of the types in this package.
-func raster32(s gpiostream.Stream, skip int, clear, set []uint32, mask uint32) error {
+func raster32(s gpiostream.Stream, skip int, clearBits, set []uint32, mask uint32) error {
 	if mask == 0 {
 		return errors.New("bcm283x: mask is 0")
 	}
-	if len(clear) == 0 {
+	if len(clearBits) == 0 {
 		return errors.New("bcm283x: clear buffer is empty")
 	}
 	if len(set) == 0 {
 		return errors.New("bcm283x: set buffer is empty")
 	}
-	if len(clear) != len(set) {
+	if len(clearBits) != len(set) {
 		return errors.New("bcm283x: clear and set buffers have different length")
 	}
 	switch x := s.(type) {
 	case *gpiostream.BitStream:
 		// TODO
-		return raster32Bits(x, skip, clear, set, mask)
+		return raster32Bits(x, skip, clearBits, set, mask)
 	case *gpiostream.EdgeStream:
 		return errors.New("bcm283x: EdgeStream is not supported yet")
 	case *gpiostream.Program:
@@ -122,7 +122,7 @@ func copyStreamToDMABuf(w gpiostream.Stream, dst []uint32) error {
 		}
 		last := uint32(0)
 		if mod := len(v.Bits) % 4; mod > 0 {
-			for j := 0; j < mod; j++ {
+			for j := range mod {
 				last |= (uint32(v.Bits[i*4+j])) << uint32(8*(3-j))
 			}
 			dst[i] = last

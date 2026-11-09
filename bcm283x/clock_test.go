@@ -93,7 +93,6 @@ func TestClockCtl_String(t *testing.T) {
 		{clockSrcHDMI, "HDMI(216MHz)"},
 	}
 	for i, line := range data {
-		line := line
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
 			t.Parallel()
 			if s := line.c.String(); s != line.s {
@@ -199,7 +198,6 @@ func TestCalcSource_exact(t *testing.T) {
 		},
 	}
 	for i, line := range data {
-		line := line
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
 			t.Parallel()
 			src, clkDiv, waitCycles, f, err := calcSource(line.desired, line.maxWaitCycles)
@@ -256,7 +254,6 @@ func TestCalcSource_oversample(t *testing.T) {
 		},
 	}
 	for i, line := range data {
-		line := line
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
 			t.Parallel()
 			src, clkDiv, waitCycles, f, err := calcSource(line.desired, line.maxWaitCycles)
@@ -276,31 +273,30 @@ func TestCalcSource_inexact(t *testing.T) {
 	data := []struct {
 		desired       physic.Frequency
 		maxWaitCycles uint32
-		//src                clockCtl
-		//clkDiv, waitCycles int
-		//expected           physic.Frequency
+		// src                clockCtl
+		// clkDiv, waitCycles int
+		// expected           physic.Frequency
 	}{
 		{
 			// 2930/1465 = 2x
 			clk19dot2MHz / clockDiviMax / (dmaWaitcyclesMax + 1) * physic.Hertz,
 			dmaWaitcyclesMax + 1,
-			//clockSrc19dot2MHz, 2121, 31, 292,
+			// clockSrc19dot2MHz, 2121, 31, 292,
 		},
 		{
 			// 93795/46886 = 2.0004 (error: 0.025%)
 			clk19dot2MHz / clockDiviMax * physic.Hertz,
 			dmaWaitcyclesMax + 1,
-			//clockSrcPLLD, 2051, 26, 9376,
+			// clockSrcPLLD, 2051, 26, 9376,
 		},
 		{
 			// 1465.2014/7 = 209.31x (error: 0.15%)
 			7 * physic.Hertz,
 			dmaWaitcyclesMax + 1,
-			//clockSrc19dot2MHz, 4095, 32, 146, // 146.52014
+			// clockSrc19dot2MHz, 4095, 32, 146, // 146.52014
 		},
 	}
 	for i, line := range data {
-		line := line
 		t.Run(fmt.Sprintf("#%d", i), func(t *testing.T) {
 			t.Parallel()
 			src, clkDiv, waitCycles, f, err := calcSource(line.desired, line.maxWaitCycles)
@@ -315,7 +311,7 @@ func TestCalcSource_inexact(t *testing.T) {
 
 func BenchmarkCalcSource_Exact(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		src, clkDiv, waitCycles, actual, err := calcSource(120*physic.KiloHertz, dmaWaitcyclesMax+1)
 		if src != clockSrc19dot2MHz || clkDiv != 160 || waitCycles != 1 || actual != 120*physic.KiloHertz || err != nil {
 			b.Fatal(src, clkDiv, waitCycles, actual, err)
@@ -325,7 +321,7 @@ func BenchmarkCalcSource_Exact(b *testing.B) {
 
 func BenchmarkCalcSource_Oversample(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		src, clkDiv, waitCycles, actual, err := calcSource(10*physic.Hertz, dmaWaitcyclesMax+1)
 		if src != clockSrc19dot2MHz || clkDiv != 4000 || waitCycles != 32 || actual != 150*physic.Hertz || err != nil {
 			b.Fatal(clkDiv, waitCycles, actual)
@@ -336,7 +332,7 @@ func BenchmarkCalcSource_Oversample(b *testing.B) {
 func BenchmarkCalcSource_Inexact(b *testing.B) {
 	// TODO(maruel): It is really too slow.
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		src, clkDiv, waitCycles, hz, err := calcSource(7, dmaWaitcyclesMax+1)
 		if src != 0 || clkDiv != 0 || waitCycles != 0 || hz != 0 || err == nil {
 			b.Fatalf("inexact match is not yet implemented")

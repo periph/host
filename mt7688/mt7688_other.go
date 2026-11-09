@@ -5,7 +5,6 @@
 // Disable MT7688 processor detection on unsupported architectures.
 
 //go:build !mipsle
-// +build !mipsle
 
 package mt7688
 

@@ -220,7 +220,7 @@ func (s *spiMPSEEConn) TxPackets(pkts []spi.Packet) error {
 	// try to make all I/O be aligned on this amount. This also removes the need
 	// for heap usage. The idea is to always trail reads by one buffer. This is
 	// fine as the device has 1024 byte read buffer. Operations look like this:
-	//   W, W, R, W, R, W, R, R
+	//   W, R, W, R, W, R,
 	// This enables reducing the I/O gaps between USB packets as the device is
 	// always busy with operations.
 	var buf [512]byte
@@ -235,16 +235,16 @@ func (s *spiMPSEEConn) TxPackets(pkts []spi.Packet) error {
 		// TODO(maruel): s.halfDuplex.
 
 		if !keptCS {
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				cmd = append(cmd, gpioSetD, idle, s.f.dbus.direction)
 			}
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				cmd = append(cmd, gpioSetD, start1, s.f.dbus.direction)
 			}
 		}
 		if s.edgeInvert {
 			// This is needed to 'prime' the clock.
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				cmd = append(cmd, gpioSetD, start2, s.f.dbus.direction)
 			}
 		}
@@ -256,7 +256,7 @@ func (s *spiMPSEEConn) TxPackets(pkts []spi.Packet) error {
 			// Have the write buffer point to the read one. This saves from
 			// allocating memory. The side effect is that it will write whatever
 			// happened to be in the read buffer.
-			p.W = p.R[:]
+			p.W = p.R
 		}
 		pendingRead := 0
 		for len(p.W) != 0 {
@@ -305,10 +305,10 @@ func (s *spiMPSEEConn) TxPackets(pkts []spi.Packet) error {
 		keptCS = p.KeepCS
 		if !keptCS {
 			cmd = append(cmd, flush)
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				cmd = append(cmd, gpioSetD, stop, s.f.dbus.direction)
 			}
-			for i := 0; i < 5; i++ {
+			for range 5 {
 				cmd = append(cmd, gpioSetD, idle, s.f.dbus.direction)
 			}
 			if _, err := s.f.h.WriteFast(cmd); err != nil {
@@ -590,7 +590,7 @@ func (s *spiSyncConn) TxPackets(pkts []spi.Packet) error {
 		}
 		// TODO(maruel): s.halfDuplex.
 		for _, b := range p.W {
-			for j := uint(0); j < 8; j++ {
+			for j := range uint(8) {
 				// For each bit, handle clock phase and data phase.
 				bit := byte(0)
 				if !s.lsbFirst {
@@ -631,7 +631,7 @@ func (s *spiSyncConn) TxPackets(pkts []spi.Packet) error {
 		for i := range p.R {
 			// For each bit, read at the right data phase.
 			b := byte(0)
-			for j := 0; j < 8; j++ {
+			for j := range 8 {
 				if re[5+i*8*2+j*2+1]&byte(1)<<1 != 0 {
 					if !s.lsbFirst {
 						// MSBF

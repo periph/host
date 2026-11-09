@@ -50,7 +50,7 @@ const (
 	timerClear                     = 1 << 0 // CONT64_CLR_EN; clears the counter
 )
 
-// R8: Page 96
+// R8: Page 96.
 type timerCtrl uint32
 
 // timerMap is the mapping of important registers across CPUs.
@@ -87,7 +87,7 @@ type timerMapA64 struct {
 	reserved12 uint32    // 0xB8 WDOG0_MODE_REG Watchdog 0 Mode Register
 }
 
-// R8: Page 85
+// R8: Page 85.
 type timerMapR8 struct {
 	reserved0   uint32       // 0x000 ASYNC_TMR_IRQ_EN_REG Timer IRQ Enable
 	reserved1   uint32       // 0x004 ASYNC_TMR_IRQ_STAS_REG Timer Status

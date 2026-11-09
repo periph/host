@@ -97,7 +97,7 @@ func (l *LED) SupportedFuncs() []pin.Func {
 }
 
 // SetFunc implements pin.PinFunc.
-func (l *LED) SetFunc(f pin.Func) error {
+func (l *LED) SetFunc(_ pin.Func) error {
 	return errors.New("sysfs-led: not implemented")
 }
 
@@ -134,7 +134,7 @@ func (l *LED) Read() gpio.Level {
 }
 
 // WaitForEdge implements gpio.PinIn.
-func (l *LED) WaitForEdge(timeout time.Duration) bool {
+func (l *LED) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -170,7 +170,7 @@ func (l *LED) Out(level gpio.Level) error {
 // PWM implements gpio.PinOut.
 //
 // This sets the intensity level, if supported. The frequency is ignored.
-func (l *LED) PWM(d gpio.Duty, f physic.Frequency) error {
+func (l *LED) PWM(d gpio.Duty, _ physic.Frequency) error {
 	err := l.open()
 	if err != nil {
 		return err

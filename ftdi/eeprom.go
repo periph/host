@@ -88,37 +88,37 @@ func (e *EEPROM) AsFT232R() *EEPROMFT232R {
 type FT232hCBusMux uint8
 
 const (
-	// TriSt-PU; Sets in Tristate (pull up) (C0~C6, C8, C9) on 75kΩ.
+	// FT232hCBusTristatePullUp TriSt-PU; Sets in Tristate (pull up) (C0~C6, C8, C9) on 75kΩ.
 	FT232hCBusTristatePullUp FT232hCBusMux = 0x00
-	// TXLED#; Pulses low when transmitting data (C0~C6, C8, C9).
+	// FT232hCBusTxLED TXLED#; Pulses low when transmitting data (C0~C6, C8, C9).
 	FT232hCBusTxLED FT232hCBusMux = 0x01
-	// RXLED#; Pulses low when receiving data (C0~C6, C8, C9).
+	// FT232hCBusRxLED RXLED#; Pulses low when receiving data (C0~C6, C8, C9).
 	FT232hCBusRxLED FT232hCBusMux = 0x02
-	// TX&RXLED#; Pulses low when either receiving or transmitting data (C0~C6,
+	// FT232hCBusTxRxLED TX&RXLED#; Pulses low when either receiving or transmitting data (C0~C6,
 	// C8, C9).
 	FT232hCBusTxRxLED FT232hCBusMux = 0x03
-	// PWREN#; Output is low after the device has been configured by USB, then
+	// FT232hCBusPwrEnable PWREN#; Output is low after the device has been configured by USB, then
 	// high during USB suspend mode (C0~C6, C8, C9).
 	//
 	// Must be used with an external 10kΩ pull up.
 	FT232hCBusPwrEnable FT232hCBusMux = 0x04
-	// SLEEP#; Goes low during USB suspend mode (C0~C6, C8, C9).
+	// FT232hCBusSleep SLEEP#; Goes low during USB suspend mode (C0~C6, C8, C9).
 	FT232hCBusSleep FT232hCBusMux = 0x05
-	// DRIVE1; Drives pin to logic 0 (C0~C6, C8, C9).
+	// FT232hCBusDrive0 DRIVE1; Drives pin to logic 0 (C0~C6, C8, C9).
 	FT232hCBusDrive0 FT232hCBusMux = 0x06
-	// DRIVE1; Drives pin to logic 1 (C0, C5, C6, C8, C9).
+	// FT232hCBusDrive1 DRIVE1; Drives pin to logic 1 (C0, C5, C6, C8, C9).
 	FT232hCBusDrive1 FT232hCBusMux = 0x07
-	// I/O Mode; CBus bit-bang mode option (C5, C6, C8, C9).
+	// FT232hCBusIOMode I/O Mode; CBus bit-bang mode option (C5, C6, C8, C9).
 	FT232hCBusIOMode FT232hCBusMux = 0x08
-	// TXDEN; Tx Data Enable. Used with RS485 level converters to enable the line
+	// FT232hCBusTxdEnable TXDEN; Tx Data Enable. Used with RS485 level converters to enable the line
 	// driver during data transmit. It is active one bit time before the start
 	// bit up to until the end of the stop bit (C0~C6, C8, C9).
 	FT232hCBusTxdEnable FT232hCBusMux = 0x09
-	// CLK30 30MHz clock output (C0, C5, C6, C8, C9).
+	// FT232hCBusClk30 CLK30 30MHz clock output (C0, C5, C6, C8, C9).
 	FT232hCBusClk30 FT232hCBusMux = 0x0A
-	// CLK15 15MHz clock output (C0, C5, C6, C8, C9).
+	// FT232hCBusClk15 CLK15 15MHz clock output (C0, C5, C6, C8, C9).
 	FT232hCBusClk15 FT232hCBusMux = 0x0B
-	// CLK7.5 7.5MHz clock output (C0, C5, C6, C8, C9).
+	// FT232hCBusClk7_5 CLK7.5 7.5MHz clock output (C0, C5, C6, C8, C9).
 	FT232hCBusClk7_5 FT232hCBusMux = 0x0C
 )
 
@@ -137,36 +137,36 @@ func (f FT232hCBusMux) String() string {
 type FT232rCBusMux uint8
 
 const (
-	// TXDEN; Tx Data Enable. Used with RS485 level converters to enable the line
+	// FT232rCBusTxdEnable TXDEN; Tx Data Enable. Used with RS485 level converters to enable the line
 	// driver during data transmit. It is active one bit time before the start
 	// bit up to until the end of the stop bit (C0~C4).
 	FT232rCBusTxdEnable FT232rCBusMux = 0x00
-	// PWREN#; Output is low after the device has been configured by USB, then
+	// FT232rCBusPwrEnable PWREN#; Output is low after the device has been configured by USB, then
 	// high during USB suspend mode (C0~C4).
 	//
 	// Must be used with an external 10kΩ pull up.
 	FT232rCBusPwrEnable FT232rCBusMux = 0x01
-	// RXLED#; Pulses low when receiving data (C0~C4).
+	// FT232rCBusRxLED RXLED#; Pulses low when receiving data (C0~C4).
 	FT232rCBusRxLED FT232rCBusMux = 0x02
-	// TXLED#; Pulses low when transmitting data (C0~C4).
+	// FT232rCBusTxLED TXLED#; Pulses low when transmitting data (C0~C4).
 	FT232rCBusTxLED FT232rCBusMux = 0x03
-	// TX&RXLED#; Pulses low when either receiving or transmitting data (C0~C4).
+	// FT232rCBusTxRxLED TX&RXLED#; Pulses low when either receiving or transmitting data (C0~C4).
 	FT232rCBusTxRxLED FT232rCBusMux = 0x04
-	// SLEEP# Goes low during USB suspend mode (C0~C4).
+	// FT232rCBusSleep SLEEP# Goes low during USB suspend mode (C0~C4).
 	FT232rCBusSleep FT232rCBusMux = 0x05
-	// CLK48 48Mhz +/-0.7% clock output (C0~C4).
+	// FT232rCBusClk48 CLK48 48Mhz +/-0.7% clock output (C0~C4).
 	FT232rCBusClk48 FT232rCBusMux = 0x06
-	// CLK24 24Mhz clock output (C0~C4).
+	// FT232rCBusClk24 CLK24 24Mhz clock output (C0~C4).
 	FT232rCBusClk24 FT232rCBusMux = 0x07
-	// CLK12 12Mhz clock output (C0~C4).
+	// FT232rCBusClk12 CLK12 12Mhz clock output (C0~C4).
 	FT232rCBusClk12 FT232rCBusMux = 0x08
-	// CLK6 6Mhz +/-0.7% clock output (C0~C4).
+	// FT232rCBusClk6 CLK6 6Mhz +/-0.7% clock output (C0~C4).
 	FT232rCBusClk6 FT232rCBusMux = 0x09
-	// CBitBangI/O; CBus bit-bang mode option (C0~C3).
+	// FT232rCBusIOMode CBitBangI/O; CBus bit-bang mode option (C0~C3).
 	FT232rCBusIOMode FT232rCBusMux = 0x0A
-	// BitBangWRn; CBus WR# strobe output (C0~C3).
+	// FT232rCBusBitBangWR BitBangWRn; CBus WR# strobe output (C0~C3).
 	FT232rCBusBitBangWR FT232rCBusMux = 0x0B
-	// BitBangRDn; CBus RD# strobe output (C0~C3).
+	// FT232rCBusBitBangRD BitBangRDn; CBus RD# strobe output (C0~C3).
 	FT232rCBusBitBangRD FT232rCBusMux = 0x0C
 )
 

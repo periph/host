@@ -48,7 +48,7 @@ func (p *invalidPin) Halt() error {
 }
 
 // In implements gpio.PinIn.
-func (p *invalidPin) In(pull gpio.Pull, e gpio.Edge) error {
+func (p *invalidPin) In(_ gpio.Pull, _ gpio.Edge) error {
 	return errors.New("d2xx: to be implemented")
 }
 
@@ -58,7 +58,7 @@ func (p *invalidPin) Read() gpio.Level {
 }
 
 // WaitForEdge implements gpio.PinIn.
-func (p *invalidPin) WaitForEdge(t time.Duration) bool {
+func (p *invalidPin) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -73,12 +73,12 @@ func (p *invalidPin) DefaultPull() gpio.Pull {
 }
 
 // Out implements gpio.PinOut.
-func (p *invalidPin) Out(l gpio.Level) error {
+func (p *invalidPin) Out(_ gpio.Level) error {
 	return errors.New("d2xx: to be implemented")
 }
 
 // PWM implements gpio.PinOut.
-func (p *invalidPin) PWM(d gpio.Duty, f physic.Frequency) error {
+func (p *invalidPin) PWM(_ gpio.Duty, _ physic.Frequency) error {
 	return errors.New("d2xx: to be implemented")
 }
 

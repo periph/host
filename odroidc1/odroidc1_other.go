@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for odroidc1.
 
 //go:build !arm
-// +build !arm
 
 package odroidc1
 

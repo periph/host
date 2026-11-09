@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func TestDTModel_fail(t *testing.T) {
+func TestDTModel_fail(_ *testing.T) {
 	defer reset()
 	DTModel()
 }
@@ -30,7 +30,7 @@ func TestDTModel(t *testing.T) {
 	}
 }
 
-func TestDTCompatible_fail(t *testing.T) {
+func TestDTCompatible_fail(_ *testing.T) {
 	defer reset()
 	DTCompatible()
 }

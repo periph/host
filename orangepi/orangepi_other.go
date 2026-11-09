@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for orangepi.
 
 //go:build !arm && !arm64
-// +build !arm,!arm64
 
 package orangepi
 

@@ -53,9 +53,7 @@ func TestChips(t *testing.T) {
 		} else {
 			t.Log(s)
 		}
-
 	}
-
 }
 
 func TestGPIORegistryByName(t *testing.T) {
@@ -91,7 +89,6 @@ func TestNumber(t *testing.T) {
 	if l2 == nil {
 		t.Errorf("retrieve Line from chip by number %d failed.", l.Number())
 	}
-
 }
 
 func TestString(t *testing.T) {

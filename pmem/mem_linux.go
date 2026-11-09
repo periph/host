@@ -23,7 +23,6 @@ func munmap(b []byte) error {
 		return wrapf("failed to unmap memory: %v", err)
 	}
 	return nil
-
 }
 
 func mlock(b []byte) error {

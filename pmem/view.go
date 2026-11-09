@@ -9,6 +9,7 @@ package pmem
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"reflect"
 	"sync"
@@ -36,7 +37,7 @@ func (s *Slice) Bytes() []byte {
 }
 
 // AsPOD implements Mem.
-func (s *Slice) AsPOD(pp interface{}) error {
+func (s *Slice) AsPOD(pp any) error {
 	if pp == nil {
 		return wrapf("require Ptr, got nil")
 	}
@@ -72,7 +73,7 @@ func (s *Slice) AsPOD(pp interface{}) error {
 	return nil
 }
 
-// View represents a view of physical memory memory mapped into user space.
+// View represents a view of physical memory mapped into user space.
 //
 // It is usually used to map CPU registers into user space, usually I/O
 // registers and the likes.
@@ -81,6 +82,7 @@ func (s *Slice) AsPOD(pp interface{}) error {
 // shutdown.
 type View struct {
 	Slice
+
 	orig []uint8 // Reference rounded to the lowest 4Kb page containing Slice.
 	phys uint64  // physical address of the base of Slice.
 }
@@ -130,7 +132,7 @@ func Map(base uint64, size int) (*View, error) {
 //
 // A slice cannot be used, as it does not have inherent size. Use an aray
 // instead.
-func MapAsPOD(base uint64, i interface{}) error {
+func MapAsPOD(base uint64, i any) error {
 	// Automatically determine the necessary size. Because of this, slice of
 	// unspecified length cannot be used here.
 	if i == nil {
@@ -153,10 +155,10 @@ func MapAsPOD(base uint64, i interface{}) error {
 // Keep a cache of open file handles instead of opening and closing repeatedly.
 var (
 	mu          sync.Mutex
-	gpioMemErr  error
+	errGPIOMem  error
 	gpioMemView *View
 	devMem      fileIO
-	devMemErr   error
+	errDevMem   error
 	openFile    = openFileOrig
 )
 
@@ -179,19 +181,23 @@ func openFileOrig(path string, flag int) (fileIO, error) {
 func mapGPIOLinux() (*View, error) {
 	mu.Lock()
 	defer mu.Unlock()
-	if gpioMemView == nil && gpioMemErr == nil {
+	if gpioMemView == nil && errGPIOMem == nil {
 		if f, err := openFile("/dev/gpiomem", os.O_RDWR|os.O_SYNC); err == nil {
-			defer f.Close()
-			if i, err2 := mmap(f.Fd(), 0, pageSize); err2 == nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
+			defer func() {
+				if closeErr := f.Close(); closeErr != nil {
+					log.Printf("close f: %v", closeErr)
+				}
+			}()
+			if i, err2 := mmap(f.Fd(), 0, pageSize); err2 == nil {
 				gpioMemView = &View{Slice: i, orig: i, phys: 0}
 			} else {
-				gpioMemErr = wrapf("failed to memory map in user space GPIO memory: %w", err2)
+				errGPIOMem = wrapf("failed to memory map in user space GPIO memory: %w", err2)
 			}
 		} else {
-			gpioMemErr = wrapf("failed to open GPIO memory: %w", err)
+			errGPIOMem = wrapf("failed to open GPIO memory: %w", err)
 		}
 	}
-	return gpioMemView, gpioMemErr
+	return gpioMemView, errGPIOMem
 }
 
 // mapLinux leverages /dev/mem to map a view of physical memory.
@@ -202,9 +208,9 @@ func mapLinux(base uint64, size int) (*View, error) {
 	}
 	// Align base and size at 4Kb.
 	offset := int(base & 0xFFF)
-	//nolint:staticcheck // SA4023: Related diagnostic for the platform-dependent error check below.
+
 	i, err := mmap(f.Fd(), int64(base&^0xFFF), (size+offset+0xFFF)&^0xFFF)
-	//nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
+
 	if err != nil {
 		return nil, wrapf("mapping at 0x%x failed: %w", base, err)
 	}
@@ -214,12 +220,12 @@ func mapLinux(base uint64, size int) (*View, error) {
 func openDevMemLinux() (fileIO, error) {
 	mu.Lock()
 	defer mu.Unlock()
-	if devMem == nil && devMemErr == nil {
-		if devMem, devMemErr = openFile("/dev/mem", os.O_RDWR|os.O_SYNC); devMemErr != nil {
-			devMemErr = wrapf("failed to open physical memory: %v", devMemErr)
+	if devMem == nil && errDevMem == nil {
+		if devMem, errDevMem = openFile("/dev/mem", os.O_RDWR|os.O_SYNC); errDevMem != nil {
+			errDevMem = wrapf("failed to open physical memory: %v", errDevMem)
 		}
 	}
-	return devMem, devMemErr
+	return devMem, errDevMem
 }
 
 func isAcceptableInner(t reflect.Type) error {
@@ -231,8 +237,8 @@ func isAcceptableInner(t reflect.Type) error {
 	case reflect.Array:
 		return isAcceptableInner(t.Elem())
 	case reflect.Struct:
-		for i := 0; i < t.NumField(); i++ {
-			if err := isAcceptableInner(t.Field(i).Type); err != nil {
+		for field := range t.Fields() {
+			if err := isAcceptableInner(field.Type); err != nil {
 				return err
 			}
 		}
@@ -265,7 +271,7 @@ func isPP(pp reflect.Value) (int, error) {
 
 // isPS makes sure it is a pointer to a nil-slice of something. It does
 // sanity checks to reduce likelihood of a panic().
-func isPS(bufSize int, ps reflect.Value) (int, error) {
+func isPS(_ int, ps reflect.Value) (int, error) {
 	if k := ps.Kind(); k != reflect.Ptr {
 		return 0, wrapf("require Ptr, got %s of %s", k, ps.Type().Name())
 	}
@@ -284,6 +290,6 @@ func isPS(bufSize int, ps reflect.Value) (int, error) {
 	return int(t.Size()), nil
 }
 
-func wrapf(format string, a ...interface{}) error {
+func wrapf(format string, a ...any) error {
 	return fmt.Errorf("pmem: "+format, a...)
 }

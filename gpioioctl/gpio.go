@@ -37,10 +37,10 @@ const (
 	LineOutput    LineDir = 2
 )
 
-// The consumer name to use for line requests. Initialized in init()
+// The consumer name to use for line requests. Initialized in init().
 var consumer []byte
 
-// The set of GPIO Chips found on the running device.
+// Chips The set of GPIO Chips found on the running device.
 var Chips []*GPIOChip
 
 type Label string
@@ -119,7 +119,7 @@ func (line *GPIOLine) Halt() error {
 	return nil
 }
 
-// Configure the GPIOLine for input. Implements gpio.PinIn.
+// In Configure the GPIOLine for input. Implements gpio.PinIn.
 func (line *GPIOLine) In(pull gpio.Pull, edge gpio.Edge) error {
 	line.mu.Lock()
 	defer line.mu.Unlock()
@@ -131,17 +131,17 @@ func (line *GPIOLine) In(pull gpio.Pull, edge gpio.Edge) error {
 	return line.setLine(flags)
 }
 
-// Implements gpio.Pin
+// Name Implements gpio.Pin.
 func (line *GPIOLine) Name() string {
 	return line.name
 }
 
-// Number returns the line offset/number within the GPIOChip. Implements gpio.Pin
+// Number returns the line offset/number within the GPIOChip. Implements gpio.Pin.
 func (line *GPIOLine) Number() int {
 	return int(line.number)
 }
 
-// Write the specified level to the line. Implements gpio.PinOut
+// Out Write the specified level to the line. Implements gpio.PinOut.
 func (line *GPIOLine) Out(l gpio.Level) error {
 	line.mu.Lock()
 	defer line.mu.Unlock()
@@ -164,13 +164,13 @@ func (line *GPIOLine) Pull() gpio.Pull {
 	return line.pull
 }
 
-// Not implemented because the kernel PWM is not in the ioctl library
+// PWM Not implemented because the kernel PWM is not in the ioctl library
 // but a different one.
 func (line *GPIOLine) PWM(gpio.Duty, physic.Frequency) error {
 	return errors.New("PWM() not implemented")
 }
 
-// Read the value of this line. Implements gpio.PinIn
+// Read the value of this line. Implements gpio.PinIn.
 func (line *GPIOLine) Read() gpio.Level {
 	if line.direction != LineInput {
 		err := line.In(gpio.PullUp, gpio.NoEdge)
@@ -210,11 +210,14 @@ func (line *GPIOLine) MarshalJSON() ([]byte, error) {
 
 // String returns information about the line in valid JSON format.
 func (line *GPIOLine) String() string {
-	json, _ := json.MarshalIndent(line, "", "    ")
-	return string(json)
+	data, err := json.MarshalIndent(line, "", "    ")
+	if err != nil {
+		log.Printf("marshal GPIO state: %v", err)
+	}
+	return string(data)
 }
 
-// Wait for this line to trigger and edge event. You must call In() with
+// WaitForEdge Wait for this line to trigger and edge event. You must call In() with
 // a valid edge for this to work. To interrupt a waiting line, call Halt().
 // Implements gpio.PinIn.
 //
@@ -337,7 +340,7 @@ func (line *GPIOLine) SetFunc(f pin.Func) error {
 	}
 }
 
-// A representation of a Linux GPIO Chip. A computer may have
+// GPIOChip A representation of a Linux GPIO Chip. A computer may have
 // more than one GPIOChip.
 type GPIOChip struct {
 	// The name of the device as reported by the kernel.
@@ -491,7 +494,7 @@ func getFlags(dir LineDir, edge gpio.Edge, pull gpio.Pull) uint64 {
 	return flags
 }
 
-// Create a LineSet using the configuration specified by config.
+// LineSetFromConfig Create a LineSet using the configuration specified by config.
 func (chip *GPIOChip) LineSetFromConfig(config *LineSetConfig) (*LineSet, error) {
 	lines := make([]uint32, len(config.Lines))
 	for ix, name := range config.Lines {
@@ -535,7 +538,6 @@ func (chip *GPIOChip) newLineSetLine(line_number, offset int, config *LineSetCon
 				lsl.direction = override.Direction
 				lsl.edge = override.Edge
 				lsl.pull = override.Pull
-
 			}
 		}
 	}
@@ -561,8 +563,11 @@ func (chip *GPIOChip) MarshalJSON() ([]byte, error) {
 
 // String returns the chip information, and line information in JSON format.
 func (chip *GPIOChip) String() string {
-	json, _ := json.MarshalIndent(chip, "", "    ")
-	return string(json)
+	data, err := json.MarshalIndent(chip, "", "    ")
+	if err != nil {
+		log.Printf("marshal GPIO state: %v", err)
+	}
+	return string(data)
 }
 
 // LineSet requests a set of io pins and configures them according to the

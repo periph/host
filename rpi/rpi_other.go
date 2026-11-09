@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for rpi.
 
 //go:build !arm && !arm64
-// +build !arm,!arm64
 
 package rpi
 

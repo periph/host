@@ -94,10 +94,10 @@ func TestDriver_Init(t *testing.T) {
 	if I2CSetSpeedHook(nil) == nil {
 		t.Fatal("must fail on nil hook")
 	}
-	if err := I2CSetSpeedHook(func(f physic.Frequency) error { return nil }); err != nil {
+	if err := I2CSetSpeedHook(func(_ physic.Frequency) error { return nil }); err != nil {
 		t.Fatal(err)
 	}
-	if I2CSetSpeedHook(func(f physic.Frequency) error { return nil }) == nil {
+	if I2CSetSpeedHook(func(_ physic.Frequency) error { return nil }) == nil {
 		t.Fatal("second I2CSetSpeedHook must fail")
 	}
 }
@@ -108,7 +108,7 @@ func BenchmarkI2C(b *testing.B) {
 	bus := I2C{f: &i}
 	var w [16]byte
 	var r [16]byte
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		if err := bus.Tx(0x01, w[:], r[:]); err != nil {
 			b.Fatal(err)
 		}

@@ -16,7 +16,7 @@ import (
 
 type pcmCS uint32
 
-// Pages 126-129
+// Pages 126-129.
 const (
 	// 31:26 reserved
 	pcmStandby      pcmCS = 1 << 25 // STBY Allow at least 4 PCM clock cycles to take effect
@@ -53,7 +53,7 @@ const (
 
 type pcmMode uint32
 
-// Page 129-131
+// Page 129-131.
 const (
 	// 31:29 reserved
 	pcmClockDisable     pcmMode = 1 << 28                     // CLK_DIS Cleanly disable the PCM clock
@@ -72,7 +72,7 @@ const (
 
 type pcmRX uint32
 
-// Page 131-132
+// Page 131-132.
 const (
 	pcmRX1Width     pcmRX = 1 << 31 // CH1WEX Legacy
 	pcmRX1Enable    pcmRX = 1 << 30 // CH1EN
@@ -88,7 +88,7 @@ const (
 
 type pcmTX uint32
 
-// Page 133-134
+// Page 133-134.
 const (
 	pcmTX1Width     pcmTX = 1 << 31 // CH1WX Legacy
 	pcmTX1Enable    pcmTX = 1 << 30 // CH1EN Enable channel 1
@@ -104,25 +104,25 @@ const (
 
 type pcmDreq uint32
 
-// Page 134-135
+// Page 134-135.
 const (
-	// 31 reserved
+	// 31 reserved.
 	pcmDreqTXPanicShift         = 24
 	pcmDreqTXPanicMask  pcmDreq = 0x7F << pcmDreqTXPanicShift // TX_PANIC Panic level
-	// 23 reserved
+	// 23 reserved.
 	pcmDreqRXPanicShift         = 16
 	pcmDreqRXPanicMask  pcmDreq = 0x7F << pcmDreqRXPanicShift // RX_PANIC Panic level
-	// 15 reserved
+	// 15 reserved.
 	pcmDreqTXLevelShift         = 8
 	pcmDreqTXLevelMask  pcmDreq = 0x7F << pcmDreqTXPanicShift // TX Request Level
-	// 7 reserved
+	// 7 reserved.
 	pcmDreqRXLevelShift         = 0
 	pcmDreqRXLevelMask  pcmDreq = 0x7F << pcmDreqRXPanicShift // RX Request Level
 )
 
 type pcmInterrupt uint32
 
-// Page 135
+// Page 135.
 const (
 	// 31:4 reserved
 	pcmIntRXErr    pcmInterrupt = 1 << 3 // RXERR RX error interrupt enable
@@ -133,7 +133,7 @@ const (
 
 type pcmIntStatus uint32
 
-// Page 135-136
+// Page 135-136.
 const (
 	// 31:4 reserved
 	pcmIntStatRXErr    pcmIntStatus = 1 << 3 // RXERR RX error occurred / clear
@@ -147,7 +147,7 @@ const (
 // contract.
 type pcmGray uint32
 
-// Page 136-137
+// Page 136-137.
 const (
 	// 31:22 reserved
 	pcmGrayRXFIFOLevelShift         = 16
@@ -161,7 +161,7 @@ const (
 	pcmGrayEnable           pcmGray = 1 << 0                      // EN
 )
 
-// Page 119
+// Page 119.
 type pcmMap struct {
 	cs     pcmCS        // CS_A Control Status
 	fifo   uint32       // FIFO_A FIFO register

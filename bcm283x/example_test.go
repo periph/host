@@ -26,7 +26,7 @@ func ExamplePinsRead0To31() {
 	bits := bcm283x.PinsRead0To31()
 	fmt.Printf("bits: %#x\n", bits)
 	suffixes := []string{"   ", "\n"}
-	for i := uint(0); i < 32; i++ {
+	for i := range uint(32) {
 		fmt.Printf("GPIO%-2d: %d%s", i, (bits>>i)&1, suffixes[(i%4)/3])
 	}
 	// Output:

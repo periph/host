@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for beagle/bone.
 
 //go:build !arm
-// +build !arm
 
 package bone
 

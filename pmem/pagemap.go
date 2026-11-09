@@ -33,32 +33,32 @@ func ReadPageMap(virtAddr uintptr) (uint64, error) {
 
 var (
 	pageMap    fileIO
-	pageMapErr error
+	errPageMap error
 )
 
 func readPageMapLinux(virtAddr uintptr) (uint64, error) {
 	var b [8]byte
 	mu.Lock()
 	defer mu.Unlock()
-	if pageMap == nil && pageMapErr == nil {
+	if pageMap == nil && errPageMap == nil {
 		// Open /proc/self/pagemap.
 		//
 		// It is a uint64 array where the index represents the virtual 4Kb page
 		// number and the value represents the physical page properties backing
 		// this virtual page.
-		pageMap, pageMapErr = openFile("/proc/self/pagemap", os.O_RDONLY|os.O_SYNC)
+		pageMap, errPageMap = openFile("/proc/self/pagemap", os.O_RDONLY|os.O_SYNC)
 	}
-	if pageMapErr != nil {
-		return 0, pageMapErr
+	if errPageMap != nil {
+		return 0, errPageMap
 	}
 	// Convert address to page number, then index in uint64 array.
 	offset := int64(virtAddr / pageSize * 8)
 	if _, err := pageMap.Seek(offset, io.SeekStart); err != nil {
-		return 0, fmt.Errorf("pmem: failed to seek at 0x%x for 0x%x: %v", offset, virtAddr, err)
+		return 0, fmt.Errorf("pmem: failed to seek at 0x%x for 0x%x: %w", offset, virtAddr, err)
 	}
 	n, err := pageMap.Read(b[:])
 	if err != nil {
-		return 0, fmt.Errorf("pmem: failed to read at 0x%x for 0x%x: %v", offset, virtAddr, err)
+		return 0, fmt.Errorf("pmem: failed to read at 0x%x for 0x%x: %w", offset, virtAddr, err)
 	}
 	if n != len(b) {
 		return 0, fmt.Errorf("pmem: failed to read the amount of data %d", len(b))

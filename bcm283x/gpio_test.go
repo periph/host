@@ -22,7 +22,7 @@ import (
 	"periph.io/x/host/v3/videocore"
 )
 
-func TestPresent(t *testing.T) {
+func TestPresent(_ *testing.T) {
 	// It may return true or false, depending on hardware but it shouldn't crash.
 	Present()
 }
@@ -153,7 +153,7 @@ func TestPin(t *testing.T) {
 	}
 
 	// Above 27.
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		drvDMA.gpioPadMemory.pads1 = pad(i)
 		if v := p.Drive(); v != physic.ElectricCurrent(2*(i+1))*physic.MilliAmpere {
 			t.Fatal(v)
@@ -215,14 +215,14 @@ func TestPin_SetFunc_33(t *testing.T) {
 	if err := p.SetFunc(uart.RX); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt3)
+	// p.setFunction(alt3)
 	if s := p.Func(); s != uart.RX.Specialize(0, -1) {
 		t.Fatal(s)
 	}
 	if err := p.SetFunc(uart.RX.Specialize(1, -1)); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt5)
+	// p.setFunction(alt5)
 	if s := p.Func(); s != uart.RX.Specialize(1, -1) {
 		t.Fatal(s)
 	}
@@ -233,28 +233,28 @@ func TestPin_SetFunc_45(t *testing.T) {
 	if err := p.SetFunc(gpio.PWM); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt0)
+	// p.setFunction(alt0)
 	if s := p.Func(); s != gpio.PWM.Specialize(-1, 1) {
 		t.Fatal(s)
 	}
 	if err := p.SetFunc(i2c.SCL); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt1)
+	// p.setFunction(alt1)
 	if s := p.Func(); s != i2c.SCL.Specialize(0, -1) {
 		t.Fatal(s)
 	}
 	if err := p.SetFunc(i2c.SCL.Specialize(1, -1)); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt2)
+	// p.setFunction(alt2)
 	if s := p.Func(); s != i2c.SCL.Specialize(1, -1) {
 		t.Fatal(s)
 	}
 	if err := p.SetFunc(spi.CS); err != nil {
 		t.Fatal(err)
 	}
-	//p.setFunction(alt4)
+	// p.setFunction(alt4)
 	if s := p.Func(); s != spi.CS.Specialize(2, 2) {
 		t.Fatal(s)
 	}

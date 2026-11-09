@@ -36,7 +36,7 @@ const (
 	clockMash3    clockCtl = 3 << 9 // will cause higher spread
 	clockFlip     clockCtl = 1 << 8 // FLIP
 	clockBusy     clockCtl = 1 << 7 // BUSY
-	// 6 reserved
+	// 6 reserved.
 	clockKill          clockCtl = 1 << 5   // KILL
 	clockEnable        clockCtl = 1 << 4   // ENAB
 	clockSrcMask       clockCtl = 0xF << 0 // SRC
@@ -55,7 +55,7 @@ const (
 //
 // It must not be changed while busy is set or a glitch may occur.
 //
-// Page 107
+// Page 107.
 type clockCtl uint32
 
 func (c clockCtl) String() string {
@@ -120,11 +120,11 @@ func (c clockCtl) String() string {
 const (
 	// 31:24 password
 	clockPasswdDiv clockDiv = 0x5A << 24 // PASSWD
-	// Integer part of the divisor
+	// Integer part of the divisor.
 	clockDiviShift          = 12
 	clockDiviMax            = (1 << 12) - 1
 	clockDiviMask  clockDiv = clockDiviMax << clockDiviShift // DIVI
-	// Fractional part of the divisor
+	// Fractional part of the divisor.
 	clockDivfMask clockDiv = (1 << 12) - 1 // DIVF
 )
 
@@ -133,7 +133,7 @@ const (
 // The fractional part generates a significant amount of noise so it is
 // preferable to not use it.
 //
-// Page 108
+// Page 108.
 type clockDiv uint32
 
 func (c clockDiv) String() string {
@@ -195,7 +195,7 @@ func findDivisorExact(src, desired physic.Frequency, maxWaitCycles uint32) (uint
 // oversampling at 10x in the 1Mhz range becomes unreasonable in term of
 // memory usage.
 func findDivisorOversampled(src, desired physic.Frequency, maxWaitCycles uint32) (uint32, uint32, physic.Frequency) {
-	//log.Printf("findDivisorOversampled(%s, %s, %d)", src, desired, maxWaitCycles)
+	// log.Printf("findDivisorOversampled(%s, %s, %d)", src, desired, maxWaitCycles)
 	// There are 2 reasons:
 	// - desired is so low it is not possible to lower src to this frequency
 	// - not a multiple, there's a need for a prime number

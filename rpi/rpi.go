@@ -43,7 +43,7 @@ func Present() bool {
 //
 // P1 is also known as J8 on A+, B+, 2 and later.
 var (
-	// Raspberry Pi A and B, 26 pin header:
+	// Raspberry Pi A and B, 26 pin header:.
 	P1_1  pin.Pin    = pin.V3_3       // max 30mA
 	P1_2  pin.Pin    = pin.V5         // (filtered)
 	P1_3  gpio.PinIO = bcm283x.GPIO2  // High, I2C1_SDA
@@ -71,7 +71,7 @@ var (
 	P1_25 pin.Pin    = pin.GROUND     //
 	P1_26 gpio.PinIO = bcm283x.GPIO7  // High, SPI0_CS1
 
-	// Raspberry Pi A+, B+, 2 and later, 40 pin header (also named J8):
+	// Raspberry Pi A+, B+, 2 and later, 40 pin header (also named J8):.
 	P1_27 gpio.PinIO = bcm283x.GPIO0  // High, I2C0_SDA used to probe for HAT EEPROM, see https://github.com/raspberrypi/hats
 	P1_28 gpio.PinIO = bcm283x.GPIO1  // High, I2C0_SCL
 	P1_29 gpio.PinIO = bcm283x.GPIO5  // High, CLK1
@@ -87,7 +87,7 @@ var (
 	P1_39 pin.Pin    = pin.GROUND     //
 	P1_40 gpio.PinIO = bcm283x.GPIO21 // Low,  I2S_DOUT, SPI1_CLK, CLK1
 
-	// P5 header on Raspberry Pi A and B, PCB v2:
+	// P5 header on Raspberry Pi A and B, PCB v2:.
 	P5_1 pin.Pin    = pin.V5
 	P5_2 pin.Pin    = pin.V3_3
 	P5_3 gpio.PinIO = bcm283x.GPIO28 // Float, I2C0_SDA, I2S_SCK
@@ -195,9 +195,9 @@ var (
 	SO_85  pin.Pin    = pin.GROUND     // GND
 	SO_86  pin.Pin    = pin.GROUND     // GND
 	SO_87  gpio.PinIO = bcm283x.GPIO26 // GPIO26
-	SO_88  pin.Pin    = pin.INVALID    // HDMI_HPD_N_1V8, HDMI_HPD_N_1V8, GPIO46_1V8
+	SO_88  pin.Pin    = pin.INVALID    // HDMI_HPD_N_1V8, GPIO46_1V8
 	SO_89  gpio.PinIO = bcm283x.GPIO27 // GPIO27
-	SO_90  pin.Pin    = pin.INVALID    // EMMC_EN_N_1V8, EMMC_EN_N_1V8, GPIO47_1V8
+	SO_90  pin.Pin    = pin.INVALID    // EMMC_EN_N_1V8, GPIO47_1V8
 	SO_91  pin.Pin    = pin.GROUND     // GND
 	SO_92  pin.Pin    = pin.GROUND     // GND
 	SO_93  pin.Pin    = pin.INVALID    // DSI0_DN1
@@ -819,7 +819,7 @@ func (d *driver) Init() (bool, error) {
 	f := features{}
 	rev := distro.DTRevision()
 	if rev == 0 {
-		return true, fmt.Errorf("rpi: failed to obtain revision")
+		return true, errors.New("rpi: failed to obtain revision")
 	}
 	if err := f.init(rev); err != nil {
 		return true, err

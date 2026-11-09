@@ -7,6 +7,7 @@
 package sysfs
 
 import (
+	"errors"
 	"os"
 	"syscall"
 )
@@ -14,6 +15,7 @@ import (
 const isLinux = true
 
 func isErrBusy(err error) bool {
-	e, ok := err.(*os.PathError)
-	return ok && e.Err == syscall.EBUSY
+	e := &os.PathError{}
+	ok := errors.As(err, &e)
+	return ok && errors.Is(e.Err, syscall.EBUSY)
 }

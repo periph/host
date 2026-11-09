@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for am335x.
 
 //go:build !arm
-// +build !arm
 
 package am335x
 

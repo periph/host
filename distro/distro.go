@@ -11,6 +11,7 @@ package distro
 
 import (
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -41,10 +42,8 @@ func IsDebian() bool {
 		if OSRelease()["ID"] == "debian" {
 			return true
 		}
-		for _, part := range strings.Split(OSRelease()["ID_LIKE"], " ") {
-			if part == "debian" {
-				return true
-			}
+		if slices.Contains(strings.Split(OSRelease()["ID_LIKE"], " "), "debian") {
+			return true
 		}
 	}
 	return false
@@ -103,7 +102,7 @@ var (
 func splitSemiColon(content string) map[string]string {
 	// Strictly speaking this format isn't ok, there can be multiple group.
 	out := map[string]string{}
-	for _, line := range strings.Split(content, "\n") {
+	for line := range strings.SplitSeq(content, "\n") {
 		parts := strings.SplitN(line, ":", 2)
 		if len(parts) != 2 {
 			continue
@@ -125,7 +124,7 @@ func splitSemiColon(content string) map[string]string {
 
 func splitStrict(content string) map[string]string {
 	out := map[string]string{}
-	for _, line := range strings.Split(content, "\n") {
+	for line := range strings.SplitSeq(content, "\n") {
 		parts := strings.SplitN(line, "=", 2)
 		if len(parts) != 2 {
 			continue
@@ -150,7 +149,7 @@ func splitStrict(content string) map[string]string {
 	return out
 }
 
-// splitNull returns the null-terminated strings in the data
+// splitNull returns the null-terminated strings in the data.
 func splitNull(data []byte) []string {
 	ss := strings.Split(string(data), "\x00")
 	// The last string is typically null-terminated, so remove empty string

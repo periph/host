@@ -5,7 +5,6 @@
 // Default ioctl request field widths and direction constants.
 
 //go:build !mips && !mipsle
-// +build !mips,!mipsle
 
 package fs
 

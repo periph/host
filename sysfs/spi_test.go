@@ -28,7 +28,7 @@ func TestNewSPI(t *testing.T) {
 
 func TestNewSPIinternal(t *testing.T) {
 	defer reset()
-	ioctlOpen = func(path string, flag int) (ioctlCloser, error) {
+	ioctlOpen = func(_ string, _ int) (ioctlCloser, error) {
 		return &ioctlClose{}, nil
 	}
 	s, err := newSPI(65535, 255)
@@ -51,7 +51,7 @@ func TestNewSPIinternal_Err(t *testing.T) {
 		t.Fatal("bad bus number")
 	}
 	defer reset()
-	ioctlOpen = func(path string, flag int) (ioctlCloser, error) {
+	ioctlOpen = func(_ string, _ int) (ioctlCloser, error) {
 		return nil, errors.New("foo")
 	}
 	if _, err := newSPI(65535, 255); err.Error() != "sysfs-spi: foo" {
@@ -315,7 +315,7 @@ func BenchmarkSPI_Tx(b *testing.B) {
 	}
 	var w [16]byte
 	var r [16]byte
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		if err := c.Tx(w[:], r[:]); err != nil {
 			b.Fatal(err)
 		}
@@ -336,7 +336,7 @@ func BenchmarkSPI_TxPackets2(b *testing.B) {
 		{W: w[:], KeepCS: true},
 		{R: r[:]},
 	}
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		if err := c.TxPackets(tx[:]); err != nil {
 			b.Fatal(err)
 		}
@@ -360,7 +360,7 @@ func BenchmarkSPI_TxPackets5(b *testing.B) {
 		{R: r[:]},
 		{W: w[:], R: r[:]},
 	}
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		if err := c.TxPackets(tx[:]); err != nil {
 			b.Fatal(err)
 		}

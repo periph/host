@@ -130,8 +130,8 @@ var (
 // expected in the device dtree:
 //
 //	root@chip2:/proc/device-tree# od -c compatible
-//	0000000   n   e   x   t   t   h   i   n   g   ,   c   h   i   p  \0   a
-//	0000020   l   l   w   i   n   n   e   r   ,   s   u   n   5   i   -   r
+//	0000000   n   e   x   t   h   i   n   g   ,   c   h   i   p  \0
+//	0000020   l   w   i   n   e   r   ,   s   u   n   5   i   -
 //	0000040   8  \0
 //	root@chip2:/proc/device-tree# od -c model
 //	0000000   N   e   x   t   T   h   i   n   g       C   .   H   .   I   .
@@ -270,14 +270,14 @@ func (d *driver) Init() (bool, error) {
 	if base == -1 {
 		return true, errors.New("couldn't find XIO pins base number")
 	}
-	for i := 0; i < 8; i++ {
+	for i := range 8 {
 		aliases[fmt.Sprintf("XIO-P%d", i)] = fmt.Sprintf("GPIO%d", base+i)
 	}
 
 	// At this point the sysfs driver has initialized and discovered its pins,
 	// we can now hook-up the appropriate CHIP pins to sysfs gpio pins.
-	for alias, real := range aliases {
-		if err := gpioreg.RegisterAlias(alias, real); err != nil {
+	for alias, target := range aliases {
+		if err := gpioreg.RegisterAlias(alias, target); err != nil {
 			return true, err
 		}
 	}

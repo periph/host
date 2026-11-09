@@ -45,7 +45,7 @@ type Mem interface {
 	// capacity set to the maximum number of elements this slice can represent.
 	//
 	// The pointer initialized points to the same address as Bytes().
-	AsPOD(pp interface{}) error
+	AsPOD(pp any) error
 	// PhysAddr is the physical address. It can be either 32 bits or 64 bits,
 	// depending on the bitness of the OS kernel, not on the user mode build,
 	// e.g. you could have compiled on a 32 bits Go toolchain but running on a
@@ -64,7 +64,7 @@ type MemAlloc struct {
 
 // Close unmaps the physical memory allocation.
 func (m *MemAlloc) Close() error {
-	if err := munlock(m.orig); err != nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
+	if err := munlock(m.orig); err != nil {
 		return err
 	}
 	return munmap(m.orig)
@@ -104,7 +104,7 @@ func uallocMemLocked(size int) ([]byte, error) {
 		for i := range b {
 			b[i] = 0
 		}
-		if err = mlock(b); err != nil { //nolint:staticcheck // SA4023: Non-Linux stubs always fail; Linux calls may succeed.
+		if err = mlock(b); err != nil {
 			// Ignore the unmap error.
 			_ = munmap(b)
 			return nil, wrapf("locking %d bytes failed: %v", size, err)

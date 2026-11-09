@@ -8,6 +8,7 @@ package pmem
 
 import (
 	"bytes"
+	"log"
 	"math/rand"
 )
 
@@ -33,12 +34,20 @@ func TestCopy(size, holeSize int, alloc func(size int) (Mem, error), copyMem fun
 	if err2 != nil {
 		return err2
 	}
-	defer pSrc.Close()
+	defer func() {
+		if closeErr := pSrc.Close(); closeErr != nil {
+			log.Printf("close pSrc: %v", closeErr)
+		}
+	}()
 	pDst, err2 := alloc(size)
 	if err2 != nil {
 		return err2
 	}
-	defer pDst.Close()
+	defer func() {
+		if closeErr := pDst.Close(); closeErr != nil {
+			log.Printf("close pDst: %v", closeErr)
+		}
+	}()
 	dst := pDst.Bytes()
 	for i := range dst {
 		dst[i] = 0x11
@@ -47,7 +56,7 @@ func TestCopy(size, holeSize int, alloc func(size int) (Mem, error), copyMem fun
 	for i := range src {
 		src[i] = byte(rand.Int31())
 	}
-	copy(pSrc.Bytes(), src[:])
+	copy(pSrc.Bytes(), src)
 
 	// Run the driver supplied memory copying code.
 	if err := copyMem(pDst.PhysAddr(), pSrc.PhysAddr()); err != nil {
@@ -55,7 +64,7 @@ func TestCopy(size, holeSize int, alloc func(size int) (Mem, error), copyMem fun
 	}
 
 	// Verifications.
-	for i := 0; i < holeSize; i++ {
+	for i := range holeSize {
 		if dst[i] != 0x11 {
 			return wrapf("DMA corrupted the buffer header: %x", dst[:holeSize])
 		}

@@ -10,13 +10,137 @@ run:
 linters:
   default: none
   enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - canonicalheader
+    - contextcheck
+    - copyloopvar
+    - dupl
+    - dupword
+    - durationcheck
+    - embeddedstructfieldcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - exhaustive
+    - exptostd
+    - fatcontext
+    - forcetypeassert
+    - funcorder
+    - gocheckcompilerdirectives
+    - gochecksumtype
+    - gocritic
+    - godoclint
+    - godot
+    - gomoddirectives
+    - goprintffuncname
     - gosec
+    - gosmopolitan
     - govet
+    - grouper
+    - iface
+    - importas
+    - inamedparam
     - ineffassign
-    - misspell
+    - intrange
+    - iotamixing
+    - loggercheck
+    - makezero
+    - mirror
+    - modernize
+    - musttag
+    - nakedret
+    - nilerr
+    - nilnesserr
+    - nilnil
+    - noctx
+    - nolintlint
+    - nosprintfhostport
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - predeclared
+    - reassign
+    - recvcheck
+    - revive
+    - sloglint
+    - sqlclosecheck
     - staticcheck
+    - tparallel
+    - unconvert
+    - unparam
+    - unused
+    - usestdlibvars
+    - usetesting
+    - wastedassign
+    - whitespace
   exclusions:
     rules:
+      # Board pin identifiers and ioctl constants preserve published schematics.
+      - path: ^(rpi/rpi|pine64/pine64|chip/chip|nanopi/nanopi|orangepi/orangepi|beagle/(bone/bone|green/green)|gpioioctl/(ioctl|gpio|syscall)|allwinner/(a64|r8))\.go$
+        text: 'var-naming:'
+        linters: [revive]
+      # Register maps retain documented bits, including unused ones, for hardware work.
+      - path: ^(allwinner/(clock|dma|spi|timer|pwm)|bcm283x/(pcm|gpio)|ftdi/mpsse)\.go$
+        text: '(const|field) .* is unused'
+        linters: [unused]
+      # Hardware, sysfs and process-state tests share resources and run serially.
+      - path: '^(allwinner/allwinnersmoketest/benchmark_gpio_support_test\.go|bcm283x/bcm283xsmoketest/benchmark_gpio_support_test\.go|bcm283x/clock_test\.go|bcm283x/dma_test\.go|bcm283x/gpio_test\.go|bcm283x/pwm_test\.go|bcm283x/streams_test\.go|bcm283x/timer_test\.go|cpu/cpu_test\.go|distro/devtree_test\.go|distro/distro_test\.go|ftdi/driver_test\.go|gpioioctl/basic_test\.go|host_test\.go|pmem/alloc_test\.go|pmem/pagemap_test\.go|pmem/smoketest_test\.go|pmem/view_test\.go|rpi/rpi_test\.go|sysfs/fs_linux_test\.go|sysfs/gpio_test\.go|sysfs/i2c_test\.go|sysfs/led_test\.go|sysfs/spi_test\.go|sysfs/sysfssmoketest/benchmark_gpio_support_test\.go|sysfs/thermal_sensor_test\.go|videocore/videocore_test\.go)$'
+        linters: [paralleltest]
+      # Architecture-specific register layouts include reserved and unused fields.
+      - path: ^(allwinner/|bcm283x/(clock|dma|gpio|pcm|pwm|timer|streams)\.go$|mt7688/gpio\.go$|ftdi/(mpsse|spi|handle)\.go$)
+        linters: [unused]
+      # Separate platform benchmark implementations and test fixtures are intentionally parallel.
+      - path: '^(allwinner/allwinnersmoketest/benchmark_fast_gpio_support\.go|allwinner/allwinnersmoketest/benchmark_gpio_support\.go|bcm283x/bcm283xsmoketest/benchmark_fast_gpio_support\.go|bcm283x/bcm283xsmoketest/benchmark_gpio_support\.go|sysfs/spi_test\.go|sysfs/sysfssmoketest/benchmark_gpio_support\.go)$'
+        linters: [dupl]
+      # Retain loop forms in hardware benchmarks and timing-sensitive paths.
+      - path: '^(allwinner/allwinnersmoketest/benchmark_fast_gpio_support\.go|allwinner/allwinnersmoketest/benchmark_gpio_support\.go|bcm283x/bcm283xsmoketest/benchmark_fast_gpio_support\.go|bcm283x/bcm283xsmoketest/benchmark_gpio_support\.go|bcm283x/streams\.go|sysfs/sysfssmoketest/benchmark_gpio_support\.go)$'
+        linters: [intrange]
+      # Explicit integer conversions document register and ioctl widths.
+      - path: '^(allwinner/gpio\.go|allwinner/gpio_pl\.go|bcm283x/dma\.go|bcm283x/gpio\.go|fs/fs_linux\.go|ftdi/mpsse\.go|gpioioctl/gpio\.go|gpioioctl/lineset\.go)$'
+        linters: [unconvert]
+      # Methods stay grouped by hardware operation instead of visibility.
+      - path: '^(bcm283x/clock\.go|bcm283x/dma\.go|gpioioctl/gpio\.go|sysfs/i2c\.go|sysfs/spi\.go|sysfs/thermal_sensor\.go)$'
+        linters: [funcorder]
+      # Hardware switches intentionally handle supported modes and reject other values.
+      - path: '^(allwinner/gpio\.go|allwinner/gpio_pl\.go|bcm283x/clock\.go|bcm283x/gpio\.go|ftdi/driver\.go|ftdi/eeprom\.go|gpioioctl/gpio\.go|pmem/view\.go|rpi/rpi\.go|sysfs/gpio\.go)$'
+        linters: [exhaustive]
+      # Assertions in these tests verify concrete fake types and fail the test on mismatch.
+      - path: '^(sysfs/fs_linux_test\.go|sysfs/spi_test\.go)$'
+        linters: [forcetypeassert]
+      # Drivers require value and pointer methods to satisfy separate interfaces.
+      - path: '^(mt7688/driver\.go|mt7688/pin\.go)$'
+        linters: [recvcheck]
+      # Legacy hardware ABI declarations retain grouped pin and kernel naming.
+      - path: '^(allwinner/gpio\.go|allwinner/gpio_pl\.go|allwinner/r8\.go|chip/chip\.go|ftdi/dev\.go|ftdi/eeprom\.go|gpioioctl/gpio\.go|gpioioctl/lineset\.go|nanopi/nanopi\.go|orangepi/orangepi\.go)$'
+        text: 'exported:'
+        linters: [revive]
+      # Hardware paths preserve documented ordering and short-circuit behavior.
+      - path: '^(allwinner/allwinnersmoketest/allwinnersmoketest\.go|allwinner/dma\.go|bcm283x/dma\.go|ftdi/dev\.go|gpioioctl/gpio\.go|rpi/rpi\.go)$'
+        text: 'ifElseChain'
+        linters: [gocritic]
+      # Platform helpers retain signatures used by related hardware implementations.
+      - path: '^(allwinner/a20\.go|allwinner/a64\.go|allwinner/dma\.go|allwinner/h5\.go|allwinner/r8\.go|bcm283x/gpio\.go|bcm283x/pwm\.go|gpioioctl/ioctl\.go|pmem/smoketest_test\.go|sysfs/fs_linux\.go)$'
+        linters: [unparam]
+      # Platform-specific code and register definitions remain available across builds.
+      - path: '^(fs/fs_linux\.go|ftdi/dev\.go|ftdi/driver\.go|odroidc1/odroidc1smoketest/odroidc1smoketest\.go|serial/serial\.go|sysfs/fs_linux\.go|sysfs/spi\.go|sysfs/sysfs_test\.go)$'
+        linters: [unused]
+      # These hardware test fixtures exercise cleanup and intentionally ignore its return.
+      - path: '^(bcm283x/gpio_test\.go|gpioioctl/example_test\.go)$'
+        linters: [errcheck]
+      # Board pin diagrams use group comments for physical connector layouts.
+      - path: '^(beagle/bone/bone\.go|beagle/green/green\.go|rpi/rpi\.go)$'
+        linters: [godoclint]
+      # Hardware paths and smoke tests retain their established allocation behavior.
+      - path: '^(bcm283x/dma\.go|chip/chipsmoketest/chipsmoketest\.go|ftdi/mpsse\.go|odroidc1/odroidc1smoketest/odroidc1smoketest\.go)$'
+        linters: [prealloc]
+      # These empty loops deliberately poll hardware state or spin for timing.
+      - path: ^(allwinner/(dma|spi|timer)|bcm283x/(clock|dma|timer)|cpu/cpu)\.go$
+        text: 'empty-block:'
+        linters: [revive]
       # The standalone gosec CI command scanned production sources only.
       - path: _test\.go$
         linters: [gosec]

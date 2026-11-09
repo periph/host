@@ -22,15 +22,15 @@ func reset() {
 	fileIOOpen = fileIOOpenDefault
 	ioctlOpen = ioctlOpenDefault
 	// Soon.
-	//fileIOOpen = fileIOOpenPanic
-	//ioctlOpen = ioctlOpenPanic
+	// fileIOOpen = fileIOOpenPanic
+	// ioctlOpen = ioctlOpenPanic
 }
 
-func ioctlOpenPanic(path string, flag int) (ioctlCloser, error) {
+func ioctlOpenPanic(_ string, _ int) (ioctlCloser, error) {
 	panic("don't forget to override fileIOOpen")
 }
 
-func fileIOOpenPanic(path string, flag int) (fileIO, error) {
+func fileIOOpenPanic(_ string, _ int) (fileIO, error) {
 	panic("don't forget to override fileIOOpen")
 }
 
@@ -39,7 +39,7 @@ type ioctlClose struct {
 	closeErr error
 }
 
-func (i *ioctlClose) Ioctl(op uint, data uintptr) error {
+func (i *ioctlClose) Ioctl(_ uint, _ uintptr) error {
 	return i.ioctlErr
 }
 
@@ -55,7 +55,7 @@ func (f *file) Fd() uintptr {
 	return 0xFFFFFFFF
 }
 
-func (f *file) Read(p []byte) (int, error) {
+func (f *file) Read(_ []byte) (int, error) {
 	return 0, errors.New("not implemented")
 }
 
@@ -66,6 +66,6 @@ func (f *file) Seek(offset int64, whence int) (int64, error) {
 	return 0, errors.New("not implemented")
 }
 
-func (f *file) Write(p []byte) (int, error) {
+func (f *file) Write(_ []byte) (int, error) {
 	return 0, errors.New("not implemented")
 }

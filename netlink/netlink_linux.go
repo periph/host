@@ -24,11 +24,11 @@ func newConnSocket() (*connSocket, error) {
 	// Open netlink socket.
 	fd, err := syscall.Socket(syscall.AF_NETLINK, syscall.SOCK_DGRAM, syscall.NETLINK_CONNECTOR)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open netlink socket: %v", err)
+		return nil, fmt.Errorf("failed to open netlink socket: %w", err)
 	}
 
 	if err := syscall.Bind(fd, &syscall.SockaddrNetlink{Family: syscall.AF_NETLINK}); err != nil {
-		return nil, fmt.Errorf("failed to bind netlink socket: %v", err)
+		return nil, fmt.Errorf("failed to bind netlink socket: %w", err)
 	}
 
 	return &connSocket{fd: fd}, nil

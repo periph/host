@@ -58,7 +58,7 @@ import (
 const (
 	// 31:16 reserved
 	pwm2MS pwmControl = 1 << 15 // MSEN2; 0: PWM algorithm is used; 1: M/S transmission is used
-	// 14 reserved
+	// 14 reserved.
 	pwm2UseFIFO        pwmControl = 1 << 13 // USEF2; 0: Data register is transmitted; 1: Fifo is used for transmission
 	pwm2Polarity       pwmControl = 1 << 12 // POLA2; 0: 0=low 1=high; 1: 1=low 0=high
 	pwm2SilenceHigh    pwmControl = 1 << 11 // SBIT2; Defines the state of the output when no transmission takes place

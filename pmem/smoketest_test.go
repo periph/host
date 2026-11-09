@@ -31,14 +31,14 @@ func TestSmokeTest_fail(t *testing.T) {
 		t.Fatal("second alloc failed")
 	}
 
-	copyFail := func(d, s uint64) error {
+	copyFail := func(_, _ uint64) error {
 		return errors.New("oops")
 	}
 	if TestCopy(1024, 1, allocRAM, copyFail) == nil {
 		t.Fatal("copy failed")
 	}
 
-	copyNop := func(d, s uint64) error {
+	copyNop := func(_, _ uint64) error {
 		return nil
 	}
 	if TestCopy(1024, 1, allocRAM, copyNop) == nil {
@@ -91,11 +91,9 @@ func TestSmokeTest(t *testing.T) {
 func allocRAM(size int) (Mem, error) {
 	p := make([]byte, size)
 	return &MemAlloc{
-		View: View{
-			Slice: Slice(p),
-			orig:  p,
-			phys:  uint64(uintptr(unsafe.Pointer(&p[0]))),
-		},
+		Slice: Slice(p),
+		orig:  p,
+		phys:  uint64(uintptr(unsafe.Pointer(&p[0]))),
 	}, nil
 }
 

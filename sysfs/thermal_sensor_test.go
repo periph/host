@@ -304,7 +304,14 @@ func TestThermalSensor_SenseContinuous_success(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer d.Halt()
+	defer func() {
+		if haltErr := d.Halt(); haltErr != nil {
+			t.Error(haltErr)
+		}
+	}()
+	if duplicate, duplicateErr := d.SenseContinuous(time.Second); duplicateErr == nil || duplicate != nil {
+		t.Fatalf("second continuous reading = %v, %v; want nil channel and error", duplicate, duplicateErr)
+	}
 	e := <-ch
 	if e.Temperature != 42*physic.Celsius+physic.ZeroCelsius {
 		t.Fatal(e.Temperature)
@@ -339,6 +346,7 @@ func resetThermal() {
 
 type fileRead struct {
 	file
+
 	t   *testing.T
 	ops [][]byte
 }

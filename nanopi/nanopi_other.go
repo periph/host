@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for nanopi.
 
 //go:build !arm && !arm64
-// +build !arm,!arm64
 
 package nanopi
 

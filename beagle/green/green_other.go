@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for beagle/green.
 
 //go:build !arm
-// +build !arm
 
 package green
 

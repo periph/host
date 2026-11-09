@@ -5,7 +5,6 @@
 // Identify non-Windows builds for serial port support.
 
 //go:build !windows
-// +build !windows
 
 package serial
 

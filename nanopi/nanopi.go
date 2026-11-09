@@ -8,7 +8,6 @@ package nanopi
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"periph.io/x/conn/v3/driver/driverreg"
@@ -167,7 +166,7 @@ func (d *driver) Init() (bool, error) {
 
 	model := distro.DTModel()
 	if model == "<unknown>" {
-		return true, fmt.Errorf("nanopi: failed to obtain model")
+		return true, errors.New("nanopi: failed to obtain model")
 	}
 
 	err := registerHeaders(model)

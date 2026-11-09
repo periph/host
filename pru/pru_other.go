@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for pru.
 
 //go:build !arm
-// +build !arm
 
 package pru
 

@@ -40,7 +40,7 @@ func TestMaxSpeed(t *testing.T) {
 	}
 }
 
-func TestNanospin(t *testing.T) {
+func TestNanospin(_ *testing.T) {
 	Nanospin(time.Microsecond)
 	nanospinTime(time.Microsecond)
 }

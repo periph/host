@@ -9,6 +9,7 @@ package sysfs
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -91,13 +92,17 @@ func (t *ThermalSensor) readType() (string, error) {
 		return "<unknown>", nil
 	}
 	if err != nil {
-		return "", fmt.Errorf("sysfs-thermal: %v", err)
+		return "", fmt.Errorf("sysfs-thermal: %w", err)
 	}
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Printf("close f: %v", closeErr)
+		}
+	}()
 	var buf [256]byte
 	n, err := f.Read(buf[:])
 	if err != nil {
-		return "", fmt.Errorf("sysfs-thermal: %v", err)
+		return "", fmt.Errorf("sysfs-thermal: %w", err)
 	}
 	if n < 2 {
 		return "<unknown>", nil
@@ -115,14 +120,14 @@ func (t *ThermalSensor) Sense(e *physic.Env) error {
 	var buf [24]byte
 	n, err := seekRead(t.f, buf[:])
 	if err != nil {
-		return fmt.Errorf("sysfs-thermal: %v", err)
+		return fmt.Errorf("sysfs-thermal: %w", err)
 	}
 	if n < 2 {
 		return errors.New("sysfs-thermal: failed to read temperature")
 	}
 	i, err := strconv.Atoi(string(buf[:n-1]))
 	if err != nil {
-		return fmt.Errorf("sysfs-thermal: %v", err)
+		return fmt.Errorf("sysfs-thermal: %w", err)
 	}
 	if t.precision == 0 {
 		t.precision = physic.MilliKelvin
@@ -139,7 +144,7 @@ func (t *ThermalSensor) SenseContinuous(interval time.Duration) (<-chan physic.E
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.done != nil {
-		return nil, nil
+		return nil, errors.New("sysfs: continuous sensing already running")
 	}
 	done := make(chan struct{})
 	ret := make(chan physic.Env)
@@ -187,7 +192,7 @@ func (t *ThermalSensor) open() error {
 	}
 	f, err := fileIOOpen(t.root+t.sensorFilename, os.O_RDONLY)
 	if err != nil {
-		return fmt.Errorf("sysfs-thermal: %v", err)
+		return fmt.Errorf("sysfs-thermal: %w", err)
 	}
 	t.f = f
 	return nil

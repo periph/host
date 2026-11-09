@@ -201,7 +201,7 @@ func (s *SmokeTest) testStreamIn(p1, p2 *loggingPin) (err error) {
 	// Sum the bits, it should be close to 50%.
 	v := 0
 	for _, x := range b.Bits {
-		for j := 0; j < 8; j++ {
+		for j := range 8 {
 			v += int((x >> uint(j)) & 1)
 		}
 	}
@@ -219,15 +219,16 @@ func (s *SmokeTest) testStreamIn(p1, p2 *loggingPin) (err error) {
 
 // since returns time in µs since the test start.
 func since(start time.Time) string {
-	µs := (time.Since(start) + time.Microsecond/2) / time.Microsecond
-	ms := µs / 1000
-	µs %= 1000
-	return fmt.Sprintf("%3d.%03dms", ms, µs)
+	us := (time.Since(start) + time.Microsecond/2) / time.Microsecond
+	ms := us / 1000
+	us %= 1000
+	return fmt.Sprintf("%3d.%03dms", ms, us)
 }
 
 // loggingPin logs when its state changes.
 type loggingPin struct {
 	*bcm283x.Pin
+
 	start time.Time
 }
 

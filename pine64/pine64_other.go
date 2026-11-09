@@ -5,7 +5,6 @@
 // Select unsupported ARM platform detection for pine64.
 
 //go:build !arm && !arm64
-// +build !arm,!arm64
 
 package pine64
 

@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -330,13 +331,13 @@ func (p *Pin) open() error {
 		goto direction
 	} else if !os.IsNotExist(p.err) {
 		// It exists but not accessible, not worth doing the remainder.
-		p.err = fmt.Errorf("need more access, try as root or setup udev rules: %v", p.err)
+		p.err = fmt.Errorf("need more access, try as root or setup udev rules: %w", p.err)
 		return p.err
 	}
 
 	if _, p.err = drvGPIO.exportHandle.Write([]byte(strconv.Itoa(p.number))); p.err != nil && !isErrBusy(p.err) {
 		if os.IsPermission(p.err) {
-			p.err = fmt.Errorf("need more access, try as root or setup udev rules: %v", p.err)
+			p.err = fmt.Errorf("need more access, try as root or setup udev rules: %w", p.err)
 		}
 		return p.err
 	}
@@ -380,7 +381,7 @@ func (p *Pin) haltEdge() error {
 }
 
 func (p *Pin) wrap(err error) error {
-	return fmt.Errorf("sysfs-gpio (%s): %v", p, err)
+	return fmt.Errorf("sysfs-gpio (%s): %w", p, err)
 }
 
 //
@@ -410,7 +411,11 @@ func readInt(path string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	defer f.Close()
+	defer func() {
+		if closeErr := f.Close(); closeErr != nil {
+			log.Printf("close f: %v", closeErr)
+		}
+	}()
 	var b [24]byte
 	n, err := f.Read(b[:])
 	if err != nil {
@@ -469,7 +474,7 @@ func (d *driverGPIO) Init() (bool, error) {
 	}
 	drvGPIO.exportHandle, err = fileIOOpen("/sys/class/gpio/export", os.O_WRONLY)
 	if os.IsPermission(err) {
-		return true, fmt.Errorf("need more access, try as root or setup udev rules: %v", err)
+		return true, fmt.Errorf("need more access, try as root or setup udev rules: %w", err)
 	}
 	return true, err
 }

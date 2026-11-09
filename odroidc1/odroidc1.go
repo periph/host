@@ -101,7 +101,7 @@ var aliases = map[string]int{
 	"SPI0_CS0":  117,
 }
 
-// sysfsPin is a safe way to get a sysfs pin
+// sysfsPin is a safe way to get a sysfs pin.
 func sysfsPin(n int) gpio.PinIO {
 	if p, ok := sysfs.Pins[n]; ok {
 		return p

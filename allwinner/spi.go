@@ -20,7 +20,7 @@ const (
 	// the error caused by the time delay of SPI_CLK propagating between master
 	// and slave.
 	// 1 – delay internal read sample point
-	// 0 – normal operation, do not delay internal read sample point
+	// 0 – normal operation, do not delay internal read sample point.
 	spiR8HalfDelay       spiR8Ctl = 1 << 19 // Master Sample Data Control
 	spiR8TransmitPause   spiR8Ctl = 1 << 18 // Transmit Pause Enable
 	spiR8CSLevel         spiR8Ctl = 1 << 17 // SS_LEVEL; Chip Select level
@@ -46,7 +46,7 @@ const (
 )
 
 // SPI_CTL
-// R8: Page 153-155.  Default: 0x0002001C
+// R8: Page 153-155.  Default: 0x0002001C.
 type spiR8Ctl uint32
 
 // SPI_INTCTL
@@ -148,7 +148,7 @@ type spiR8Group struct {
 func (s *spiR8Group) setup() {
 	s.intCtl = 0
 	s.status = 0
-	//s.dmaCtl = spiR8DMARXByte
+	// s.dmaCtl = spiR8DMARXByte
 	s.dmaCtl = 0
 	s.wait = 2
 	s.clockCtl = spiR8DivRateSelect2 | spiR8Div1024
@@ -168,13 +168,13 @@ func spi2Write(w []byte) error {
 		return errors.New("subsystem not initialized")
 	}
 	// Make sure the source clock is disabled. Set it at 250kHz.
-	//drvDMA.clockMemory.spi2Clk &^= clockSPIEnable
+	// drvDMA.clockMemory.spi2Clk &^= clockSPIEnable
 	drvDMA.clockMemory.spi2Clk |= clockSPIEnable
 	drvDMA.clockMemory.spi2Clk = clockSPIDiv8a | clockSPIDiv12b
 	ch := &drvDMA.spiMemory.groups[2]
 	ch.setup()
 	fmt.Printf("Setup done\n")
-	for i := 0; i < len(w)/4; i++ {
+	for range len(w) / 4 {
 		// TODO(maruel): Access it in 8bit mode.
 		ch.tx = uint32(w[0])
 		for ch.fifoStatus.tx() == 0 {
@@ -192,12 +192,12 @@ func spi2Read(r []byte) error {
 		return errors.New("subsystem not initialized")
 	}
 	// Make sure the source clock is disabled. Set it at 250kHz.
-	//drvDMA.clockMemory.spi2Clk &^= clockSPIEnable
+	// drvDMA.clockMemory.spi2Clk &^= clockSPIEnable
 	drvDMA.clockMemory.spi2Clk |= clockSPIEnable
 	drvDMA.clockMemory.spi2Clk = clockSPIDiv8a | clockSPIDiv12b
 	ch := &drvDMA.spiMemory.groups[2]
 	ch.setup()
-	for i := 0; i < len(r)/4; i++ {
+	for i := range len(r) / 4 {
 		ch.tx = 0
 		for ch.status&spiR8TC == 0 {
 		}

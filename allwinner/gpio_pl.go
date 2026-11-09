@@ -381,7 +381,7 @@ func (p *PinPL) setFunction(f function) bool {
 }
 
 func (p *PinPL) wrap(err error) error {
-	return fmt.Errorf("allwinner-gpio-pl (%s): %v", p, err)
+	return fmt.Errorf("allwinner-gpio-pl (%s): %w", p, err)
 }
 
 //
@@ -540,7 +540,7 @@ func (d *driverGPIOPL) Init() (bool, error) {
 	m, err := pmem.Map(getBaseAddressPL(), 4096)
 	if err != nil {
 		if os.IsPermission(err) {
-			return true, fmt.Errorf("need more access, try as root: %v", err)
+			return true, fmt.Errorf("need more access, try as root: %w", err)
 		}
 		return true, err
 	}

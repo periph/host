@@ -79,8 +79,8 @@ func (d *dmaR8NormalGroup) release() error {
 	d.dstAddr = 0
 	d.byteCounter = 0
 	d.cfg = ndmaLoad
-	//drvDMA.dmaMemory.irqEn &^= ...
-	//drvDMA.dmaMemory.irqPendStas &^= ...
+	// drvDMA.dmaMemory.irqEn &^= ...
+	// drvDMA.dmaMemory.irqPendStas &^= ...
 	return nil
 }
 
@@ -107,7 +107,7 @@ func (d *dmaDedicatedGroup) set(srcAddr, dstAddr, l uint32, srcIO, dstIO bool, s
 	d.dstAddr = dstAddr
 	d.byteCounter = l
 	// TODO(maruel): Slow down the clock by another 2*250x
-	//d.param = ddmaR8Param(250 | 250<<16)
+	// d.param = ddmaR8Param(250 | 250<<16)
 	d.param = ddmaR8Param(1<<24 | 1<<8 | 1)
 	// All these have value 0. This statement only exist for documentation.
 	cfg := ddmaDstWidth8 | ddmaDstBurst1 | ddmaDstLinear | ddmaSrcWidth8 | ddmaSrcLinear | ddmaSrcBurst1
@@ -131,18 +131,18 @@ func (d *dmaDedicatedGroup) release() error {
 	d.dstAddr = 0
 	d.byteCounter = 0
 	d.cfg = ddmaLoad
-	//drvDMA.dmaMemory.irqEn &^= ...
-	//drvDMA.dmaMemory.irqPendStas &^= ...
+	// drvDMA.dmaMemory.irqEn &^= ...
+	// drvDMA.dmaMemory.irqPendStas &^= ...
 	return nil
 }
 
 const (
-	// 31 reserved
+	// 31 reserved.
 	dma7QueueEndIrq   dmaA64Irq = 1 << 30 // DMA7_END_IRQ_EN; DMA 7 Queue End Transfer Interrupt Enable.
 	dma7PackageEndIrq dmaA64Irq = 1 << 29 // DMA7_PKG_IRQ_EN; DMA 7 Package End Transfer Interrupt Enable.
 	dma7HalfIrq       dmaA64Irq = 1 << 28 // DMA7_HLAF_IRQ_EN; DMA 7 Half Package Transfer Interrupt Enable.
 	// ...
-	// 3 reserved
+	// 3 reserved.
 	dma0QueueEndIrq   dmaA64Irq = 1 << 2 // DMA0_END_IRQ_EN; DMA 0 Queue End Transfer Interrupt Enable.
 	dma0PackageEndIrq dmaA64Irq = 1 << 1 // DMA0_PKG_IRQ_EN; DMA 0 Package End Transfer Interrupt Enable.
 	dma0HalfIrq       dmaA64Irq = 1 << 0 // DMA0_HLAF_IRQ_EN; DMA 0 Half Package Transfer Interrupt Enable.
@@ -170,12 +170,12 @@ const (
 type dmaR8Irq uint32
 
 const (
-	// 31 reserved
+	// 31 reserved.
 	dma7QueueEndIrqPend   dmaA64PendingIrq = 1 << 30 // DMA7_QUEUE_IRQ_PEND; DMA 7 Queue End Transfer Interrupt Pending. Set 1 to the bit will clear it.
 	dma7PackageEndIrqPend dmaA64PendingIrq = 1 << 29 // DMA7_PKG_IRQ_PEND; DMA 7 Package End Transfer Interrupt Pending. Set 1 to the bit will clear it.
 	dma7HalfIrqPend       dmaA64PendingIrq = 1 << 28 // DMA7_HLAF_IRQ_PEND; DMA 7 Half Package Transfer Interrupt Pending. Set 1 to the bit will clear it.
 	// ...
-	// 3 reserved
+	// 3 reserved.
 	dma0QueueEndIrqPend   dmaA64PendingIrq = 1 << 2 // DMA0_QUEUE_IRQ_PEND; DMA 0 Queue End Transfer Interrupt Pending. Set 1 to the bit will clear it.
 	dma0PackageEndIrqPend dmaA64PendingIrq = 1 << 1 // DMA0_PKG_IRQ_PEND; DMA 0 Package End Transfer Interrupt Pending. Set 1 to the bit will clear it.
 	dma0HalfIrqPend       dmaA64PendingIrq = 1 << 0 // DMA0_HLAF_IRQ_PEND; DMA 0 Half Package Transfer Interrupt Pending. Set 1 to the bit will clear it.
@@ -412,7 +412,7 @@ func (d *driverDMA) Init() (bool, error) {
 		timerBaseAddr = 0x1C20C00
 		// Page 81.
 		clockBaseAddr = 0x1C20000
-		// Page Page 545.
+		// Page 545.
 		spiBaseAddr = 0x01C68000
 	} else if IsR8() {
 		// Page 124.
@@ -428,17 +428,17 @@ func (d *driverDMA) Init() (bool, error) {
 	} else {
 		// H3
 		// Page 194.
-		//dmaBaseAddr = 0x1C02000
+		// dmaBaseAddr = 0x1C02000
 		// Page 187.
-		//pwmBaseAddr = 0x1C21400
+		// pwmBaseAddr = 0x1C21400
 		// Page 154.
-		//timerBaseAddr = 0x1C20C00
+		// timerBaseAddr = 0x1C20C00
 		return false, errors.New("unsupported CPU architecture")
 	}
 
 	if err := pmem.MapAsPOD(uint64(dmaBaseAddr), &d.dmaMemory); err != nil {
 		if os.IsPermission(err) {
-			return true, fmt.Errorf("need more access, try as root: %v", err)
+			return true, fmt.Errorf("need more access, try as root: %w", err)
 		}
 		return true, err
 	}

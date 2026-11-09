@@ -81,7 +81,7 @@ func (i *I2C) Close() error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 	if err := i.f.Close(); err != nil {
-		return fmt.Errorf("sysfs-i2c: %v", err)
+		return fmt.Errorf("sysfs-i2c: %w", err)
 	}
 	return nil
 }
@@ -124,7 +124,7 @@ func (i *I2C) Tx(addr uint16, w, r []byte) error {
 	i.mu.Lock()
 	defer i.mu.Unlock()
 	if err := i.f.Ioctl(ioctlRdwr, pp); err != nil {
-		return fmt.Errorf("sysfs-i2c: %v", err)
+		return fmt.Errorf("sysfs-i2c: %w", err)
 	}
 	return nil
 }
@@ -168,10 +168,10 @@ func newI2C(busNumber int) (*I2C, error) {
 		//   edited to enable I²C then the device must be rebooted.
 		// - permission denied. In this case, the user has to be added to plugdev.
 		if os.IsNotExist(err) {
-			return nil, fmt.Errorf("sysfs-i2c: bus #%d is not configured: %v", busNumber, err)
+			return nil, fmt.Errorf("sysfs-i2c: bus #%d is not configured: %w", busNumber, err)
 		}
 		// TODO(maruel): This is a debianism.
-		return nil, fmt.Errorf("sysfs-i2c: are you member of group 'plugdev'? %v", err)
+		return nil, fmt.Errorf("sysfs-i2c: are you member of group 'plugdev'? %w", err)
 	}
 	i := &I2C{f: f, busNumber: busNumber}
 
@@ -181,7 +181,7 @@ func newI2C(busNumber int) (*I2C, error) {
 
 	// Query to know if 10 bits addresses are supported.
 	if err = i.f.Ioctl(ioctlFuncs, uintptr(unsafe.Pointer(&i.fn))); err != nil {
-		return nil, fmt.Errorf("sysfs-i2c: %v", err)
+		return nil, fmt.Errorf("sysfs-i2c: %w", err)
 	}
 	return i, nil
 }
@@ -212,7 +212,7 @@ const (
 	ioctlRdwr    = 0x707
 )
 
-// flags
+// flags.
 const (
 	flagTEN        = 0x0010 // this is a ten bit chip address
 	flagRD         = 0x0001 // read data, from slave to master

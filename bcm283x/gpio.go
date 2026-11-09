@@ -891,7 +891,7 @@ func (p *Pin) setFunction(f function) {
 }
 
 func (p *Pin) wrap(err error) error {
-	return fmt.Errorf("bcm283x-gpio (%s): %v", p, err)
+	return fmt.Errorf("bcm283x-gpio (%s): %w", p, err)
 }
 
 //
@@ -1286,7 +1286,7 @@ func sleep150cycles() uint32 {
 	// Abuse the fact that gpioMemory is uncached memory.
 	// TODO(maruel): No idea if this is too much or enough.
 	var out uint32
-	for i := 0; i < 150; i++ {
+	for range 150 {
 		out += drvGPIO.gpioMemory.functionSelect[0]
 	}
 	return out
@@ -1458,11 +1458,11 @@ func (d *driverGPIO) Init() (bool, error) {
 				// Raspbian specific error code to help guide the user to troubleshoot
 				// the problems.
 				if os.IsNotExist(err) && os.IsPermission(err2) {
-					return true, fmt.Errorf("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
+					return true, errors.New("/dev/gpiomem wasn't found; please upgrade to Raspbian Jessie or run as root")
 				}
 			}
 			if os.IsPermission(err2) {
-				return true, fmt.Errorf("need more access, try as root: %v", err)
+				return true, fmt.Errorf("need more access, try as root: %w", err)
 			}
 			return true, err
 		}
@@ -1474,7 +1474,7 @@ func (d *driverGPIO) Init() (bool, error) {
 	return true, sysfs.I2CSetSpeedHook(setSpeed)
 }
 
-func setSpeed(f physic.Frequency) error {
+func setSpeed(_ physic.Frequency) error {
 	// Writing to "/sys/module/i2c_bcm2708/parameters/baudrate" was confirmed to
 	// not work.
 	// modprobe hangs when a bus is opened, so this must be called *before* the

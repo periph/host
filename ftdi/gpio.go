@@ -78,7 +78,7 @@ func (s *dbusPinSync) Read() gpio.Level {
 }
 
 // WaitForEdge implements gpio.PinIn.
-func (s *dbusPinSync) WaitForEdge(t time.Duration) bool {
+func (s *dbusPinSync) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -101,7 +101,7 @@ func (s *dbusPinSync) Out(l gpio.Level) error {
 }
 
 // PWM implements gpio.PinOut.
-func (s *dbusPinSync) PWM(d gpio.Duty, f physic.Frequency) error {
+func (s *dbusPinSync) PWM(_ gpio.Duty, _ physic.Frequency) error {
 	return errors.New("d2xx: not implemented")
 }
 
@@ -192,7 +192,7 @@ func (c *cbusPin) Read() gpio.Level {
 }
 
 // WaitForEdge implements gpio.PinIn.
-func (c *cbusPin) WaitForEdge(t time.Duration) bool {
+func (c *cbusPin) WaitForEdge(_ time.Duration) bool {
 	return false
 }
 
@@ -215,7 +215,7 @@ func (c *cbusPin) Out(l gpio.Level) error {
 }
 
 // PWM implements gpio.PinOut.
-func (c *cbusPin) PWM(d gpio.Duty, f physic.Frequency) error {
+func (c *cbusPin) PWM(_ gpio.Duty, _ physic.Frequency) error {
 	return errors.New("d2xx: not implemented")
 }
 
